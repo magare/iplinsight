@@ -789,7 +789,7 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                         'mean': "Average Runs",
                         'inning': "Innings"
                     })
-        st.plotly_chart(fig)
+        responsive_plotly_chart(fig)
     else:
         st.info("No phase-wise scoring data available for this venue")
     
@@ -809,7 +809,7 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                         'inning': "Innings",
                         'sum': "Total Runs"
                     })
-        st.plotly_chart(fig)
+        responsive_plotly_chart(fig)
     else:
         st.info("No innings comparison data available for this venue")
     
@@ -825,7 +825,7 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                         nbins=20,
                         title=f"Match Score Distribution at {selected_venue}",
                         labels={'x': 'Total Match Score', 'y': 'Frequency'})
-        st.plotly_chart(fig)
+        responsive_plotly_chart(fig)
         
         # Display summary statistics
         st.write("Summary Statistics:")
@@ -883,7 +883,7 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
                     names=list(stats['toss_decisions'].keys()),
                     title="Toss Decisions Distribution"
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No toss decision data available")
         
@@ -915,7 +915,7 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
                             names=list(team_stats['decisions'].keys()),
                             title=f"Toss Decisions - {team}"
                         )
-                        st.plotly_chart(fig, use_container_width=True)
+                        responsive_plotly_chart(fig, use_container_width=True)
                     else:
                         st.info(f"No toss decision data available for {team}")
                 
@@ -944,7 +944,7 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
             title="Success Rate by Toss Decision",
             labels={'Success Rate': 'Win Percentage'}
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
 
 def display_weather_analysis(matches_df: pd.DataFrame) -> None:
     """Display weather impact analysis for venues."""
@@ -990,7 +990,7 @@ def display_weather_analysis(matches_df: pd.DataFrame) -> None:
                  values='Matches',
                  names='Time',
                  title=f"Match Timing Distribution at {selected_venue}")
-    st.plotly_chart(fig)
+    responsive_plotly_chart(fig)
     
     # Add a note about data availability
     if venue_stats['day_matches'] == venue_stats['total_matches'] // 2 and venue_stats['evening_matches'] == venue_stats['total_matches'] // 2:

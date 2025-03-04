@@ -89,7 +89,7 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
         
         # Add explanation text below the chart
         st.markdown("""
@@ -137,7 +137,7 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
 
 def calculate_nrr(innings1_score: int, innings1_overs: float, innings2_score: int, innings2_overs: float) -> float:
     """Calculate Net Run Rate for a match."""
@@ -366,7 +366,6 @@ def plot_playoff_analysis(matches_df=None):
         paper_bgcolor='rgba(0,0,0,0)',
         margin=dict(t=60, b=80)
     )
-    # Use responsive chart rendering
     responsive_plotly_chart(fig, use_container_width=True)
 
 def plot_head_to_head_analysis(matches_df=None, deliveries_df=None):
@@ -391,7 +390,6 @@ def plot_head_to_head_analysis(matches_df=None, deliveries_df=None):
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
-    # Use responsive chart rendering
     responsive_plotly_chart(fig, use_container_width=True)
 
 def plot_venue_performance(matches_df=None, deliveries_df=None):
@@ -479,7 +477,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Toss impact at this venue (calculate on-the-fly as it's venue-specific)
@@ -519,7 +517,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # The remaining tabs will continue to use on-the-fly calculations as they're venue-specific
     # Batting Analysis Tab
@@ -550,7 +548,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Boundary percentage
@@ -570,7 +568,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)'
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
     
     # Bowling Analysis Tab
     with venue_tabs[2]:
@@ -592,7 +590,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Wickets by over
@@ -614,7 +612,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Season Trends Tab
     with venue_tabs[3]:
@@ -647,7 +645,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Matches per season
@@ -675,7 +673,7 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
 
 def plot_phase_analysis(matches_df=None, deliveries_df=None):
     """Plot phase-wise analysis of team performance using pre-computed data."""
@@ -734,7 +732,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Boundary percentage in different phases
@@ -760,7 +758,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Bowling Phases Tab
     with phase_tabs[1]:
@@ -789,7 +787,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Wicket rate in different phases
@@ -814,7 +812,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Phase Comparison Tab
     with phase_tabs[2]:
@@ -859,7 +857,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Net Run Rate by Phase
@@ -893,7 +891,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # For the Historical Trends Tab, we still need the original dataframes
     # Historical Trends Tab
@@ -964,7 +962,7 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Bowling Economy Trends
@@ -988,42 +986,66 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
 
 def display_team_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame):
     """Main function to display team analysis."""
     st.header("Team Analysis")
     
-    # Create tabs for different analyses
-    tabs = st.tabs([
+    # Get device type to determine layout
+    device_type = st.session_state.get('device_type', 'mobile')
+    
+    # Define analysis options
+    analysis_options = [
         "Overall Performance",
         "Net Run Rate Analysis",
         "Playoff Performance",
         "Head-to-Head Analysis",
         "Venue Performance",
         "Phase Analysis"
-    ])
+    ]
     
-    # Overall Performance Tab
-    with tabs[0]:
-        plot_overall_performance(matches_df, deliveries_df)
-    
-    # Net Run Rate Analysis Tab
-    with tabs[1]:
-        plot_nrr_analysis(matches_df, deliveries_df)
-    
-    # Playoff Performance Tab
-    with tabs[2]:
-        plot_playoff_analysis(matches_df)
-    
-    # Head-to-Head Analysis Tab
-    with tabs[3]:
-        plot_head_to_head_analysis(matches_df, deliveries_df)
-    
-    # Venue Performance Tab
-    with tabs[4]:
-        plot_venue_performance(matches_df, deliveries_df)
-    
-    # Phase Analysis Tab
-    with tabs[5]:
-        plot_phase_analysis(matches_df, deliveries_df) 
+    if device_type == 'mobile':
+        # Use a selectbox for mobile view
+        selected_analysis = st.selectbox("Select Analysis", analysis_options)
+        
+        # Display the selected analysis
+        if selected_analysis == "Overall Performance":
+            plot_overall_performance(matches_df, deliveries_df)
+        elif selected_analysis == "Net Run Rate Analysis":
+            plot_nrr_analysis(matches_df, deliveries_df)
+        elif selected_analysis == "Playoff Performance":
+            plot_playoff_analysis(matches_df)
+        elif selected_analysis == "Head-to-Head Analysis":
+            plot_head_to_head_analysis(matches_df, deliveries_df)
+        elif selected_analysis == "Venue Performance":
+            plot_venue_performance(matches_df, deliveries_df)
+        elif selected_analysis == "Phase Analysis":
+            plot_phase_analysis(matches_df, deliveries_df)
+    else:
+        # Use tabs for desktop view
+        tabs = st.tabs(analysis_options)
+        
+        # Overall Performance Tab
+        with tabs[0]:
+            plot_overall_performance(matches_df, deliveries_df)
+        
+        # Net Run Rate Analysis Tab
+        with tabs[1]:
+            plot_nrr_analysis(matches_df, deliveries_df)
+        
+        # Playoff Performance Tab
+        with tabs[2]:
+            plot_playoff_analysis(matches_df)
+        
+        # Head-to-Head Analysis Tab
+        with tabs[3]:
+            plot_head_to_head_analysis(matches_df, deliveries_df)
+        
+        # Venue Performance Tab
+        with tabs[4]:
+            plot_venue_performance(matches_df, deliveries_df)
+        
+        # Phase Analysis Tab
+        with tabs[5]:
+            plot_phase_analysis(matches_df, deliveries_df) 

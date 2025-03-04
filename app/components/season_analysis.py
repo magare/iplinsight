@@ -239,7 +239,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.warning("Batting statistics not available")
         
@@ -265,7 +265,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.warning("Batting statistics not available")
     
@@ -294,7 +294,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.warning("Bowling statistics not available")
         
@@ -320,7 +320,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.warning("Bowling statistics not available")
     
@@ -348,7 +348,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             
             with col2:
                 # Most run outs
@@ -369,7 +369,7 @@ def display_top_performers(matches_df, deliveries_df, season):
                     yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
         else:
             st.info("Fielding statistics are not available for this season")
     

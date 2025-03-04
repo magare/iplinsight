@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
+from utils.chart_utils import responsive_plotly_chart
 from pathlib import Path
 
 def load_player_analysis_data():
@@ -222,7 +223,7 @@ def display_batting_analysis(deliveries_df=None):
                 hover_data=['batting_average', 'batting_strike_rate', 'matches_batting']
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
             
             # Strike Rate vs Average scatter plot
             fig = px.scatter(
@@ -234,7 +235,7 @@ def display_batting_analysis(deliveries_df=None):
                 hover_data=['runs', 'matches_batting']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Boundary percentage analysis
@@ -247,7 +248,7 @@ def display_batting_analysis(deliveries_df=None):
                 hover_data=['runs', 'batting_strike_rate']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
             
             # Milestones comparison
             milestone_fig = go.Figure(data=[
@@ -263,7 +264,7 @@ def display_batting_analysis(deliveries_df=None):
                 title='Batting Milestones (Top 10 Run Scorers)',
                 xaxis_tickangle=-45
             )
-            st.plotly_chart(milestone_fig, use_container_width=True)
+            responsive_plotly_chart(milestone_fig, use_container_width=True)
     
     # Phase Analysis Tab
     with analysis_tabs[1]:
@@ -287,7 +288,7 @@ def display_batting_analysis(deliveries_df=None):
                 title=f'Strike Rate by Match Phase - {selected_player}',
                 color='phase'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Average by phase
@@ -298,7 +299,7 @@ def display_batting_analysis(deliveries_df=None):
                 title=f'Average by Match Phase - {selected_player}',
                 color='phase'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Position Analysis Tab
     with analysis_tabs[2]:
@@ -324,7 +325,7 @@ def display_batting_analysis(deliveries_df=None):
                 color='position',
                 hover_data=['innings', 'batting_average']
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Strike rate by position
@@ -336,7 +337,7 @@ def display_batting_analysis(deliveries_df=None):
                 color='position',
                 hover_data=['innings', 'batting_average']
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         # Position-wise detailed stats
         st.subheader("Detailed Position-wise Statistics")
@@ -486,7 +487,7 @@ def display_bowling_analysis(deliveries_df=None):
                 hover_data=['bowling_economy', 'bowling_average', 'bowling_strike_rate']
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
             
             # Economy vs Strike Rate
             fig = px.scatter(
@@ -498,7 +499,7 @@ def display_bowling_analysis(deliveries_df=None):
                 hover_data=['is_wicket', 'bowling_average']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Dot ball percentage
@@ -510,7 +511,7 @@ def display_bowling_analysis(deliveries_df=None):
                 hover_data=['bowling_economy', 'is_wicket']
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
             
             # Wickets per match
             fig = px.bar(
@@ -521,7 +522,7 @@ def display_bowling_analysis(deliveries_df=None):
                 hover_data=['is_wicket', 'matches_bowling']
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Wicket Analysis Tab
     with analysis_tabs[1]:
@@ -547,7 +548,7 @@ def display_bowling_analysis(deliveries_df=None):
             names='wicket_type',
             title=f'Wicket Types - {selected_bowler}'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
     
     # Phase Analysis Tab
     with analysis_tabs[2]:
@@ -571,7 +572,7 @@ def display_bowling_analysis(deliveries_df=None):
                 title=f'Economy Rate by Match Phase - {selected_bowler}',
                 color='phase'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Wickets by phase
@@ -582,7 +583,7 @@ def display_bowling_analysis(deliveries_df=None):
                 title=f'Wickets by Match Phase - {selected_bowler}',
                 color='phase'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         # Phase-wise detailed stats
         st.subheader("Detailed Phase-wise Statistics")
@@ -693,7 +694,7 @@ def display_allrounder_analysis(deliveries_df=None):
                 hover_data=['batting_runs', 'wickets']
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Batting vs Bowling score scatter
@@ -706,7 +707,7 @@ def display_allrounder_analysis(deliveries_df=None):
                 hover_data=['batting_runs', 'wickets', 'allrounder_score']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Performance Matrix Tab
     with analysis_tabs[1]:
@@ -723,7 +724,7 @@ def display_allrounder_analysis(deliveries_df=None):
                 hover_data=['batting_average', 'bowling_economy']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Strike Rate vs Economy scatter
@@ -736,7 +737,7 @@ def display_allrounder_analysis(deliveries_df=None):
                 hover_data=['batting_runs', 'wickets']
             )
             fig.update_traces(textposition='top center')
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Detailed Stats Tab
     with analysis_tabs[2]:
@@ -907,7 +908,7 @@ def display_head_to_head_analysis(deliveries_df=None):
                     hover_data=['runs', 'balls', 'dismissals']
                 )
                 fig.update_layout(xaxis_tickangle=-45)
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No data available for dominant batting performances")
         
@@ -924,7 +925,7 @@ def display_head_to_head_analysis(deliveries_df=None):
                     hover_data=['runs', 'balls', 'dismissals']
                 )
                 fig.update_layout(xaxis_tickangle=-45)
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No data available for dominant bowling performances")
     
@@ -967,7 +968,7 @@ def display_head_to_head_analysis(deliveries_df=None):
                     labels=dict(x="Bowler", y="Batsman", color="Strike Rate"),
                     aspect="auto"
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No data available for the selected players")
         else:

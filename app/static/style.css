@@ -90,16 +90,55 @@ button:hover, .stButton > button:hover {
 
 /* Make tab lists scrollable on smaller screens */
 [data-testid="stTabs"] [role="tablist"] {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
+    flex-wrap: nowrap !important; /* Changed back to nowrap for horizontal scrolling */
+    overflow-x: auto !important; /* Enable horizontal scrolling */
     overflow-y: hidden !important;
     margin-bottom: 10px !important;
-    scrollbar-width: none !important;  /* Firefox */
+    display: flex !important;
+    justify-content: flex-start !important; /* Align to the start */
+    gap: 5px !important; /* Add gap between buttons */
+    scrollbar-width: thin !important; /* Firefox */
+    padding-bottom: 5px !important; /* Add padding to avoid content being cut off */
 }
 
-/* Hide scrollbar for tab lists */
+/* Remove the red line at the bottom of selected tabs */
+[data-testid="stTabs"] button::after {
+    display: none !important;
+}
+
+/* Mobile-specific adjustments for tab buttons */
+@media (max-width: 768px) {
+    [data-testid="stTabs"] [role="tablist"] {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+        padding-bottom: 10px !important;
+        -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
+    }
+    
+    [data-testid="stTabs"] button {
+        flex: 0 0 auto !important; /* Don't grow or shrink */
+        min-width: 120px !important; /* Set minimum width */
+        margin: 0 3px !important;
+        font-size: 0.85rem !important; /* Slightly smaller font */
+    }
+    
+    /* Remove the brick wall pattern */
+    [data-testid="stTabs"] button:nth-child(4n+3),
+    [data-testid="stTabs"] button:nth-child(4n+4) {
+        margin-left: 3px !important;
+    }
+}
+
+/* Hide scrollbar for tab lists but keep functionality */
 [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar {
-    display: none !important;  /* Chrome, Safari, Edge */
+    height: 4px !important; /* Small height for the scrollbar */
+    background: rgba(15, 15, 30, 0.3) !important;
+}
+
+[data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar-thumb {
+    background: rgba(51, 255, 204, 0.5) !important; /* Neon teal */
+    border-radius: 4px !important;
 }
 
 /* Style the selected tab */
@@ -152,6 +191,57 @@ button:hover, .stButton > button:hover {
     background-color: rgba(20, 20, 40, 0.7) !important;
     border-radius: 8px !important;
     color: #33ffcc !important;  /* Neon teal */
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    /* Adjust chart container for better mobile viewing */
+    .stPlotlyChart {
+        margin: 30px 0 !important; /* Add vertical margin for charts */
+        padding: 0 5px !important; /* Add horizontal padding */
+    }
+    
+    /* Add space between chart title and legend */
+    .gtitle {
+        margin-bottom: 25px !important;
+    }
+    
+    /* Fix for overlapping legends */
+    .legend {
+        margin-top: 10px !important;
+    }
+    
+    /* Make headers smaller on mobile */
+    h1 {
+        font-size: 2rem !important;
+        margin-bottom: 15px !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+        margin-bottom: 12px !important;
+    }
+    
+    h3 {
+        font-size: 1.2rem !important;
+        margin-bottom: 10px !important;
+    }
+    
+    /* Adjust column spacing on mobile */
+    .row-widget.stHorizontal {
+        gap: 5px !important;
+    }
+    
+    /* Add more space between components */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Add space between sections */
+    .stMarkdown {
+        margin-bottom: 10px !important;
+    }
 }
 
 /* Custom scrollbar */

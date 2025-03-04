@@ -9,7 +9,7 @@ st.set_page_config(
 import base64
 from pathlib import Path
 from utils.data_loader import load_data, calculate_basic_stats, format_large_number
-from utils.chart_utils import init_device_detection
+from utils.chart_utils import init_device_detection, responsive_plotly_chart
 from components.overview import (
     plot_tournament_growth,
     display_team_participation,
@@ -48,6 +48,15 @@ except Exception as e:
 
 # Initialize device detection
 device_type = init_device_detection()
+
+# Add a note about mobile optimization
+if device_type == 'mobile':
+    st.sidebar.markdown("""
+    <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.8rem;">
+        <p style="margin: 0;">📱 <b>Mobile-optimized view enabled</b></p>
+        <p style="margin: 0; opacity: 0.8;">Charts and layouts are adjusted for better mobile experience.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Cache data loading to improve performance and wrap it with a spinner for user feedback
 @st.cache_data(show_spinner=False)
@@ -120,16 +129,37 @@ def render_team_analysis():
 
 def render_player_analysis():
     st.header("Player Analysis")
-    # Use tabs for a more intuitive nested navigation experience
-    tabs = st.tabs(["Batting Analysis", "Bowling Analysis", "All-Rounder Analysis", "Head-to-Head Analysis"])
-    with tabs[0]:
-        display_batting_analysis(deliveries)
-    with tabs[1]:
-        display_bowling_analysis(deliveries)
-    with tabs[2]:
-        display_allrounder_analysis(deliveries)
-    with tabs[3]:
-        display_head_to_head_analysis(deliveries)
+    
+    # Get device type to determine layout
+    device_type = st.session_state.get('device_type', 'mobile')
+    
+    # Define analysis options
+    analysis_options = ["Batting Analysis", "Bowling Analysis", "All-Rounder Analysis", "Head-to-Head Analysis"]
+    
+    if device_type == 'mobile':
+        # Use a selectbox for mobile view
+        selected_analysis = st.selectbox("Select Analysis", analysis_options)
+        
+        # Display the selected analysis
+        if selected_analysis == "Batting Analysis":
+            display_batting_analysis(deliveries)
+        elif selected_analysis == "Bowling Analysis":
+            display_bowling_analysis(deliveries)
+        elif selected_analysis == "All-Rounder Analysis":
+            display_allrounder_analysis(deliveries)
+        elif selected_analysis == "Head-to-Head Analysis":
+            display_head_to_head_analysis(deliveries)
+    else:
+        # Use tabs for desktop view
+        tabs = st.tabs(analysis_options)
+        with tabs[0]:
+            display_batting_analysis(deliveries)
+        with tabs[1]:
+            display_bowling_analysis(deliveries)
+        with tabs[2]:
+            display_allrounder_analysis(deliveries)
+        with tabs[3]:
+            display_head_to_head_analysis(deliveries)
 
 def render_match_analysis():
     st.header("Match Analysis")
@@ -137,9 +167,15 @@ def render_match_analysis():
     This section provides a detailed analysis of match outcomes, toss decisions, and their impact on the game.
     We explore various aspects like victory margins, toss advantage, and scoring patterns.
     """)
-    # Use a selectbox for lazy loading nested match analysis tabs
-    match_tab = st.selectbox("Select Match Analysis", 
-                               ["Match Details", "Match Results", "Toss Analysis", "Scoring Patterns", "High/Low Scoring Matches"])
+    
+    # Get device type to determine layout
+    device_type = st.session_state.get('device_type', 'mobile')
+    
+    # Define analysis options
+    match_options = ["Match Details", "Match Results", "Toss Analysis", "Scoring Patterns", "High/Low Scoring Matches"]
+    
+    # Use a selectbox for both mobile and desktop for consistency
+    match_tab = st.selectbox("Select Match Analysis", match_options)
     
     if match_tab == "Match Results":
         display_match_result_analysis(matches)

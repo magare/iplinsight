@@ -32,17 +32,46 @@ def update_chart_for_responsive_layout(fig: Any, device_type: Optional[str] = No
     
     # Update layout based on device type
     if device_type == 'mobile':
-        # Place legend at the top of the chart on mobile
+        # Place legend at the top of the chart on mobile with more space
         fig.update_layout(
             legend=dict(
                 orientation="h",  # horizontal orientation
                 yanchor="bottom",
-                y=1.02,           # position just above the chart
+                y=1.15,           # position further above the chart to avoid overlap
                 xanchor="center",
                 x=0.5,            # centered horizontally
-                font=CHART_STYLING['legend_font']
+                font=CHART_STYLING['legend_font'],
+                itemsizing='constant',  # Make legend items consistent size
+                itemwidth=30,           # Limit width of legend items
+                entrywidth=70           # Limit width of legend entries
+            ),
+            margin=dict(t=100, l=30, r=30, b=50),  # Add more top margin to accommodate the legend
+            height=350,           # Slightly reduce height for better mobile viewing
+            title=dict(
+                y=0.95,           # Move title down slightly to avoid overlap with legend
+                x=0.5,
+                xanchor='center',
+                yanchor='top',
+                font=dict(size=14)
             )
         )
+        
+        # Make axis titles and text smaller on mobile
+        fig.update_layout(
+            xaxis=dict(
+                title_font=dict(size=10),
+                tickfont=dict(size=8)
+            ),
+            yaxis=dict(
+                title_font=dict(size=10),
+                tickfont=dict(size=8)
+            )
+        )
+        
+        # Reduce tick density on mobile
+        if hasattr(fig, 'data') and len(fig.data) > 0:
+            if hasattr(fig.data[0], 'x') and fig.data[0].x is not None and len(fig.data[0].x) > 8:
+                fig.update_xaxes(nticks=8)  # Limit number of ticks on x-axis
     else:
         # Default legend position for desktop (usually to the right)
         fig.update_layout(
@@ -53,7 +82,8 @@ def update_chart_for_responsive_layout(fig: Any, device_type: Optional[str] = No
                 xanchor="right",
                 x=1.02,           # just to the right of the chart
                 font=CHART_STYLING['legend_font']
-            )
+            ),
+            margin=dict(t=60, l=50, r=50, b=50)  # Standard margins for desktop
         )
     
     # Apply neon styling to the chart
@@ -96,12 +126,10 @@ def get_neon_color_discrete_sequence(n=None):
 def init_device_detection():
     """
     Initialize device detection in session state when the app loads.
-    Uses a simple approach with HTML and CSS to detect mobile devices.
+    Always set to mobile to ensure responsive layout for all users.
     """
-    # Default to mobile for all users for now, since that's the layout we want to prioritize
-    # This simplifies our implementation and ensures everyone gets the better layout
-    if 'device_type' not in st.session_state:
-        st.session_state.device_type = 'mobile'
+    # Always set to mobile for better responsive layout
+    st.session_state.device_type = 'mobile'
     
     # Add a simple CSS-based device detection that just logs the device type
     device_detector_css = """

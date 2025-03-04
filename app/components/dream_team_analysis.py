@@ -566,7 +566,7 @@ class DreamTeamAnalysis:
                     color='primary_role',
                     title='Top 10 Players by Dream Team Appearances'
                 )
-                st.plotly_chart(fig)
+                responsive_plotly_chart(fig)
             with col2:
                 st.subheader("Top Players by Appearance Rate")
                 fig = px.bar(
@@ -575,12 +575,12 @@ class DreamTeamAnalysis:
                     color='primary_role',
                     title='Top 10 Players by Dream Team Appearance Rate'
                 )
-                st.plotly_chart(fig)
+                responsive_plotly_chart(fig)
             st.subheader("Overall Dream Team Composition")
             role_comp = all_time_stats['primary_role'].value_counts()
             fig = px.pie(values=role_comp.values, names=role_comp.index,
                          title='Dream Team Role Distribution')
-            st.plotly_chart(fig)
+            responsive_plotly_chart(fig)
             st.subheader("Top All-Time Performers")
             metrics_df = all_time_stats.nlargest(20, 'appearances').copy()
             col1, col2, col3 = st.columns(3)
@@ -616,13 +616,13 @@ class DreamTeamAnalysis:
                         color='primary_role',
                         title=f'Top 10 Players by Dream Team Appearances in {selected_season}'
                     )
-                    st.plotly_chart(fig)
+                    responsive_plotly_chart(fig)
                 with col2:
                     st.subheader("Role Distribution")
                     role_comp = season_stats['primary_role'].value_counts()
                     fig = px.pie(values=role_comp.values, names=role_comp.index,
                                  title=f'Dream Team Role Distribution in {selected_season}')
-                    st.plotly_chart(fig)
+                    responsive_plotly_chart(fig)
                 st.subheader(f"Season {selected_season} Best XI")
                 best_xi = season_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
@@ -676,7 +676,7 @@ class DreamTeamAnalysis:
                     labels={'value': 'Points', 'variable': 'Category'},
                     barmode='stack'
                 )
-                st.plotly_chart(fig)
+                responsive_plotly_chart(fig)
                 col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("Batting Performances")
@@ -703,13 +703,13 @@ class DreamTeamAnalysis:
                         color='primary_role',
                         title=f'Top 10 Players by Dream Team Appearances at {selected_venue}'
                     )
-                    st.plotly_chart(fig)
+                    responsive_plotly_chart(fig)
                 with col2:
                     st.subheader("Role Distribution")
                     role_comp = venue_stats['primary_role'].value_counts()
                     fig = px.pie(values=role_comp.values, names=role_comp.index,
                                  title=f'Dream Team Role Distribution at {selected_venue}')
-                    st.plotly_chart(fig)
+                    responsive_plotly_chart(fig)
                 st.subheader("Venue Best XI")
                 best_xi = venue_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
@@ -761,7 +761,7 @@ class DreamTeamAnalysis:
                         title=f'{selected_player} Dream Team Performance Trend',
                         labels={'date': 'Date', 'total_points': 'Fantasy Points'}
                     )
-                    st.plotly_chart(fig)
+                    responsive_plotly_chart(fig)
                     st.subheader("Season Breakdown")
                     season_breakdown = player_history.groupby('season').agg(
                         Appearances=('match_id', 'count'),

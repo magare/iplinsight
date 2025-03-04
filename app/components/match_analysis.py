@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import os
+from utils.chart_utils import responsive_plotly_chart
 from pathlib import Path
 
 # Import the dream team analysis for match details
@@ -103,7 +104,7 @@ def display_match_result_analysis(matches_df):
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Histogram for wickets victories
@@ -122,7 +123,7 @@ def display_match_result_analysis(matches_df):
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Win Methods by Season Tab
     with tabs[1]:
@@ -140,7 +141,7 @@ def display_match_result_analysis(matches_df):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
     
     # Super Over Analysis Tab
     with tabs[2]:
@@ -207,7 +208,7 @@ def display_toss_analysis(matches_df):
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             # Since we can't compute correlation from precomputed data, we'll show a different metric
@@ -237,7 +238,7 @@ def display_toss_analysis(matches_df):
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
             fig = px.line(
@@ -253,7 +254,7 @@ def display_toss_analysis(matches_df):
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Toss by Venue Tab
     with tabs[2]:
@@ -281,7 +282,7 @@ def display_toss_analysis(matches_df):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
 
 
 # ---------------------------
@@ -375,7 +376,7 @@ def display_scoring_analysis(matches_df, deliveries_df):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
     
     # Season Trends Tab
     with tabs[1]:
@@ -418,7 +419,7 @@ def display_scoring_analysis(matches_df, deliveries_df):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
     
     # Phase Analysis Tab
     with tabs[2]:
@@ -441,7 +442,7 @@ def display_scoring_analysis(matches_df, deliveries_df):
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
-        st.plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=True)
     
     # Score Distribution Tab
     with tabs[3]:
@@ -461,7 +462,7 @@ def display_scoring_analysis(matches_df, deliveries_df):
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             st.subheader("Summary Statistics")
             summary_df = pd.DataFrame({
@@ -505,7 +506,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Venue'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
                 scoring_stats[2].head(10),
@@ -513,7 +514,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Venue'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Team Analysis Tab
     with tabs[1]:
@@ -525,7 +526,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Team'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
                 scoring_stats[4].head(10),
@@ -533,7 +534,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Team'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Season Analysis Tab
     with tabs[2]:
@@ -545,7 +546,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Season'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
                 scoring_stats[6],
@@ -553,7 +554,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 labels={'value': 'Number of Matches', 'index': 'Season'}
             )
             fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
     
     # Match Characteristics Tab
     with tabs[3]:
@@ -569,7 +570,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Toss Decisions in High/Low Scoring Matches',
                 barmode='group'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             phase_comparison = pd.DataFrame({
                 'High Scoring': scoring_stats[9],
@@ -581,7 +582,7 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Run Rates by Phase',
                 labels={'value': 'Average Runs', 'variable': 'Match Type'}
             )
-            st.plotly_chart(fig, use_container_width=True)
+            responsive_plotly_chart(fig, use_container_width=True)
 
 
 def display_match_dream_team(match_id):
@@ -626,7 +627,7 @@ def display_match_dream_team(match_id):
                     barmode='stack'
                 )
                 fig.update_layout(height=400)
-                st.plotly_chart(fig, use_container_width=True)
+                responsive_plotly_chart(fig, use_container_width=True)
             
             with col2:
                 # Role distribution
@@ -638,7 +639,7 @@ def display_match_dream_team(match_id):
                         title='Role Distribution in Dream Team'
                     )
                     fig.update_layout(height=400)
-                    st.plotly_chart(fig, use_container_width=True)
+                    responsive_plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Dream team data not available for this match")
     except Exception as e:
