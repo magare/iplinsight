@@ -1,0 +1,499 @@
+match_id,season,date,team1,team2,venue,city,toss_winner,toss_decision,winner,win_by_runs,win_by_wickets,player_of_match,match_number,result_type,result_margin
+2008_01,2008,2008-04-18,RCB,KKR,M Chinnaswamy Stadium,Bangalore,RCB,field,KKR,140,0,BB McCullum,1,runs,140
+2008_03,2008,2008-04-19,KXIP,CSK,PCA IS Bindra Stadium,Chandigarh,CSK,bat,CSK,33,0,MEK Hussey,3,runs,33
+2008_08,2008,2008-04-23,CSK,MI,MA Chidambaram Stadium,Chennai,MI,field,CSK,6,0,ML Hayden,8,runs,6
+2008_10,2008,2008-04-25,KXIP,MI,PCA IS Bindra Stadium,Chandigarh,MI,field,KXIP,66,0,KC Sangakkara,10,runs,66
+2008_15,2008,2008-04-28,RCB,CSK,M Chinnaswamy Stadium,Bangalore,CSK,bat,CSK,13,0,MS Dhoni,15,runs,13
+2008_17,2008,2008-04-30,DD,RCB,Arun Jaitley Stadium,Delhi,RCB,field,DD,10,0,GD McGrath,17,runs,10
+2008_19,2008,2008-05-01,RR,KKR,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,45,0,SA Asnodkar,19,runs,45
+2008_21,2008,2008-05-03,RCB,SRH,M Chinnaswamy Stadium,Bangalore,SRH,field,RCB,3,0,P Kumar,21,runs,3
+2008_22,2008,2008-05-03,KXIP,KKR,PCA IS Bindra Stadium,Chandigarh,KXIP,bat,KXIP,9,0,IK Pathan,22,runs,9
+2008_23,2008,2008-05-04,MI,DD,Dr DY Patil Sports Academy,Mumbai,DD,field,MI,29,0,SM Pollock,23,runs,29
+2008_28,2008,2008-05-08,KKR,RCB,Eden Gardens,Kolkata,KKR,bat,KKR,5,0,SC Ganguly,28,runs,5
+2008_31,2008,2008-05-10,CSK,KXIP,MA Chidambaram Stadium,Chennai,KXIP,field,CSK,18,0,L Balaji,31,runs,18
+2008_32,2008,2008-05-11,SRH,KKR,Rajiv Gandhi Intl. Stadium,Hyderabad,KKR,bat,KKR,23,0,SC Ganguly,32,runs,23
+2008_35,2008,2008-05-13,KKR,DD,Eden Gardens,Kolkata,KKR,bat,KKR,23,0,Shoaib Akhtar,35,runs,23
+2008_37,2008,2008-05-15,DD,SRH,Arun Jaitley Stadium,Delhi,SRH,field,DD,12,0,A Mishra,37,runs,12
+2008_39,2008,2008-05-17,DD,KXIP,Arun Jaitley Stadium,Delhi,DD,bat,KXIP,6,0,DPMD Jayawardene,39,runs,6
+2008_40,2008,2008-05-17,RR,RCB,Sawai Mansingh Stadium,Jaipur,RCB,field,RR,65,0,GC Smith,40,runs,65
+2008_42,2008,2008-05-18,SRH,MI,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,MI,25,0,DJ Bravo,42,runs,25
+2008_41,2008,2008-05-18,KKR,CSK,Eden Gardens,Kolkata,KKR,bat,CSK,3,0,M Ntini,41,runs,3
+2008_45,2008,2008-05-21,MI,KXIP,Wankhede Stadium,Mumbai,MI,field,KXIP,1,0,SE Marsh,45,runs,1
+2008_46,2008,2008-05-21,CSK,RCB,MA Chidambaram Stadium,Chennai,RCB,bat,RCB,14,0,A Kumble,46,runs,14
+2008_49,2008,2008-05-24,CSK,RR,MA Chidambaram Stadium,Chennai,RR,bat,RR,10,0,JA Morkel,49,runs,10
+2008_54,2008,2008-05-28,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,RR,field,KXIP,41,0,SE Marsh,54,runs,41
+2008_56,2008,2008-05-30,DD,RR,Wankhede Stadium,Mumbai,DD,field,RR,105,0,SR Watson,56,runs,105
+2009_01,2009,2009-04-18,CSK,MI,Newlands,Cape Town,CSK,field,MI,19,0,SR Tendulkar,1,runs,19
+2009_02,2009,2009-04-18,RCB,RR,Newlands,Cape Town,RCB,bat,RCB,75,0,R Dravid,2,runs,75
+2009_05,2009,2009-04-20,RCB,CSK,St George's Park,Port Elizabeth,CSK,bat,CSK,92,0,M Muralitharan,5,runs,92
+2009_06,2009,2009-04-21,KXIP,KKR,Kingsmead,Durban,KKR,field,KKR,11,0,CH Gayle,6,runs,11
+2009_07,2009,2009-04-22,RCB,SRH,Newlands,Cape Town,SRH,bat,SRH,24,0,AC Gilchrist,7,runs,24
+2009_09,2009,2009-04-23,CSK,DD,Kingsmead,Durban,DD,bat,DD,9,0,AB de Villiers,9,runs,9
+2009_11,2009,2009-04-25,SRH,MI,Kingsmead,Durban,SRH,bat,SRH,12,0,PP Ojha,11,runs,12
+2009_13,2009,2009-04-26,KXIP,RR,Newlands,Cape Town,KXIP,bat,KXIP,27,0,KC Sangakkara,13,runs,27
+2009_14,2009,2009-04-27,KKR,MI,St George's Park,Port Elizabeth,MI,bat,MI,92,0,SR Tendulkar,14,runs,92
+2009_17,2009,2009-04-29,KXIP,MI,Kingsmead,Durban,KXIP,bat,KXIP,3,0,KC Sangakkara,17,runs,3
+2009_20,2009,2009-04-30,CSK,RR,SuperSport Park,Centurion,RR,field,CSK,38,0,SK Raina,20,runs,38
+2009_21,2009,2009-05-01,RCB,KXIP,Kingsmead,Durban,RCB,bat,RCB,8,0,Yuvraj Singh,21,runs,8
+2009_22,2009,2009-05-01,KKR,MI,Buffalo Park,East London,MI,bat,MI,9,0,JP Duminy,22,runs,9
+2009_23,2009,2009-05-02,CSK,DD,New Wanderers Stadium,Johannesburg,DD,field,CSK,18,0,SB Jakati,23,runs,18
+2009_27,2009,2009-05-04,CSK,SRH,Buffalo Park,East London,CSK,bat,CSK,78,0,MS Dhoni,27,runs,78
+2009_28,2009,2009-05-05,KXIP,RR,Kingsmead,Durban,KXIP,field,RR,78,0,GC Smith,28,runs,78
+2009_30,2009,2009-05-06,SRH,MI,SuperSport Park,Centurion,SRH,bat,SRH,19,0,RG Sharma,30,runs,19
+2009_32,2009,2009-05-07,CSK,KXIP,SuperSport Park,Centurion,CSK,bat,CSK,12,0,ML Hayden,32,runs,12
+2009_37,2009,2009-05-10,RCB,MI,St George's Park,Port Elizabeth,MI,bat,MI,16,0,JP Duminy,37,runs,16
+2009_38,2009,2009-05-11,SRH,RR,De Beers Diamond Oval,Kimberley,SRH,bat,SRH,53,0,DR Smith,38,runs,53
+2009_41,2009,2009-05-13,SRH,DD,Kingsmead,Durban,SRH,field,DD,12,0,R Bhatia,41,runs,12
+2009_43,2009,2009-05-14,MI,RR,Kingsmead,Durban,RR,bat,RR,2,0,SK Warne,43,runs,2
+2009_47,2009,2009-05-17,DD,RR,OUTsurance Oval,Bloemfontein,DD,bat,DD,14,0,AB de Villiers,47,runs,14
+2009_48,2009,2009-05-17,SRH,KXIP,New Wanderers Stadium,Johannesburg,SRH,field,KXIP,1,0,Yuvraj Singh,48,runs,1
+2009_52,2009,2009-05-20,CSK,KXIP,Kingsmead,Durban,CSK,bat,CSK,24,0,M Muralitharan,52,runs,24
+2009_53,2009,2009-05-21,RCB,SRH,SuperSport Park,Centurion,RCB,bat,RCB,12,0,MK Pandey,53,runs,12
+2009_57,2009,2009-05-24,RCB,SRH,New Wanderers Stadium,Johannesburg,RCB,field,SRH,6,0,A Kumble,57,runs,6
+2010_01,2010,2010-03-12,SRH,KKR,Dr DY Patil Sports Academy,Mumbai,SRH,field,KKR,11,0,AD Mathews,1,runs,11
+2010_02,2010,2010-03-13,MI,RR,Brabourne Stadium,Mumbai,MI,bat,MI,4,0,YK Pathan,2,runs,4
+2010_04,2010,2010-03-14,CSK,SRH,MA Chidambaram Stadium,Chennai,SRH,bat,SRH,31,0,WPUJC Vaas,4,runs,31
+2010_07,2010,2010-03-16,KKR,CSK,Eden Gardens,Kolkata,CSK,bat,CSK,55,0,MS Dhoni,7,runs,55
+2010_09,2010,2010-03-17,DD,MI,Arun Jaitley Stadium,Delhi,DD,field,MI,98,0,SR Tendulkar,9,runs,98
+2010_11,2010,2010-03-19,SRH,KXIP,Barabati Stadium,Cuttack,KXIP,field,SRH,6,0,A Symonds,11,runs,6
+2010_14,2010,2010-03-20,RR,KKR,Narendra Modi Stadium,Ahmedabad,RR,bat,RR,34,0,AA Jhunjhunwala,14,runs,34
+2010_15,2010,2010-03-21,SRH,DD,Barabati Stadium,Cuttack,SRH,bat,SRH,10,0,A Symonds,15,runs,10
+2010_18,2010,2010-03-23,RCB,CSK,M Chinnaswamy Stadium,Bangalore,CSK,field,RCB,36,0,RV Uthappa,18,runs,36
+2010_19,2010,2010-03-24,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,KXIP,field,RR,31,0,AC Voges,19,runs,31
+2010_21,2010,2010-03-25,RCB,DD,M Chinnaswamy Stadium,Bangalore,RCB,field,DD,17,0,KM Jadhav,21,runs,17
+2010_23,2010,2010-03-27,KXIP,KKR,PCA IS Bindra Stadium,Chandigarh,KKR,bat,KKR,39,0,MK Tiwary,23,runs,39
+2010_24,2010,2010-03-28,SRH,MI,Dr DY Patil Sports Academy,Mumbai,SRH,field,MI,41,0,Harbhajan Singh,24,runs,41
+2010_25,2010,2010-03-28,RR,CSK,Narendra Modi Stadium,Ahmedabad,RR,bat,RR,17,0,NV Ojha,25,runs,17
+2010_26,2010,2010-03-29,DD,KKR,Arun Jaitley Stadium,Delhi,DD,bat,DD,40,0,DA Warner,26,runs,40
+2010_29,2010,2010-03-31,DD,RR,Arun Jaitley Stadium,Delhi,DD,bat,DD,67,0,KD Karthik,29,runs,67
+2010_30,2010,2010-04-01,KKR,SRH,Eden Gardens,Kolkata,KKR,bat,KKR,24,0,SC Ganguly,30,runs,24
+2010_32,2010,2010-04-03,CSK,RR,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,23,0,M Vijay,32,runs,23
+2010_33,2010,2010-04-03,MI,SRH,Brabourne Stadium,Mumbai,MI,bat,MI,63,0,AT Rayudu,33,runs,63
+2010_34,2010,2010-04-04,DD,RCB,Arun Jaitley Stadium,Delhi,DD,bat,DD,37,0,PD Collingwood,34,runs,37
+2010_36,2010,2010-04-05,SRH,RR,VCA Stadium,Nagpur,RR,bat,RR,2,0,SK Warne,36,runs,2
+2010_37,2010,2010-04-06,CSK,MI,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,24,0,SK Raina,37,runs,24
+2010_38,2010,2010-04-07,KKR,DD,Eden Gardens,Kolkata,KKR,bat,KKR,14,0,SC Ganguly,38,runs,14
+2010_45,2010,2010-04-11,RR,MI,Sawai Mansingh Stadium,Jaipur,RR,field,MI,37,0,SR Tendulkar,45,runs,37
+2010_46,2010,2010-04-12,SRH,RCB,VCA Stadium,Nagpur,RCB,field,SRH,13,0,Harmeet Singh,46,runs,13
+2010_47,2010,2010-04-13,MI,DD,Brabourne Stadium,Mumbai,MI,bat,MI,39,0,KA Pollard,47,runs,39
+2010_52,2010,2010-04-17,RCB,MI,M Chinnaswamy Stadium,Bangalore,RCB,field,MI,57,0,R McLaren,52,runs,57
+2010_54,2010,2010-04-18,DD,SRH,Arun Jaitley Stadium,Delhi,SRH,bat,SRH,11,0,A Symonds,54,runs,11
+2010_57,2010,2010-04-21,RCB,MI,Dr DY Patil Sports Academy,Mumbai,MI,bat,MI,35,0,KA Pollard,57,runs,35
+2010_58,2010,2010-04-22,CSK,SRH,Dr DY Patil Sports Academy,Mumbai,CSK,bat,CSK,38,0,DE Bollinger,58,runs,38
+2010_60,2010,2010-04-25,CSK,MI,Dr DY Patil Sports Academy,Mumbai,CSK,bat,CSK,22,0,SK Raina,60,runs,22
+2011_01,2011,2011-04-08,CSK,KKR,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,2,0,S Anirudha,1,runs,2
+2011_06,2011,2011-04-11,KKR,SRH,Eden Gardens,Kolkata,KKR,bat,KKR,9,0,JH Kallis,6,runs,9
+2011_11,2011,2011-04-14,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,33,0,DW Steyn,11,runs,33
+2011_15,2011,2011-04-16,CSK,RCB,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,21,0,MEK Hussey,15,runs,21
+2011_19,2011,2011-04-19,DD,SRH,Arun Jaitley Stadium,Delhi,SRH,bat,SRH,16,0,S Sohal,19,runs,16
+2011_20,2011,2011-04-20,KKR,KTK,Eden Gardens,Kolkata,KKR,field,KTK,6,0,DPMD Jayawardene,20,runs,6
+2011_22,2011,2011-04-21,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,RR,field,KXIP,48,0,SE Marsh,22,runs,48
+2011_24,2011,2011-04-22,MI,CSK,Wankhede Stadium,Mumbai,CSK,field,MI,8,0,Harbhajan Singh,24,runs,8
+2011_25,2011,2011-04-23,DD,KXIP,Arun Jaitley Stadium,Delhi,KXIP,field,DD,29,0,DA Warner,25,runs,29
+2011_27,2011,2011-04-24,SRH,MI,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,MI,37,0,SL Malinga,27,runs,37
+2011_28,2011,2011-04-25,CSK,PW,MA Chidambaram Stadium,Chennai,PW,field,CSK,25,0,MEK Hussey,28,runs,25
+2011_30,2011,2011-04-27,KTK,SRH,Nehru Stadium,Kochi,KTK,field,SRH,55,0,I Sharma,30,runs,55
+2011_32,2011,2011-04-28,DD,KKR,Arun Jaitley Stadium,Delhi,DD,field,KKR,17,0,MK Tiwary,32,runs,17
+2011_33,2011,2011-04-29,RCB,PW,M Chinnaswamy Stadium,Bangalore,PW,field,RCB,26,0,V Kohli,33,runs,26
+2011_36,2011,2011-04-30,KTK,DD,Nehru Stadium,Kochi,DD,bat,DD,38,0,V Sehwag,36,runs,38
+2011_37,2011,2011-05-01,CSK,SRH,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,19,0,JA Morkel,37,runs,19
+2011_40,2011,2011-05-02,MI,KXIP,Wankhede Stadium,Mumbai,KXIP,field,MI,23,0,KA Pollard,40,runs,23
+2011_41,2011,2011-05-03,SRH,KKR,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,KKR,20,0,YK Pathan,41,runs,20
+2011_43,2011,2011-05-04,PW,MI,Dr DY Patil Sports Academy,Mumbai,PW,field,MI,21,0,R Sharma,43,runs,21
+2011_44,2011,2011-05-05,KTK,KKR,Nehru Stadium,Kochi,KKR,field,KTK,17,0,BJ Hodge,44,runs,17
+2011_46,2011,2011-05-06,RCB,KXIP,M Chinnaswamy Stadium,Bangalore,KXIP,field,RCB,85,0,CH Gayle,46,runs,85
+2011_48,2011,2011-05-07,KKR,CSK,Eden Gardens,Kolkata,CSK,bat,KKR,10,0,Iqbal Abdulla,48,runs,10
+2011_47,2011,2011-05-07,MI,DD,Wankhede Stadium,Mumbai,DD,field,MI,32,0,AT Rayudu,47,runs,32
+2011_51,2011,2011-05-09,RR,CSK,Sawai Mansingh Stadium,Jaipur,RR,field,CSK,63,0,M Vijay,51,runs,63
+2011_53,2011,2011-05-10,KXIP,MI,PCA IS Bindra Stadium,Chandigarh,MI,field,KXIP,76,0,BA Bhatt,53,runs,76
+2011_55,2011,2011-05-12,CSK,DD,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,18,0,MS Dhoni,55,runs,18
+2011_58,2011,2011-05-14,MI,SRH,Wankhede Stadium,Mumbai,SRH,bat,SRH,10,0,A Mishra,58,runs,10
+2011_60,2011,2011-05-15,KXIP,DD,HPCA Stadium,Dharamsala,DD,field,KXIP,29,0,PP Chawla,60,runs,29
+2011_62,2011,2011-05-17,KXIP,RCB,HPCA Stadium,Dharamsala,KXIP,bat,KXIP,111,0,AC Gilchrist,62,runs,111
+2011_63,2011,2011-05-18,CSK,KTK,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,11,0,WP Saha,63,runs,11
+2011_66,2011,2011-05-21,KXIP,SRH,HPCA Stadium,Dharamsala,KXIP,field,SRH,82,0,S Dhawan,66,runs,82
+2011_72,2011,2011-05-27,RCB,MI,MA Chidambaram Stadium,Chennai,MI,field,RCB,43,0,CH Gayle,72,runs,43
+2011_73,2011,2011-05-28,CSK,RCB,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,58,0,M Vijay,73,runs,58
+2012_03,2012,2012-04-06,RR,KXIP,Sawai Mansingh Stadium,Jaipur,KXIP,field,RR,31,0,AM Rahane,3,runs,31
+2012_04,2012,2012-04-06,MI,PW,Wankhede Stadium,Mumbai,MI,field,PW,28,0,SPD Smith,4,runs,28
+2012_05,2012,2012-04-07,SRH,CSK,ACA-VDCA Stadium,Visakhapatnam,SRH,field,CSK,74,0,RA Jadeja,5,runs,74
+2012_06,2012,2012-04-07,RCB,DD,M Chinnaswamy Stadium,Bangalore,DD,field,RCB,20,0,AB de Villiers,6,runs,20
+2012_07,2012,2012-04-08,PW,KXIP,Subrata Roy Sahara Stadium,Pune,PW,bat,PW,22,0,MN Samuels,7,runs,22
+2012_08,2012,2012-04-08,RR,KKR,Sawai Mansingh Stadium,Jaipur,KKR,field,RR,22,0,BJ Hodge,8,runs,22
+2012_10,2012,2012-04-10,RCB,KKR,M Chinnaswamy Stadium,Bangalore,RCB,field,KKR,42,0,L Balaji,10,runs,42
+2012_12,2012,2012-04-11,MI,RR,Wankhede Stadium,Mumbai,RR,field,MI,27,0,KA Pollard,12,runs,27
+2012_17,2012,2012-04-15,RCB,RR,M Chinnaswamy Stadium,Bangalore,RR,bat,RR,59,0,AM Rahane,17,runs,59
+2012_18,2012,2012-04-15,KKR,KXIP,Eden Gardens,Kolkata,KKR,field,KXIP,2,0,SP Narine,18,runs,2
+2012_24,2012,2012-04-19,CSK,PW,MA Chidambaram Stadium,Chennai,PW,field,CSK,13,0,KMDN Kulasekara,24,runs,13
+2012_26,2012,2012-04-21,DD,PW,Arun Jaitley Stadium,Delhi,DD,field,PW,20,0,SC Ganguly,26,runs,20
+2012_30,2012,2012-04-23,RR,RCB,Sawai Mansingh Stadium,Jaipur,RR,field,RCB,46,0,AB de Villiers,30,runs,46
+2012_33,2012,2012-04-26,PW,SRH,Subrata Roy Sahara Stadium,Pune,SRH,bat,SRH,18,0,CL White,33,runs,18
+2012_34,2012,2012-04-27,DD,MI,Arun Jaitley Stadium,Delhi,MI,field,DD,37,0,V Sehwag,34,runs,37
+2012_35,2012,2012-04-28,KKR,RCB,Eden Gardens,Kolkata,KKR,bat,KKR,47,0,G Gambhir,35,runs,47
+2012_36,2012,2012-04-28,CSK,KXIP,MA Chidambaram Stadium,Chennai,KXIP,bat,KXIP,7,0,Mandeep Singh,36,runs,7
+2012_38,2012,2012-04-29,DD,RR,Arun Jaitley Stadium,Delhi,DD,bat,DD,1,0,V Sehwag,38,runs,1
+2012_40,2012,2012-05-01,SRH,PW,Barabati Stadium,Cuttack,SRH,bat,SRH,13,0,KC Sangakkara,40,runs,13
+2012_43,2012,2012-05-03,PW,MI,Subrata Roy Sahara Stadium,Pune,MI,bat,MI,1,0,SL Malinga,43,runs,1
+2012_44,2012,2012-05-04,CSK,SRH,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,10,0,SK Raina,44,runs,10
+2012_45,2012,2012-05-05,KKR,PW,Eden Gardens,Kolkata,KKR,bat,KKR,7,0,SP Narine,45,runs,7
+2012_46,2012,2012-05-05,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,RR,bat,RR,43,0,SR Watson,46,runs,43
+2012_51,2012,2012-05-08,SRH,KXIP,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,KXIP,25,0,Mandeep Singh,51,runs,25
+2012_55,2012,2012-05-11,PW,RCB,Subrata Roy Sahara Stadium,Pune,PW,field,RCB,35,0,CH Gayle,55,runs,35
+2012_56,2012,2012-05-12,KKR,MI,Eden Gardens,Kolkata,MI,bat,MI,27,0,RG Sharma,56,runs,27
+2012_58,2012,2012-05-13,RR,PW,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,45,0,A Chandila,58,runs,45
+2012_63,2012,2012-05-16,MI,KKR,Wankhede Stadium,Mumbai,MI,field,KKR,32,0,SP Narine,63,runs,32
+2012_64,2012,2012-05-17,DD,RCB,Arun Jaitley Stadium,Delhi,DD,field,RCB,21,0,CH Gayle,64,runs,21
+2012_68,2012,2012-05-19,PW,KKR,Subrata Roy Sahara Stadium,Pune,KKR,bat,KKR,34,0,Shakib Al Hasan,68,runs,34
+2012_69,2012,2012-05-20,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,9,0,DW Steyn,69,runs,9
+2012_71,2012,2012-05-22,DD,KKR,Subrata Roy Sahara Stadium,Pune,KKR,bat,KKR,18,0,YK Pathan,71,runs,18
+2012_72,2012,2012-05-23,CSK,MI,M Chinnaswamy Stadium,Bangalore,MI,field,CSK,38,0,MS Dhoni,72,runs,38
+2012_73,2012,2012-05-25,DD,CSK,MA Chidambaram Stadium,Chennai,DD,field,CSK,86,0,M Vijay,73,runs,86
+2013_02,2013,2013-04-04,RCB,MI,M Chinnaswamy Stadium,Bangalore,MI,field,RCB,2,0,CH Gayle,2,runs,2
+2013_03,2013,2013-04-05,SRH,PW,Rajiv Gandhi Intl. Stadium,Hyderabad,PW,field,SRH,22,0,A Mishra,3,runs,22
+2013_04,2013,2013-04-06,DD,RR,Arun Jaitley Stadium,Delhi,RR,bat,RR,5,0,R Dravid,4,runs,5
+2013_05,2013,2013-04-06,CSK,MI,MA Chidambaram Stadium,Chennai,MI,bat,MI,9,0,KA Pollard,5,runs,9
+2013_08,2013,2013-04-08,RR,KKR,Sawai Mansingh Stadium,Jaipur,KKR,field,RR,19,0,SK Trivedi,8,runs,19
+2013_10,2013,2013-04-09,MI,DD,Wankhede Stadium,Mumbai,MI,bat,MI,44,0,KD Karthik,10,runs,44
+2013_15,2013,2013-04-13,MI,PW,Wankhede Stadium,Mumbai,MI,bat,MI,41,0,RG Sharma,15,runs,41
+2013_18,2013,2013-04-14,KKR,SRH,Eden Gardens,Kolkata,KKR,bat,KKR,48,0,G Gambhir,18,runs,48
+2013_19,2013,2013-04-15,CSK,PW,MA Chidambaram Stadium,Chennai,PW,bat,PW,24,0,SPD Smith,19,runs,24
+2013_21,2013,2013-04-16,KXIP,KKR,PCA IS Bindra Stadium,Chandigarh,KKR,field,KXIP,4,0,MS Gony,21,runs,4
+2013_22,2013,2013-04-17,RR,MI,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,87,0,AM Rahane,22,runs,87
+2013_23,2013,2013-04-17,PW,SRH,"MCA Stadium, Pune",Pune,PW,field,SRH,11,0,A Mishra,23,runs,11
+2013_24,2013,2013-04-18,DD,CSK,Arun Jaitley Stadium,Delhi,CSK,bat,CSK,86,0,MEK Hussey,24,runs,86
+2013_31,2013,2013-04-23,RCB,PW,M Chinnaswamy Stadium,Bangalore,PW,field,RCB,130,0,CH Gayle,31,runs,130
+2013_37,2013,2013-04-27,MI,RCB,Wankhede Stadium,Mumbai,MI,bat,MI,58,0,DR Smith,37,runs,58
+2013_39,2013,2013-04-28,DD,PW,SVNS Intl. Stadium,Raipur,PW,field,DD,15,0,DA Warner,39,runs,15
+2013_38,2013,2013-04-28,CSK,KKR,MA Chidambaram Stadium,Chennai,KKR,field,CSK,14,0,MEK Hussey,38,runs,14
+2013_40,2013,2013-04-29,MI,KXIP,Wankhede Stadium,Mumbai,MI,bat,MI,4,0,RG Sharma,40,runs,4
+2013_42,2013,2013-04-30,PW,CSK,Subrata Roy Sahara Stadium,Pune,CSK,bat,CSK,37,0,MS Dhoni,42,runs,37
+2013_45,2013,2013-05-02,CSK,KXIP,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,15,0,SK Raina,45,runs,15
+2013_46,2013,2013-05-02,PW,RCB,Subrata Roy Sahara Stadium,Pune,RCB,bat,RCB,17,0,AB de Villiers,46,runs,17
+2013_50,2013,2013-05-05,MI,CSK,Wankhede Stadium,Mumbai,MI,bat,MI,60,0,MG Johnson,50,runs,60
+2013_52,2013,2013-05-07,MI,KKR,Wankhede Stadium,Mumbai,MI,bat,MI,65,0,SR Tendulkar,52,runs,65
+2013_54,2013,2013-05-08,SRH,CSK,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,CSK,77,0,SK Raina,54,runs,77
+2013_56,2013,2013-05-09,PW,KKR,Subrata Roy Sahara Stadium,Pune,KKR,bat,KKR,46,0,G Gambhir,56,runs,46
+2013_57,2013,2013-05-10,DD,RCB,Arun Jaitley Stadium,Delhi,DD,field,RCB,4,0,JD Unadkat,57,runs,4
+2013_59,2013,2013-05-11,KXIP,SRH,PCA IS Bindra Stadium,Chandigarh,KXIP,field,SRH,30,0,PA Patel,59,runs,30
+2013_63,2013,2013-05-14,CSK,DD,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,33,0,MS Dhoni,63,runs,33
+2013_65,2013,2013-05-15,KKR,PW,JSCA Intl. Stadium Complex,Ranchi,KKR,field,PW,7,0,MK Pandey,65,runs,7
+2013_66,2013,2013-05-15,MI,RR,Wankhede Stadium,Mumbai,RR,field,MI,14,0,AP Tare,66,runs,14
+2013_67,2013,2013-05-16,KXIP,DD,HPCA Stadium,Dharamsala,DD,field,KXIP,7,0,DA Miller,67,runs,7
+2013_68,2013,2013-05-17,SRH,RR,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,bat,SRH,23,0,A Mishra,68,runs,23
+2013_69,2013,2013-05-18,KXIP,MI,HPCA Stadium,Dharamsala,MI,field,KXIP,50,0,Azhar Mahmood,69,runs,50
+2013_70,2013,2013-05-18,RCB,CSK,M Chinnaswamy Stadium,Bangalore,CSK,field,RCB,24,0,V Kohli,70,runs,24
+2013_71,2013,2013-05-19,PW,DD,Subrata Roy Sahara Stadium,Pune,PW,bat,PW,38,0,LJ Wright,71,runs,38
+2013_73,2013,2013-05-21,CSK,MI,Arun Jaitley Stadium,Delhi,CSK,bat,CSK,48,0,MEK Hussey,73,runs,48
+2013_76,2013,2013-05-26,CSK,MI,Eden Gardens,Kolkata,MI,bat,MI,23,0,KA Pollard,76,runs,23
+2014_01,2014,2014-04-16,MI,KKR,Sheikh Zayed Stadium,Abu Dhabi,KKR,bat,KKR,41,0,JH Kallis,1,runs,41
+2014_08,2014,2014-04-21,CSK,DD,Sheikh Zayed Stadium,Abu Dhabi,CSK,bat,CSK,93,0,SK Raina,8,runs,93
+2014_09,2014,2014-04-22,KXIP,SRH,Sharjah Cricket Stadium,,SRH,field,KXIP,72,0,GJ Maxwell,9,runs,72
+2014_10,2014,2014-04-23,RR,CSK,Dubai Intl. Cricket Stadium,,RR,field,CSK,7,0,RA Jadeja,10,runs,7
+2014_11,2014,2014-04-24,RCB,KKR,Sharjah Cricket Stadium,,RCB,field,KKR,2,0,CA Lynn,11,runs,2
+2014_12,2014,2014-04-25,SRH,DD,Dubai Intl. Cricket Stadium,,SRH,bat,SRH,4,0,AJ Finch,12,runs,4
+2014_15,2014,2014-04-26,KKR,KXIP,Sheikh Zayed Stadium,Abu Dhabi,KKR,field,KXIP,23,0,Sandeep Sharma,15,runs,23
+2014_20,2014,2014-04-30,MI,SRH,Dubai Intl. Cricket Stadium,,MI,field,SRH,15,0,B Kumar,20,runs,15
+2014_21,2014,2014-05-02,CSK,KKR,JSCA Intl. Stadium Complex,Ranchi,CSK,bat,CSK,34,0,RA Jadeja,21,runs,34
+2014_26,2014,2014-05-05,RR,KKR,Narendra Modi Stadium,Ahmedabad,KKR,field,RR,10,0,PV Tambe,26,runs,10
+2014_27,2014,2014-05-06,MI,RCB,Wankhede Stadium,Mumbai,RCB,field,MI,19,0,RG Sharma,27,runs,19
+2014_29,2014,2014-05-07,KXIP,CSK,Barabati Stadium,Cuttack,CSK,field,KXIP,44,0,GJ Maxwell,29,runs,44
+2014_30,2014,2014-05-08,RR,SRH,Narendra Modi Stadium,Ahmedabad,RR,field,SRH,32,0,B Kumar,30,runs,32
+2014_31,2014,2014-05-09,RCB,KXIP,M Chinnaswamy Stadium,Bangalore,RCB,field,KXIP,32,0,Sandeep Sharma,31,runs,32
+2014_37,2014,2014-05-13,RCB,DD,M Chinnaswamy Stadium,Bangalore,DD,field,RCB,16,0,Yuvraj Singh,37,runs,16
+2014_41,2014,2014-05-15,RR,DD,Narendra Modi Stadium,Ahmedabad,DD,field,RR,62,0,AM Rahane,41,runs,62
+2014_45,2014,2014-05-19,RR,MI,Narendra Modi Stadium,Ahmedabad,MI,bat,MI,25,0,MEK Hussey,45,runs,25
+2014_49,2014,2014-05-22,KKR,RCB,Eden Gardens,Kolkata,RCB,field,KKR,30,0,RV Uthappa,49,runs,30
+2014_51,2014,2014-05-23,MI,DD,Wankhede Stadium,Mumbai,DD,field,MI,15,0,MEK Hussey,51,runs,15
+2014_52,2014,2014-05-23,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,RR,field,KXIP,16,0,SE Marsh,52,runs,16
+2014_57,2014,2014-05-27,KXIP,KKR,Eden Gardens,Kolkata,KXIP,field,KKR,28,0,UT Yadav,57,runs,28
+2014_59,2014,2014-05-30,CSK,KXIP,Wankhede Stadium,Mumbai,CSK,field,KXIP,24,0,V Sehwag,59,runs,24
+2015_02,2015,2015-04-09,CSK,DD,MA Chidambaram Stadium,Chennai,DD,field,CSK,1,0,A Nehra,2,runs,1
+2015_03,2015,2015-04-10,KXIP,RR,"MCA Stadium, Pune",Pune,KXIP,field,RR,26,0,JP Faulkner,3,runs,26
+2015_05,2015,2015-04-11,CSK,SRH,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,45,0,BB McCullum,5,runs,45
+2015_07,2015,2015-04-12,MI,KXIP,Wankhede Stadium,Mumbai,MI,field,KXIP,18,0,GJ Bailey,7,runs,18
+2015_14,2015,2015-04-18,SRH,DD,ACA-VDCA Stadium,Visakhapatnam,DD,bat,DD,4,0,JP Duminy,14,runs,4
+2015_15,2015,2015-04-19,RCB,MI,M Chinnaswamy Stadium,Bangalore,RCB,field,MI,18,0,Harbhajan Singh,15,runs,18
+2015_19,2015,2015-04-22,RCB,CSK,M Chinnaswamy Stadium,Bangalore,RCB,field,CSK,27,0,SK Raina,19,runs,27
+2015_20,2015,2015-04-22,SRH,KKR,ACA-VDCA Stadium,Visakhapatnam,KKR,field,SRH,16,0,DA Warner,20,runs,16
+2015_21,2015,2015-04-23,DD,MI,Arun Jaitley Stadium,Delhi,MI,field,DD,37,0,SS Iyer,21,runs,37
+2015_23,2015,2015-04-25,CSK,KXIP,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,97,0,BB McCullum,23,runs,97
+2015_24,2015,2015-04-25,MI,SRH,Wankhede Stadium,Mumbai,MI,bat,MI,20,0,SL Malinga,24,runs,20
+2015_26,2015,2015-04-27,KXIP,SRH,PCA IS Bindra Stadium,Chandigarh,KXIP,field,SRH,20,0,TA Boult,26,runs,20
+2015_27,2015,2015-04-28,CSK,KKR,MA Chidambaram Stadium,Chennai,KKR,field,CSK,2,0,DJ Bravo,27,runs,2
+2015_31,2015,2015-05-01,MI,RR,Wankhede Stadium,Mumbai,RR,field,MI,8,0,AT Rayudu,31,runs,8
+2015_32,2015,2015-05-02,SRH,CSK,Rajiv Gandhi Intl. Stadium,Hyderabad,CSK,field,SRH,22,0,DA Warner,32,runs,22
+2015_34,2015,2015-05-03,KXIP,MI,PCA IS Bindra Stadium,Chandigarh,MI,bat,MI,23,0,LMP Simmons,34,runs,23
+2015_35,2015,2015-05-03,RR,DD,Brabourne Stadium,Mumbai,DD,field,RR,14,0,AM Rahane,35,runs,14
+2015_36,2015,2015-05-04,CSK,RCB,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,24,0,SK Raina,36,runs,24
+2015_37,2015,2015-05-04,KKR,SRH,Eden Gardens,Kolkata,SRH,field,KKR,35,0,UT Yadav,37,runs,35
+2015_39,2015,2015-05-06,RCB,KXIP,M Chinnaswamy Stadium,Bangalore,KXIP,field,RCB,138,0,CH Gayle,39,runs,138
+2015_40,2015,2015-05-07,RR,SRH,Brabourne Stadium,Mumbai,RR,field,SRH,7,0,EJG Morgan,40,runs,7
+2015_41,2015,2015-05-07,KKR,DD,Eden Gardens,Kolkata,KKR,bat,KKR,13,0,PP Chawla,41,runs,13
+2015_44,2015,2015-05-09,DD,SRH,SVNS Intl. Stadium,Raipur,SRH,bat,SRH,6,0,MC Henriques,44,runs,6
+2015_46,2015,2015-05-10,CSK,RR,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,12,0,RA Jadeja,46,runs,12
+2015_45,2015,2015-05-10,MI,RCB,Wankhede Stadium,Mumbai,RCB,bat,RCB,39,0,AB de Villiers,45,runs,39
+2015_47,2015,2015-05-11,SRH,KXIP,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,bat,SRH,5,0,DA Warner,47,runs,5
+2015_49,2015,2015-05-13,KXIP,RCB,PCA IS Bindra Stadium,Chandigarh,RCB,field,KXIP,22,0,AR Patel,49,runs,22
+2015_50,2015,2015-05-14,MI,KKR,Wankhede Stadium,Mumbai,KKR,field,MI,5,0,HH Pandya,50,runs,5
+2015_52,2015,2015-05-16,RR,KKR,Brabourne Stadium,Mumbai,RR,bat,RR,9,0,SR Watson,52,runs,9
+2015_56,2015,2015-05-19,CSK,MI,Wankhede Stadium,Mumbai,MI,bat,MI,25,0,KA Pollard,56,runs,25
+2015_57,2015,2015-05-20,RCB,RR,"MCA Stadium, Pune",Pune,RCB,bat,RCB,71,0,AB de Villiers,57,runs,71
+2015_59,2015,2015-05-24,MI,CSK,Eden Gardens,Kolkata,CSK,field,MI,41,0,RG Sharma,59,runs,41
+2016_04,2016,2016-04-12,RCB,SRH,M Chinnaswamy Stadium,Bangalore,SRH,field,RCB,45,0,AB de Villiers,4,runs,45
+2016_16,2016,2016-04-22,RPS,RCB,"MCA Stadium, Pune",Pune,RPS,field,RCB,13,0,AB de Villiers,16,runs,13
+2016_18,2016,2016-04-23,DD,MI,Arun Jaitley Stadium,Delhi,MI,field,DD,10,0,SV Samson,18,runs,10
+2016_21,2016,2016-04-25,KXIP,MI,PCA IS Bindra Stadium,Chandigarh,KXIP,field,MI,25,0,PA Patel,21,runs,25
+2016_22,2016,2016-04-26,SRH,RPS,Rajiv Gandhi Intl. Stadium,Hyderabad,RPS,field,RPS,34,0,AB Dinda,22,runs,34
+2016_23,2016,2016-04-27,DD,GL,Arun Jaitley Stadium,Delhi,DD,field,GL,1,0,CH Morris,23,runs,1
+2016_26,2016,2016-04-30,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,15,0,DA Warner,26,runs,15
+2016_27,2016,2016-04-30,DD,KKR,Arun Jaitley Stadium,Delhi,KKR,field,DD,27,0,CR Brathwaite,27,runs,27
+2016_28,2016,2016-05-01,GL,KXIP,Saurashtra Cricket Assn. Stadium,Rajkot,GL,field,KXIP,23,0,AR Patel,28,runs,23
+2016_32,2016,2016-05-04,KKR,KXIP,Eden Gardens,Kolkata,KXIP,field,KKR,7,0,AD Russell,32,runs,7
+2016_36,2016,2016-05-07,KXIP,DD,PCA IS Bindra Stadium,Chandigarh,DD,field,KXIP,9,0,MP Stoinis,36,runs,9
+2016_38,2016,2016-05-08,MI,SRH,ACA-VDCA Stadium,Visakhapatnam,MI,field,SRH,85,0,A Nehra,38,runs,85
+2016_39,2016,2016-05-09,KXIP,RCB,PCA IS Bindra Stadium,Chandigarh,KXIP,field,RCB,1,0,SR Watson,39,runs,1
+2016_40,2016,2016-05-10,RPS,SRH,ACA-VDCA Stadium,Visakhapatnam,SRH,bat,SRH,4,0,A Zampa,40,runs,4
+2016_45,2016,2016-05-14,RCB,GL,M Chinnaswamy Stadium,Bangalore,GL,field,RCB,144,0,AB de Villiers,45,runs,144
+2016_47,2016,2016-05-15,MI,DD,ACA-VDCA Stadium,Visakhapatnam,DD,field,MI,80,0,KH Pandya,47,runs,80
+2016_49,2016,2016-05-17,RPS,DD,ACA-VDCA Stadium,Visakhapatnam,RPS,field,RPS,19,0,AB Dinda,49,runs,19
+2016_50,2016,2016-05-18,RCB,KXIP,M Chinnaswamy Stadium,Bangalore,KXIP,field,RCB,82,0,V Kohli,50,runs,82
+2016_56,2016,2016-05-22,KKR,SRH,Eden Gardens,Kolkata,SRH,field,KKR,22,0,YK Pathan,56,runs,22
+2016_58,2016,2016-05-25,SRH,KKR,Arun Jaitley Stadium,Delhi,KKR,field,SRH,22,0,MC Henriques,58,runs,22
+2016_60,2016,2016-05-29,RCB,SRH,M Chinnaswamy Stadium,Bangalore,SRH,bat,SRH,8,0,BCJ Cutting,60,runs,8
+2017_01,2017,2017-04-05,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,35,0,Yuvraj Singh,1,runs,35
+2017_04,2017,2017-04-08,RCB,DD,M. Chinnaswamy Stadium,Bengaluru,RCB,bat,RCB,15,0,KM Jadhav,4,runs,15
+2017_09,2017,2017-04-11,RPS,DD,"MCA Stadium, Pune",Pune,RPS,field,DD,97,0,SV Samson,9,runs,97
+2017_15,2017,2017-04-15,KKR,SRH,Eden Gardens,Kolkata,SRH,field,KKR,17,0,RV Uthappa,15,runs,17
+2017_14,2017,2017-04-15,DD,KXIP,Arun Jaitley Stadium,Delhi,DD,bat,DD,51,0,CJ Anderson,14,runs,51
+2017_17,2017,2017-04-16,RCB,RPS,M Chinnaswamy Stadium,Bangalore,RCB,field,RPS,27,0,BA Stokes,17,runs,27
+2017_19,2017,2017-04-17,SRH,KXIP,Rajiv Gandhi Intl. Stadium,Hyderabad,KXIP,field,SRH,5,0,B Kumar,19,runs,5
+2017_20,2017,2017-04-18,GL,RCB,Saurashtra Cricket Assn. Stadium,Rajkot,GL,field,RCB,21,0,CH Gayle,20,runs,21
+2017_21,2017,2017-04-19,SRH,DD,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,bat,SRH,15,0,KS Williamson,21,runs,15
+2017_24,2017,2017-04-22,MI,DD,Wankhede Stadium,Mumbai,DD,field,MI,14,0,MJ McClenaghan,24,runs,14
+2017_26,2017,2017-04-23,GL,KXIP,Saurashtra Cricket Assn. Stadium,Rajkot,GL,field,KXIP,26,0,HM Amla,26,runs,26
+2017_27,2017,2017-04-23,KKR,RCB,Eden Gardens,Kolkata,RCB,field,KKR,82,0,NM Coulter-Nile,27,runs,82
+2017_28,2017,2017-04-24,MI,RPS,Wankhede Stadium,Mumbai,MI,field,RPS,3,0,BA Stokes,28,runs,3
+2017_32,2017,2017-04-28,KXIP,SRH,PCA IS Bindra Stadium,Chandigarh,KXIP,field,SRH,26,0,Rashid Khan,32,runs,26
+2017_33,2017,2017-04-29,RPS,RCB,"MCA Stadium, Pune",Pune,RCB,field,RPS,61,0,LH Ferguson,33,runs,61
+2017_36,2017,2017-04-30,SRH,KKR,Rajiv Gandhi Intl. Stadium,Hyderabad,KKR,field,SRH,48,0,DA Warner,36,runs,48
+2017_42,2017,2017-05-05,RCB,KXIP,M Chinnaswamy Stadium,Bangalore,RCB,field,KXIP,19,0,Sandeep Sharma,42,runs,19
+2017_43,2017,2017-05-06,SRH,RPS,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,RPS,12,0,JD Unadkat,43,runs,12
+2017_44,2017,2017-05-06,DD,MI,Arun Jaitley Stadium,Delhi,DD,field,MI,146,0,LMP Simmons,44,runs,146
+2017_48,2017,2017-05-09,KXIP,KKR,PCA IS Bindra Stadium,Chandigarh,KKR,field,KXIP,14,0,MM Sharma,48,runs,14
+2017_50,2017,2017-05-11,MI,KXIP,Wankhede Stadium,Mumbai,MI,field,KXIP,7,0,WP Saha,50,runs,7
+2017_51,2017,2017-05-12,DD,RPS,Arun Jaitley Stadium,Delhi,DD,bat,DD,7,0,KK Nair,51,runs,7
+2017_52,2017,2017-05-13,KKR,MI,Eden Gardens,Kolkata,KKR,field,MI,9,0,AT Rayudu,52,runs,9
+2017_54,2017,2017-05-14,DD,RCB,Arun Jaitley Stadium,Delhi,RCB,bat,RCB,10,0,HV Patel,54,runs,10
+2017_56,2017,2017-05-16,MI,RPS,Wankhede Stadium,Mumbai,MI,field,RPS,20,0,Washington Sundar,56,runs,20
+2017_59,2017,2017-05-21,MI,RPS,Rajiv Gandhi Intl. Stadium,Hyderabad,MI,bat,MI,1,0,KH Pandya,59,runs,1
+2018_06,2018,2018-04-11,RR,DD,Sawai Mansingh Stadium,Jaipur,DD,field,RR,10,0,SV Samson,6,runs,10
+2018_11,2018,2018-04-15,RR,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,RR,19,0,SV Samson,11,runs,19
+2018_12,2018,2018-04-15,KXIP,CSK,PCA IS Bindra Stadium,Chandigarh,CSK,field,KXIP,4,0,CH Gayle,12,runs,4
+2018_13,2018,2018-04-16,KKR,DD,Eden Gardens,Kolkata,DD,field,KKR,71,0,N Rana,13,runs,71
+2018_14,2018,2018-04-17,MI,RCB,Wankhede Stadium,Mumbai,RCB,field,MI,46,0,RG Sharma,14,runs,46
+2018_16,2018,2018-04-19,KXIP,SRH,PCA IS Bindra Stadium,Chandigarh,KXIP,bat,KXIP,15,0,CH Gayle,16,runs,15
+2018_17,2018,2018-04-20,CSK,RR,"MCA Stadium, Pune",Pune,RR,field,CSK,64,0,SR Watson,17,runs,64
+2018_21,2018,2018-04-22,CSK,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,CSK,4,0,AT Rayudu,21,runs,4
+2018_22,2018,2018-04-23,KXIP,DD,Arun Jaitley Stadium,Delhi,DD,field,KXIP,4,0,AS Rajpoot,22,runs,4
+2018_23,2018,2018-04-24,SRH,MI,Wankhede Stadium,Mumbai,MI,field,SRH,31,0,Rashid Khan,23,runs,31
+2018_25,2018,2018-04-26,SRH,KXIP,Rajiv Gandhi Intl. Stadium,Hyderabad,KXIP,field,SRH,13,0,AS Rajpoot,25,runs,13
+2018_26,2018,2018-04-27,DD,KKR,Arun Jaitley Stadium,Delhi,KKR,field,DD,55,0,SS Iyer,26,runs,55
+2018_29,2018,2018-04-29,SRH,RR,Sawai Mansingh Stadium,Jaipur,SRH,bat,SRH,11,0,KS Williamson,29,runs,11
+2018_30,2018,2018-04-30,CSK,DD,"MCA Stadium, Pune",Pune,DD,field,CSK,13,0,SR Watson,30,runs,13
+2018_31,2018,2018-05-01,RCB,MI,M. Chinnaswamy Stadium,Bengaluru,MI,field,RCB,14,0,TG Southee,31,runs,14
+2018_32,2018,2018-05-02,DD,RR,Arun Jaitley Stadium,Delhi,RR,field,DD,4,0,RR Pant,32,runs,4
+2018_38,2018,2018-05-06,MI,KKR,Wankhede Stadium,Mumbai,KKR,field,MI,13,0,HH Pandya,38,runs,13
+2018_39,2018,2018-05-07,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,5,0,KS Williamson,39,runs,5
+2018_40,2018,2018-05-08,RR,KXIP,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,15,0,JC Buttler,40,runs,15
+2018_41,2018,2018-05-09,MI,KKR,Eden Gardens,Kolkata,KKR,field,MI,102,0,Ishan Kishan,41,runs,102
+2018_45,2018,2018-05-12,KKR,KXIP,Holkar Cricket Stadium,Indore,KXIP,field,KKR,31,0,SP Narine,45,runs,31
+2018_50,2018,2018-05-16,MI,KXIP,Wankhede Stadium,Mumbai,KXIP,field,MI,3,0,JJ Bumrah,50,runs,3
+2018_51,2018,2018-05-17,RCB,SRH,M. Chinnaswamy Stadium,Bengaluru,SRH,field,RCB,14,0,AB de Villiers,51,runs,14
+2018_52,2018,2018-05-18,DD,CSK,Arun Jaitley Stadium,Delhi,CSK,field,DD,34,0,HV Patel,52,runs,34
+2018_53,2018,2018-05-19,RR,RCB,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,30,0,S Gopal,53,runs,30
+2018_55,2018,2018-05-20,DD,MI,Arun Jaitley Stadium,Delhi,DD,bat,DD,11,0,A Mishra,55,runs,11
+2018_58,2018,2018-05-23,KKR,RR,Eden Gardens,Kolkata,RR,field,KKR,25,0,AD Russell,58,runs,25
+2018_59,2018,2018-05-25,SRH,KKR,Eden Gardens,Kolkata,KKR,field,SRH,14,0,Rashid Khan,59,runs,14
+2019_02,2019,2019-03-24,DC,MI,Wankhede Stadium,Mumbai,MI,field,DC,37,0,RR Pant,2,runs,37
+2019_04,2019,2019-03-25,KXIP,RR,Sawai Mansingh Stadium,Jaipur,RR,field,KXIP,14,0,CH Gayle,4,runs,14
+2019_06,2019,2019-03-27,KKR,KXIP,Eden Gardens,Kolkata,KXIP,field,KKR,28,0,AD Russell,6,runs,28
+2019_07,2019,2019-03-28,MI,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,MI,6,0,JJ Bumrah,7,runs,6
+2019_11,2019,2019-03-31,SRH,RCB,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,field,SRH,118,0,JM Bairstow,11,runs,118
+2019_12,2019,2019-03-31,CSK,RR,MA Chidambaram Stadium,Chennai,RR,field,CSK,8,0,MS Dhoni,12,runs,8
+2019_13,2019,2019-04-01,KXIP,DC,PCA IS Bindra Stadium,Chandigarh,DC,field,KXIP,14,0,SM Curran,13,runs,14
+2019_15,2019,2019-04-03,MI,CSK,Wankhede Stadium,Mumbai,CSK,field,MI,37,0,HH Pandya,15,runs,37
+2019_18,2019,2019-04-06,MI,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,MI,40,0,AS Joseph,18,runs,40
+2019_19,2019,2019-04-06,CSK,KXIP,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,22,0,Harbhajan Singh,19,runs,22
+2019_30,2019,2019-04-14,DC,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,DC,39,0,KMA Paul,30,runs,39
+2019_32,2019,2019-04-16,KXIP,RR,PCA IS Bindra Stadium,Chandigarh,RR,field,KXIP,12,0,R Ashwin,32,runs,12
+2019_34,2019,2019-04-18,MI,DC,Arun Jaitley Stadium,Delhi,MI,bat,MI,40,0,HH Pandya,34,runs,40
+2019_35,2019,2019-04-19,RCB,KKR,Eden Gardens,Kolkata,KKR,field,RCB,10,0,V Kohli,35,runs,10
+2019_38,2019,2019-04-21,RCB,CSK,M. Chinnaswamy Stadium,Bengaluru,CSK,field,RCB,1,0,PA Patel,38,runs,1
+2019_42,2019,2019-04-24,RCB,KXIP,M. Chinnaswamy Stadium,Bengaluru,KXIP,field,RCB,17,0,AB de Villiers,42,runs,17
+2019_44,2019,2019-04-26,MI,CSK,MA Chidambaram Stadium,Chennai,CSK,field,MI,46,0,RG Sharma,44,runs,46
+2019_46,2019,2019-04-28,KKR,MI,Eden Gardens,Kolkata,MI,field,KKR,34,0,AD Russell,46,runs,34
+2019_47,2019,2019-04-28,DC,RCB,Arun Jaitley Stadium,Delhi,DC,bat,DC,16,0,S Dhawan,47,runs,16
+2019_48,2019,2019-04-29,SRH,KXIP,Rajiv Gandhi Intl. Stadium,Hyderabad,KXIP,field,SRH,45,0,DA Warner,48,runs,45
+2019_50,2019,2019-05-01,CSK,DC,MA Chidambaram Stadium,Chennai,DC,field,CSK,80,0,MS Dhoni,50,runs,80
+2019_60,2019,2019-05-12,MI,CSK,Rajiv Gandhi Intl. Stadium,Hyderabad,MI,bat,MI,1,0,JJ Bumrah,60,runs,1
+2020_03,2020,2020-09-21,RCB,SRH,Dubai Intl. Cricket Stadium,,SRH,field,RCB,10,0,YS Chahal,3,runs,10
+2020_04,2020,2020-09-22,RR,CSK,Sharjah Cricket Stadium,,CSK,field,RR,16,0,SV Samson,4,runs,16
+2020_05,2020,2020-09-23,MI,KKR,Sheikh Zayed Stadium,Abu Dhabi,KKR,field,MI,49,0,RG Sharma,5,runs,49
+2020_06,2020,2020-09-24,KXIP,RCB,Dubai Intl. Cricket Stadium,,RCB,field,KXIP,97,0,KL Rahul,6,runs,97
+2020_07,2020,2020-09-25,DC,CSK,Dubai Intl. Cricket Stadium,,CSK,field,DC,44,0,PP Shaw,7,runs,44
+2020_11,2020,2020-09-29,SRH,DC,Sheikh Zayed Stadium,Abu Dhabi,DC,field,SRH,15,0,Rashid Khan,11,runs,15
+2020_12,2020,2020-09-30,KKR,RR,Dubai Intl. Cricket Stadium,,RR,field,KKR,37,0,Shivam Mavi,12,runs,37
+2020_13,2020,2020-10-01,MI,KXIP,Sheikh Zayed Stadium,Abu Dhabi,KXIP,field,MI,48,0,KA Pollard,13,runs,48
+2020_14,2020,2020-10-02,SRH,CSK,Dubai Intl. Cricket Stadium,,SRH,bat,SRH,7,0,PK Garg,14,runs,7
+2020_15,2020,2020-10-03,DC,KKR,Sharjah Cricket Stadium,,KKR,field,DC,18,0,SS Iyer,15,runs,18
+2020_17,2020,2020-10-04,MI,SRH,Sharjah Cricket Stadium,,MI,bat,MI,34,0,TA Boult,17,runs,34
+2020_19,2020,2020-10-05,DC,RCB,Dubai Intl. Cricket Stadium,,RCB,field,DC,59,0,AR Patel,19,runs,59
+2020_20,2020,2020-10-06,MI,RR,Sheikh Zayed Stadium,Abu Dhabi,MI,bat,MI,57,0,SA Yadav,20,runs,57
+2020_21,2020,2020-10-07,KKR,CSK,Sheikh Zayed Stadium,Abu Dhabi,KKR,bat,KKR,10,0,RA Tripathi,21,runs,10
+2020_22,2020,2020-10-08,SRH,KXIP,Dubai Intl. Cricket Stadium,,SRH,bat,SRH,69,0,JM Bairstow,22,runs,69
+2020_23,2020,2020-10-09,DC,RR,Sharjah Cricket Stadium,,RR,field,DC,46,0,R Ashwin,23,runs,46
+2020_24,2020,2020-10-10,KKR,KXIP,Sheikh Zayed Stadium,Abu Dhabi,KKR,bat,KKR,2,0,KD Karthik,24,runs,2
+2020_25,2020,2020-10-10,RCB,CSK,Dubai Intl. Cricket Stadium,,RCB,bat,RCB,37,0,V Kohli,25,runs,37
+2020_28,2020,2020-10-12,RCB,KKR,Sharjah Cricket Stadium,,RCB,bat,RCB,82,0,AB de Villiers,28,runs,82
+2020_29,2020,2020-10-13,CSK,SRH,Dubai Intl. Cricket Stadium,,CSK,bat,CSK,20,0,RA Jadeja,29,runs,20
+2020_30,2020,2020-10-14,DC,RR,Dubai Intl. Cricket Stadium,,DC,bat,DC,13,0,A Nortje,30,runs,13
+2020_42,2020,2020-10-24,KKR,DC,Sheikh Zayed Stadium,Abu Dhabi,DC,field,KKR,59,0,CV Varun,42,runs,59
+2020_43,2020,2020-10-24,KXIP,SRH,Dubai Intl. Cricket Stadium,,SRH,field,KXIP,12,0,CJ Jordan,43,runs,12
+2020_47,2020,2020-10-27,SRH,DC,Dubai Intl. Cricket Stadium,,DC,field,SRH,88,0,WP Saha,47,runs,88
+2020_53,2020,2020-11-01,KKR,RR,Dubai Intl. Cricket Stadium,,RR,field,KKR,60,0,PJ Cummins,53,runs,60
+2020_57,2020,2020-11-05,MI,DC,Dubai Intl. Cricket Stadium,,DC,field,MI,57,0,JJ Bumrah,57,runs,57
+2020_59,2020,2020-11-08,DC,SRH,Sheikh Zayed Stadium,Abu Dhabi,DC,bat,DC,17,0,MP Stoinis,59,runs,17
+2021_03,2021,2021-04-11,KKR,SRH,MA Chidambaram Stadium,Chennai,SRH,field,KKR,10,0,N Rana,3,runs,10
+2021_04,2021,2021-04-12,PBKS,RR,Wankhede Stadium,Mumbai,RR,field,PBKS,4,0,SV Samson,4,runs,4
+2021_05,2021,2021-04-13,MI,KKR,MA Chidambaram Stadium,Chennai,KKR,field,MI,10,0,RD Chahar,5,runs,10
+2021_06,2021,2021-04-14,RCB,SRH,MA Chidambaram Stadium,Chennai,SRH,field,RCB,6,0,GJ Maxwell,6,runs,6
+2021_09,2021,2021-04-17,MI,SRH,MA Chidambaram Stadium,Chennai,MI,bat,MI,13,0,KA Pollard,9,runs,13
+2021_10,2021,2021-04-18,RCB,KKR,MA Chidambaram Stadium,Chennai,RCB,bat,RCB,38,0,AB de Villiers,10,runs,38
+2021_12,2021,2021-04-19,CSK,RR,Wankhede Stadium,Mumbai,RR,field,CSK,45,0,MM Ali,12,runs,45
+2021_14,2021,2021-04-21,CSK,KKR,Wankhede Stadium,Mumbai,KKR,field,CSK,18,0,F du Plessis,14,runs,18
+2021_20,2021,2021-04-25,CSK,RCB,Wankhede Stadium,Mumbai,CSK,bat,CSK,69,0,RA Jadeja,20,runs,69
+2021_22,2021,2021-04-27,RCB,DC,Narendra Modi Stadium,Ahmedabad,DC,field,RCB,1,0,AB de Villiers,22,runs,1
+2021_26,2021,2021-04-30,PBKS,RCB,Narendra Modi Stadium,Ahmedabad,RCB,field,PBKS,34,0,Harpreet Brar,26,runs,34
+2021_28,2021,2021-05-02,RR,SRH,Arun Jaitley Stadium,Delhi,SRH,field,RR,55,0,JC Buttler,28,runs,55
+2021_30,2021,2021-09-19,CSK,MI,Dubai Intl. Cricket Stadium,Dubai,CSK,bat,CSK,20,0,RD Gaikwad,30,runs,20
+2021_32,2021,2021-09-21,RR,PBKS,Dubai Intl. Cricket Stadium,Dubai,PBKS,field,RR,2,0,Kartik Tyagi,32,runs,2
+2021_36,2021,2021-09-25,PBKS,SRH,Sharjah Cricket Stadium,Sharjah,SRH,field,PBKS,5,0,JO Holder,36,runs,5
+2021_37,2021,2021-09-25,DC,RR,Sheikh Zayed Stadium,Abu Dhabi,RR,field,DC,33,0,SS Iyer,37,runs,33
+2021_38,2021,2021-09-26,RCB,MI,Dubai Intl. Cricket Stadium,Dubai,MI,field,RCB,54,0,GJ Maxwell,38,runs,54
+2021_49,2021,2021-10-03,RCB,PBKS,Sharjah Cricket Stadium,Sharjah,RCB,bat,RCB,6,0,GJ Maxwell,49,runs,6
+2021_52,2021,2021-10-06,SRH,RCB,Sheikh Zayed Stadium,Abu Dhabi,RCB,field,SRH,4,0,KS Williamson,52,runs,4
+2021_54,2021,2021-10-07,KKR,RR,Sharjah Cricket Stadium,Sharjah,RR,field,KKR,86,0,Shivam Mavi,54,runs,86
+2021_55,2021,2021-10-08,MI,SRH,Sheikh Zayed Stadium,Abu Dhabi,MI,bat,MI,42,0,Ishan Kishan,55,runs,42
+2021_60,2021,2021-10-15,CSK,KKR,Dubai Intl. Cricket Stadium,Dubai,KKR,field,CSK,27,0,F du Plessis,60,runs,27
+2022_05,2022,2022-03-29,RR,SRH,"MCA Stadium, Pune",Pune,SRH,field,RR,61,0,SV Samson,5,runs,61
+2022_09,2022,2022-04-02,RR,MI,Dr DY Patil Sports Academy,Mumbai,MI,field,RR,23,0,JC Buttler,9,runs,23
+2022_10,2022,2022-04-02,GT,DC,"MCA Stadium, Pune",Pune,DC,field,GT,14,0,LH Ferguson,10,runs,14
+2022_11,2022,2022-04-03,PBKS,CSK,Brabourne Stadium,Mumbai,CSK,field,PBKS,54,0,LS Livingstone,11,runs,54
+2022_12,2022,2022-04-04,LSG,SRH,Dr DY Patil Sports Academy,Mumbai,SRH,field,LSG,12,0,Avesh Khan,12,runs,12
+2022_19,2022,2022-04-10,DC,KKR,Brabourne Stadium,Mumbai,KKR,field,DC,44,0,Kuldeep Yadav,19,runs,44
+2022_20,2022,2022-04-10,RR,LSG,Wankhede Stadium,Mumbai,LSG,field,RR,3,0,YS Chahal,20,runs,3
+2022_22,2022,2022-04-12,CSK,RCB,Dr DY Patil Sports Academy,Mumbai,RCB,field,CSK,23,0,S Dube,22,runs,23
+2022_23,2022,2022-04-13,PBKS,MI,"MCA Stadium, Pune",Pune,MI,field,PBKS,12,0,MA Agarwal,23,runs,12
+2022_24,2022,2022-04-14,GT,RR,Dr DY Patil Sports Academy,Mumbai,RR,field,GT,37,0,HH Pandya,24,runs,37
+2022_27,2022,2022-04-16,RCB,DC,Wankhede Stadium,Mumbai,DC,field,RCB,16,0,KD Karthik,27,runs,16
+2022_26,2022,2022-04-16,LSG,MI,Brabourne Stadium,Mumbai,MI,field,LSG,18,0,KL Rahul,26,runs,18
+2022_30,2022,2022-04-18,RR,KKR,Brabourne Stadium,Mumbai,KKR,field,RR,7,0,YS Chahal,30,runs,7
+2022_31,2022,2022-04-19,RCB,LSG,Dr DY Patil Sports Academy,Mumbai,LSG,field,RCB,18,0,F du Plessis,31,runs,18
+2022_34,2022,2022-04-22,RR,DC,Wankhede Stadium,Mumbai,DC,field,RR,15,0,JC Buttler,34,runs,15
+2022_35,2022,2022-04-23,GT,KKR,Dr DY Patil Sports Academy,Navi Mumbai,GT,bat,GT,8,0,Rashid Khan,35,runs,8
+2022_37,2022,2022-04-24,LSG,MI,Wankhede Stadium,Mumbai,MI,field,LSG,36,0,KL Rahul,37,runs,36
+2022_38,2022,2022-04-25,PBKS,CSK,Wankhede Stadium,Mumbai,CSK,field,PBKS,11,0,S Dhawan,38,runs,11
+2022_39,2022,2022-04-26,RR,RCB,"MCA Stadium, Pune",Pune,RCB,field,RR,29,0,R Parag,39,runs,29
+2022_42,2022,2022-04-29,LSG,PBKS,"MCA Stadium, Pune",Pune,PBKS,field,LSG,20,0,KH Pandya,42,runs,20
+2022_46,2022,2022-05-01,LSG,DC,Wankhede Stadium,Mumbai,LSG,bat,LSG,6,0,Mohsin Khan,46,runs,6
+2022_45,2022,2022-05-01,CSK,SRH,"MCA Stadium, Pune",Pune,SRH,field,CSK,13,0,RD Gaikwad,45,runs,13
+2022_49,2022,2022-05-04,RCB,CSK,"MCA Stadium, Pune",Pune,CSK,field,RCB,13,0,HV Patel,49,runs,13
+2022_50,2022,2022-05-05,DC,SRH,Brabourne Stadium,Mumbai,SRH,field,DC,21,0,DA Warner,50,runs,21
+2022_51,2022,2022-05-06,MI,GT,Brabourne Stadium,Mumbai,GT,field,MI,5,0,TH David,51,runs,5
+2022_53,2022,2022-05-07,LSG,KKR,"MCA Stadium, Pune",Pune,KKR,field,LSG,75,0,Avesh Khan,53,runs,75
+2022_54,2022,2022-05-08,RCB,SRH,Wankhede Stadium,Mumbai,RCB,bat,RCB,67,0,PWH de Silva,54,runs,67
+2022_55,2022,2022-05-08,CSK,DC,Dr DY Patil Sports Academy,Navi Mumbai,DC,field,CSK,91,0,DP Conway,55,runs,91
+2022_56,2022,2022-05-09,KKR,MI,Dr DY Patil Sports Academy,Navi Mumbai,MI,field,KKR,52,0,JJ Bumrah,56,runs,52
+2022_57,2022,2022-05-10,GT,LSG,"MCA Stadium, Pune",Pune,GT,bat,GT,62,0,Shubman Gill,57,runs,62
+2022_60,2022,2022-05-13,PBKS,RCB,Brabourne Stadium,Mumbai,RCB,field,PBKS,54,0,JM Bairstow,60,runs,54
+2022_61,2022,2022-05-14,KKR,SRH,"MCA Stadium, Pune",Pune,KKR,bat,KKR,54,0,AD Russell,61,runs,54
+2022_63,2022,2022-05-15,RR,LSG,Brabourne Stadium,Mumbai,RR,bat,RR,24,0,TA Boult,63,runs,24
+2022_64,2022,2022-05-16,DC,PBKS,Dr DY Patil Sports Academy,Navi Mumbai,PBKS,field,DC,17,0,SN Thakur,64,runs,17
+2022_65,2022,2022-05-17,SRH,MI,Wankhede Stadium,Mumbai,MI,field,SRH,3,0,RA Tripathi,65,runs,3
+2022_66,2022,2022-05-18,LSG,KKR,Dr DY Patil Sports Academy,Navi Mumbai,LSG,bat,LSG,2,0,Q de Kock,66,runs,2
+2022_72,2022,2022-05-25,RCB,LSG,Eden Gardens,Kolkata,LSG,field,RCB,14,0,RM Patidar,72,runs,14
+2023_02,2023,2023-04-01,PBKS,KKR,PCA IS Bindra Stadium,Chandigarh,KKR,field,PBKS,7,0,Arshdeep Singh,2,runs,7
+2023_03,2023,2023-04-01,LSG,DC,BRSABV Ekana Stadium,Lucknow,DC,field,LSG,50,0,MA Wood,3,runs,50
+2023_04,2023,2023-04-02,RR,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,RR,72,0,JC Buttler,4,runs,72
+2023_06,2023,2023-04-03,CSK,LSG,MA Chidambaram Stadium,Chennai,LSG,field,CSK,12,0,MM Ali,6,runs,12
+2023_08,2023,2023-04-05,PBKS,RR,Barsapara Stadium,Guwahati,RR,field,PBKS,5,0,NT Ellis,8,runs,5
+2023_09,2023,2023-04-06,KKR,RCB,Eden Gardens,Kolkata,RCB,field,KKR,81,0,SN Thakur,9,runs,81
+2023_12,2023,2023-04-08,RR,DC,Barsapara Stadium,Guwahati,DC,field,RR,57,0,YBK Jaiswal,12,runs,57
+2023_17,2023,2023-04-12,RR,CSK,MA Chidambaram Stadium,Chennai,CSK,field,RR,3,0,R Ashwin,17,runs,3
+2023_19,2023,2023-04-14,SRH,KKR,Eden Gardens,Kolkata,KKR,field,SRH,23,0,HC Brook,19,runs,23
+2023_21,2023,2023-04-15,RCB,DC,M. Chinnaswamy Stadium,Bengaluru,DC,field,RCB,23,0,V Kohli,21,runs,23
+2023_24,2023,2023-04-17,CSK,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,CSK,8,0,DP Conway,24,runs,8
+2023_25,2023,2023-04-18,MI,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,field,MI,14,0,C Green,25,runs,14
+2023_26,2023,2023-04-19,LSG,RR,Sawai Mansingh Stadium,Jaipur,RR,field,LSG,10,0,MP Stoinis,26,runs,10
+2023_28,2023,2023-04-20,RCB,PBKS,PCA IS Bindra Stadium,Chandigarh,PBKS,field,RCB,24,0,Mohammed Siraj,28,runs,24
+2023_30,2023,2023-04-22,PBKS,MI,Wankhede Stadium,Mumbai,MI,field,PBKS,13,0,SM Curran,30,runs,13
+2023_31,2023,2023-04-22,GT,LSG,BRSABV Ekana Stadium,Lucknow,GT,bat,GT,7,0,MM Sharma,31,runs,7
+2023_32,2023,2023-04-23,CSK,KKR,Eden Gardens,Kolkata,KKR,field,CSK,49,0,AM Rahane,32,runs,49
+2023_33,2023,2023-04-23,RCB,RR,M. Chinnaswamy Stadium,Bengaluru,RR,field,RCB,7,0,GJ Maxwell,33,runs,7
+2023_34,2023,2023-04-24,DC,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,DC,bat,DC,7,0,AR Patel,34,runs,7
+2023_35,2023,2023-04-25,GT,MI,Narendra Modi Stadium,Ahmedabad,MI,field,GT,55,0,A Manohar,35,runs,55
+2023_36,2023,2023-04-26,KKR,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,KKR,21,0,CV Varun,36,runs,21
+2023_37,2023,2023-04-27,RR,CSK,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,32,0,YBK Jaiswal,37,runs,32
+2023_38,2023,2023-04-28,LSG,PBKS,PCA IS Bindra Stadium,Chandigarh,PBKS,field,LSG,56,0,MP Stoinis,38,runs,56
+2023_39,2023,2023-04-29,SRH,DC,Arun Jaitley Stadium,Delhi,SRH,bat,SRH,9,0,MR Marsh,39,runs,9
+2023_43,2023,2023-05-01,RCB,LSG,BRSABV Ekana Stadium,Lucknow,RCB,bat,RCB,18,0,F du Plessis,43,runs,18
+2023_44,2023,2023-05-02,DC,GT,Narendra Modi Stadium,Ahmedabad,DC,bat,DC,5,0,Mohammed Shami,44,runs,5
+2023_47,2023,2023-05-04,KKR,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,KKR,bat,KKR,5,0,CV Varun,47,runs,5
+2023_52,2023,2023-05-07,GT,LSG,Narendra Modi Stadium,Ahmedabad,LSG,field,GT,56,0,Shubman Gill,52,runs,56
+2023_55,2023,2023-05-10,CSK,DC,MA Chidambaram Stadium,Chennai,CSK,bat,CSK,27,0,RA Jadeja,55,runs,27
+2023_57,2023,2023-05-12,MI,GT,Wankhede Stadium,Mumbai,GT,field,MI,27,0,SA Yadav,57,runs,27
+2023_58,2023,2023-05-13,PBKS,DC,Arun Jaitley Stadium,Delhi,DC,field,PBKS,31,0,P Simran Singh,58,runs,31
+2023_61,2023,2023-05-14,RCB,RR,Sawai Mansingh Stadium,Jaipur,RCB,bat,RCB,112,0,WD Parnell,61,runs,112
+2023_62,2023,2023-05-15,GT,SRH,Narendra Modi Stadium,Ahmedabad,SRH,field,GT,34,0,Shubman Gill,62,runs,34
+2023_63,2023,2023-05-16,LSG,MI,BRSABV Ekana Stadium,Lucknow,MI,field,LSG,5,0,MP Stoinis,63,runs,5
+2023_64,2023,2023-05-17,DC,PBKS,HPCA Stadium,Dharamsala,PBKS,field,DC,15,0,RR Rossouw,64,runs,15
+2023_67,2023,2023-05-20,CSK,DC,Arun Jaitley Stadium,Delhi,CSK,bat,CSK,77,0,RD Gaikwad,67,runs,77
+2023_68,2023,2023-05-20,LSG,KKR,Eden Gardens,Kolkata,KKR,field,LSG,1,0,N Pooran,68,runs,1
+2023_71,2023,2023-05-23,CSK,GT,MA Chidambaram Stadium,Chennai,GT,field,CSK,15,0,RD Gaikwad,71,runs,15
+2023_72,2023,2023-05-24,MI,LSG,MA Chidambaram Stadium,Chennai,MI,bat,MI,81,0,Akash Madhwal,72,runs,81
+2023_73,2023,2023-05-26,GT,MI,Narendra Modi Stadium,Ahmedabad,MI,field,GT,62,0,Shubman Gill,73,runs,62
+2024_02,2024,2024-03-23,KKR,SRH,Eden Gardens,Kolkata,SRH,field,KKR,4,0,AD Russell,2,runs,4
+2024_04,2024,2024-03-24,GT,MI,Narendra Modi Stadium,Ahmedabad,MI,field,GT,6,0,B Sai Sudharsan,4,runs,6
+2024_05,2024,2024-03-24,RR,LSG,Sawai Mansingh Stadium,Jaipur,RR,bat,RR,20,0,SV Samson,5,runs,20
+2024_07,2024,2024-03-26,CSK,GT,MA Chidambaram Stadium,Chennai,GT,field,CSK,63,0,S Dube,7,runs,63
+2024_08,2024,2024-03-27,SRH,MI,Rajiv Gandhi Intl. Stadium,Hyderabad,MI,field,SRH,31,0,Abhishek Sharma,8,runs,31
+2024_09,2024,2024-03-28,RR,DC,Sawai Mansingh Stadium,Jaipur,DC,field,RR,12,0,R Parag,9,runs,12
+2024_11,2024,2024-03-30,LSG,PBKS,BRSABV Ekana Stadium,Lucknow,LSG,bat,LSG,21,0,MP Yadav,11,runs,21
+2024_12,2024,2024-03-31,DC,CSK,ACA-VDCA Stadium,Visakhapatnam,DC,bat,DC,20,0,KK Ahmed,12,runs,20
+2024_15,2024,2024-04-02,LSG,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,LSG,28,0,MP Yadav,15,runs,28
+2024_16,2024,2024-04-03,KKR,DC,ACA-VDCA Stadium,Visakhapatnam,KKR,bat,KKR,106,0,SP Narine,16,runs,106
+2024_20,2024,2024-04-07,LSG,GT,BRSABV Ekana Stadium,Lucknow,LSG,bat,LSG,33,0,Yash Thakur,20,runs,33
+2024_21,2024,2024-04-07,MI,DC,Wankhede Stadium,Mumbai,DC,field,MI,29,0,R Shepherd,21,runs,29
+2024_23,2024,2024-04-09,SRH,PBKS,Maharaja Yadvindra Cricket Stadium,Mohali,PBKS,field,SRH,2,0,Nithish Kumar Reddy,23,runs,2
+2024_28,2024,2024-04-14,CSK,MI,Wankhede Stadium,Mumbai,MI,field,CSK,20,0,M Pathirana,28,runs,20
+2024_30,2024,2024-04-15,SRH,RCB,M. Chinnaswamy Stadium,Bengaluru,RCB,field,SRH,25,0,TM Head,30,runs,25
+2024_33,2024,2024-04-18,MI,PBKS,Maharaja Yadvindra Cricket Stadium,Mohali,PBKS,field,MI,9,0,JJ Bumrah,33,runs,9
+2024_35,2024,2024-04-20,SRH,DC,Arun Jaitley Stadium,Delhi,DC,field,SRH,67,0,TM Head,35,runs,67
+2024_36,2024,2024-04-21,KKR,RCB,Eden Gardens,Kolkata,RCB,field,KKR,1,0,AD Russell,36,runs,1
+2024_40,2024,2024-04-24,DC,GT,Arun Jaitley Stadium,Delhi,GT,field,DC,4,0,RR Pant,40,runs,4
+2024_41,2024,2024-04-25,RCB,SRH,Rajiv Gandhi Intl. Stadium,Hyderabad,RCB,bat,RCB,35,0,RM Patidar,41,runs,35
+2024_44,2024,2024-04-27,DC,MI,Arun Jaitley Stadium,Delhi,MI,field,DC,10,0,J Fraser-McGurk,44,runs,10
+2024_46,2024,2024-04-28,CSK,SRH,MA Chidambaram Stadium,Chennai,SRH,field,CSK,78,0,RD Gaikwad,46,runs,78
+2024_50,2024,2024-05-02,SRH,RR,Rajiv Gandhi Intl. Stadium,Hyderabad,SRH,bat,SRH,1,0,B Kumar,50,runs,1
+2024_51,2024,2024-05-03,KKR,MI,Wankhede Stadium,Mumbai,MI,field,KKR,24,0,VR Iyer,51,runs,24
+2024_54,2024,2024-05-05,KKR,LSG,BRSABV Ekana Stadium,Lucknow,LSG,field,KKR,98,0,SP Narine,54,runs,98
+2024_53,2024,2024-05-05,CSK,PBKS,HPCA Stadium,Dharamsala,PBKS,field,CSK,28,0,RA Jadeja,53,runs,28
+2024_56,2024,2024-05-07,DC,RR,Arun Jaitley Stadium,Delhi,RR,field,DC,20,0,Kuldeep Yadav,56,runs,20
+2024_58,2024,2024-05-09,RCB,PBKS,HPCA Stadium,Dharamsala,PBKS,field,RCB,60,0,V Kohli,58,runs,60
+2024_59,2024,2024-05-10,GT,CSK,Narendra Modi Stadium,Ahmedabad,CSK,field,GT,35,0,Shubman Gill,59,runs,35
+2024_60,2024,2024-05-11,KKR,MI,Eden Gardens,Kolkata,MI,field,KKR,18,0,CV Varun,60,runs,18
+2024_61,2024,2024-05-12,RCB,DC,M. Chinnaswamy Stadium,Bengaluru,DC,field,RCB,47,0,C Green,61,runs,47
+2024_63,2024,2024-05-14,DC,LSG,Arun Jaitley Stadium,Delhi,LSG,field,DC,19,0,I Sharma,63,runs,19
+2024_65,2024,2024-05-17,LSG,MI,Wankhede Stadium,Mumbai,MI,field,LSG,18,0,N Pooran,65,runs,18
+2024_66,2024,2024-05-18,RCB,CSK,M. Chinnaswamy Stadium,Bengaluru,CSK,field,RCB,27,0,F du Plessis,66,runs,27
+2024_70,2024,2024-05-24,SRH,RR,MA Chidambaram Stadium,Chennai,RR,field,SRH,36,0,Shahbaz Ahmed,70,runs,36

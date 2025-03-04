@@ -1,0 +1,19 @@
+inning,phase,mean,std
+1,Powerplay,37.75,10.64
+1,Middle Overs,78.15,18.33
+1,Death Overs,49.65,16.22
+2,Powerplay,39.33,11.58
+2,Middle Overs,76.36,19.31
+2,Death Overs,36.09,18.97
+3,Powerplay,0.13,1.24
+3,Middle Overs,0.0,0.0
+3,Death Overs,0.0,0.0
+4,Powerplay,0.11,1.09
+4,Middle Overs,0.0,0.0
+4,Death Overs,0.0,0.0
+5,Powerplay,0.01,0.33
+5,Middle Overs,0.0,0.0
+5,Death Overs,0.0,0.0
+6,Powerplay,0.01,0.45
+6,Middle Overs,0.0,0.0
+6,Death Overs,0.0,0.0

@@ -1,0 +1,439 @@
+'''\
+Module for analyzing season data.
+This module loads precomputed season statistics and provides functions to display
+these analyses using Streamlit and Plotly.\
+'''
+
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
+import numpy as np
+import os
+from pathlib import Path
+from utils.chart_utils import responsive_plotly_chart, update_chart_for_responsive_layout
+
+# ---------------------------
+# Helper Functions
+# ---------------------------
+
+def load_precomputed_data(filename):
+    """
+    Load precomputed data from CSV files.
+    
+    Args:
+        filename (str): Name of the CSV file to load.
+        
+    Returns:
+        pd.DataFrame: DataFrame containing the loaded data.
+    """
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    file_path = data_dir / filename
+    
+    if not os.path.exists(file_path):
+        st.error(f"Precomputed data file not found: {filename}")
+        return pd.DataFrame()
+    
+    # Handle index columns for certain files
+    if filename in ['season_standings.csv', 'season_points_progression.csv',
+                   'season_batting_stats.csv', 'season_bowling_stats.csv',
+                   'season_fielding_stats.csv', 'season_all_round_stats.csv']:
+        return pd.read_csv(file_path, index_col=0)
+    else:
+        return pd.read_csv(file_path)
+
+# ---------------------------
+# Season Stats Loading Functions
+# ---------------------------
+
+def load_season_stats(season):
+    """
+    Load precomputed season statistics.
+
+    Args:
+        season: The season to load statistics for.
+        
+    Returns:
+        dict: Dictionary containing various season statistics.
+    """
+    # Load basic season stats
+    season_stats = load_precomputed_data(f'season_{season}_stats.csv')
+    
+    # Load team standings
+    standings = load_precomputed_data(f'season_{season}_standings.csv')
+    
+    # Load key matches
+    key_matches = load_precomputed_data(f'season_{season}_key_matches.csv')
+    
+    # Load batting stats
+    batting_stats = load_precomputed_data(f'season_{season}_batting_stats.csv')
+    
+    # Load bowling stats
+    bowling_stats = load_precomputed_data(f'season_{season}_bowling_stats.csv')
+    
+    # Load fielding stats
+    fielding_stats = load_precomputed_data(f'season_{season}_fielding_stats.csv')
+    
+    # Load all-round stats
+    all_round_stats = load_precomputed_data(f'season_{season}_all_round_stats.csv')
+    
+    # Load points progression
+    points_progression = load_precomputed_data(f'season_{season}_points_progression.csv')
+    
+    return {
+        'season_stats': season_stats,
+        'standings': standings,
+        'key_matches': key_matches,
+        'batting_stats': batting_stats,
+        'bowling_stats': bowling_stats,
+        'fielding_stats': fielding_stats,
+        'all_round_stats': all_round_stats,
+        'points_progression': points_progression
+    }
+
+# ---------------------------
+# Display Functions
+# ---------------------------
+
+def display_season_highlights(matches_df, deliveries_df, season):
+    """Display season highlights and key statistics."""
+    st.header(f"Season {season} Highlights")
+    
+    # Load precomputed season statistics
+    stats = load_season_stats(season)
+    
+    # Display basic statistics in columns
+    col1, col2, col3 = st.columns(3)
+    
+    # Extract basic stats from precomputed data
+    if not stats['season_stats'].empty:
+        season_data = stats['season_stats'].iloc[0]
+        
+        with col1:
+            st.metric("Total Matches", season_data.get('total_matches', 0))
+            st.metric("Average Match Score", f"{season_data.get('avg_match_score', 0):.1f}")
+        
+        with col2:
+            st.metric("Total Runs", season_data.get('total_runs', 0))
+            st.metric("Total Wickets", season_data.get('total_wickets', 0))
+        
+        with col3:
+            st.metric("Sixes per Match", f"{season_data.get('sixes_per_match', 0):.1f}")
+            st.metric("Fours per Match", f"{season_data.get('fours_per_match', 0):.1f}")
+        
+        # Display season winner
+        if 'winner' in season_data:
+            st.success(f"🏆 Season Winner: {season_data['winner']}")
+    else:
+        st.warning("Season statistics not available")
+    
+    # Display team standings
+    st.subheader("Team Standings")
+    if not stats['standings'].empty:
+        st.dataframe(
+            stats['standings'].style.format({
+                'nrr': '{:.3f}',
+                'runs': '{:.0f}',
+                'wickets': '{:.0f}'
+            }),
+            use_container_width=True
+        )
+    else:
+        st.warning("Team standings not available")
+
+def display_season_standings(matches_df, deliveries_df, season):
+    """Display detailed team standings and points progression."""
+    st.subheader("Points Table Progression")
+    
+    # Load precomputed season statistics
+    stats = load_season_stats(season)
+    
+    # Create cumulative points progression plot as an area (step) chart
+    if not stats['points_progression'].empty:
+        points_df = stats['points_progression'].reset_index()
+        points_df.columns = ['index'] + list(points_df.columns[1:])
+        
+        # Melt the DataFrame to get it in the right format for plotting
+        points_melt = points_df.melt(
+            id_vars='index', 
+            var_name='Team', 
+            value_name='Points'
+        )
+        points_melt.rename(columns={'index': 'Match Number'}, inplace=True)
+        
+        fig = px.area(
+            points_melt,
+            x='Match Number',
+            y='Points',
+            color='Team',
+            line_shape='hv',
+            title='Cumulative Points Progression',
+            labels={'Points': 'Points', 'Match Number': 'Match Number'},
+            template='plotly_dark',
+            color_discrete_sequence=['#00ff88', '#ff0088', '#00ffff', '#ff00ff', '#ffff00', '#ff8800', '#88ff00', '#0088ff']  # Neon colors
+        )
+        
+        fig.update_layout(
+            xaxis_title='Match Number',
+            yaxis_title='Points',
+            legend_title='Teams',
+            hovermode='x unified',
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+        )
+        
+        # Use the responsive chart function instead of st.plotly_chart
+        responsive_plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning("Points progression data not available")
+    
+    # Display final standings
+    st.subheader("Final Standings")
+    if not stats['standings'].empty:
+        final_standings = stats['standings'].reset_index()
+        final_standings.columns = ['Team'] + list(final_standings.columns[1:])
+        st.dataframe(final_standings, use_container_width=True)
+    else:
+        st.warning("Final standings data not available")
+
+def display_top_performers(matches_df, deliveries_df, season):
+    """Display detailed analysis of top performers."""
+    st.subheader(f"Season {season} Top Performers")
+    
+    # Load precomputed season statistics
+    stats = load_season_stats(season)
+    
+    # Create tabs for different categories
+    tabs = st.tabs([
+        "Batting",
+        "Bowling",
+        "Fielding",
+        "All-Round"
+    ])
+    
+    # Batting Tab
+    with tabs[0]:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Top run scorers
+            st.subheader("Top Run Scorers")
+            if not stats['batting_stats'].empty:
+                top_batters = stats['batting_stats'].nlargest(10, 'runs')
+                fig = px.bar(
+                    top_batters.reset_index(),
+                    x='batter',
+                    y='runs',
+                    title='Top 10 Run Scorers',
+                    hover_data=['average', 'strike_rate'],
+                    template='plotly_dark',
+                    color_discrete_sequence=['#00ff88']  # Neon green
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("Batting statistics not available")
+        
+        with col2:
+            # Best strike rates (min 100 balls)
+            st.subheader("Best Strike Rates")
+            if not stats['batting_stats'].empty:
+                qualified_batters = stats['batting_stats'][stats['batting_stats']['balls'] >= 100]
+                top_sr = qualified_batters.nlargest(10, 'strike_rate')
+                fig = px.bar(
+                    top_sr.reset_index(),
+                    x='batter',
+                    y='strike_rate',
+                    title='Top 10 Strike Rates (min. 100 balls)',
+                    hover_data=['runs', 'balls'],
+                    template='plotly_dark',
+                    color_discrete_sequence=['#ff0088']  # Neon pink
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("Batting statistics not available")
+    
+    # Bowling Tab
+    with tabs[1]:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Top wicket takers
+            st.subheader("Top Wicket Takers")
+            if not stats['bowling_stats'].empty:
+                top_bowlers = stats['bowling_stats'].nlargest(10, 'wickets')
+                fig = px.bar(
+                    top_bowlers.reset_index(),
+                    x='bowler',
+                    y='wickets',
+                    title='Top 10 Wicket Takers',
+                    hover_data=['economy', 'average'],
+                    template='plotly_dark',
+                    color_discrete_sequence=['#00ffff']  # Neon cyan
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("Bowling statistics not available")
+        
+        with col2:
+            # Best economy rates (min 20 overs)
+            st.subheader("Best Economy Rates")
+            if not stats['bowling_stats'].empty:
+                qualified_bowlers = stats['bowling_stats'][stats['bowling_stats']['overs'] >= 20]
+                top_economy = qualified_bowlers.nsmallest(10, 'economy')
+                fig = px.bar(
+                    top_economy.reset_index(),
+                    x='bowler',
+                    y='economy',
+                    title='Top 10 Economy Rates (min. 20 overs)',
+                    hover_data=['wickets', 'overs'],
+                    template='plotly_dark',
+                    color_discrete_sequence=['#ff00ff']  # Neon magenta
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("Bowling statistics not available")
+    
+    # Fielding Tab
+    with tabs[2]:
+        if not stats['fielding_stats'].empty:
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Most catches
+                st.subheader("Most Catches")
+                top_catchers = stats['fielding_stats'].nlargest(10, 'catches')
+                fig = px.bar(
+                    top_catchers.reset_index(),
+                    x='player',
+                    y='catches',
+                    title='Top 10 Catchers',
+                    template='plotly_dark',
+                    color_discrete_sequence=['#ffff00']  # Neon yellow
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with col2:
+                # Most run outs
+                st.subheader("Most Run Outs")
+                top_run_outs = stats['fielding_stats'].nlargest(10, 'run_outs')
+                fig = px.bar(
+                    top_run_outs.reset_index(),
+                    x='player',
+                    y='run_outs',
+                    title='Top 10 Run Outs',
+                    template='plotly_dark',
+                    color_discrete_sequence=['#ff8800']  # Neon orange
+                )
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Fielding statistics are not available for this season")
+    
+    # All-Round Tab
+    with tabs[3]:
+        if not stats['all_round_stats'].empty:
+            all_round_df = stats['all_round_stats'].reset_index()
+            st.dataframe(
+                all_round_df.style.format({
+                    'runs': '{:.0f}',
+                    'wickets': '{:.0f}',
+                    'batting_sr': '{:.2f}',
+                    'bowling_economy': '{:.2f}'
+                }),
+                use_container_width=True
+            )
+        else:
+            st.info("No qualifying all-rounders found for this season")
+
+def display_season_analysis(matches_df, deliveries_df):
+    """Display comprehensive season analysis."""
+    st.title("Season Analysis")
+    
+    # Get unique seasons and sort them
+    seasons = sorted(matches_df['season'].unique())
+    
+    # Season selector
+    selected_season = st.selectbox(
+        "Select Season",
+        seasons,
+        index=len(seasons)-1  # Default to latest season
+    )
+    
+    # Create tabs for different aspects of season analysis
+    tabs = st.tabs([
+        "Highlights",
+        "Standings",
+        "Top Performers",
+        "Key Matches"
+    ])
+    
+    # Highlights Tab
+    with tabs[0]:
+        display_season_highlights(matches_df, deliveries_df, selected_season)
+    
+    # Standings Tab
+    with tabs[1]:
+        display_season_standings(matches_df, deliveries_df, selected_season)
+    
+    # Top Performers Tab
+    with tabs[2]:
+        display_top_performers(matches_df, deliveries_df, selected_season)
+    
+    # Key Matches Tab
+    with tabs[3]:
+        st.subheader("Key Matches")
+        # Load precomputed season statistics
+        stats = load_season_stats(selected_season)
+        
+        if not stats['key_matches'].empty:
+            for _, match in stats['key_matches'].iterrows():
+                st.markdown(f"""
+                **{match['type']}**  
+                {match['description']}  
+                Winner: {match['winner']} ({match['margin']})
+                """)
+        else:
+            st.info("No key matches data available for this season") 

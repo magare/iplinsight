@@ -1,0 +1,175 @@
+/* Custom CSS for IPL Data Analysis Streamlit App */
+
+/* Main app background and text colors */
+.stApp {
+    background-color: #0a0a12;  /* Dark blue-black background */
+    color: #e0e0ff;  /* Light blue-white text */
+}
+
+/* Sidebar styling */
+.css-1d391kg, .css-1siy2j7 {
+    background-color: #14142a !important;  /* Slightly lighter than main background */
+}
+
+/* Make titles and headers stand out with neon glow */
+h1, h2, h3, h4 {
+    font-weight: 600 !important;
+    color: #33ffcc !important;  /* Neon teal */
+    text-shadow: 0 0 8px rgba(51, 255, 204, 0.5) !important;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+}
+
+h2 {
+    font-size: 2rem !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+}
+
+/* Style the main header */
+.stApp header {
+    background-color: rgba(20, 20, 42, 0.8) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* Custom styling for metrics */
+.css-1xarl3l, .css-1kqcjlh {
+    background-color: rgba(30, 30, 60, 0.7) !important;
+    border: 1px solid rgba(80, 80, 255, 0.3) !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    box-shadow: 0 0 15px rgba(30, 144, 255, 0.2) !important;
+}
+
+/* Neon color for metric labels */
+.css-1xarl3l label, .css-1kqcjlh label {
+    color: #ff66cc !important;  /* Neon pink */
+    text-shadow: 0 0 8px rgba(255, 102, 204, 0.5) !important;
+}
+
+/* Neon color for metric values */
+.css-1xarl3l .css-1ht1j8u, .css-1kqcjlh .css-1ht1j8u {
+    color: #66ffff !important;  /* Neon cyan */
+    text-shadow: 0 0 8px rgba(102, 255, 255, 0.5) !important;
+}
+
+/* Style for all buttons */
+button, .stButton > button {
+    background-color: rgba(15, 15, 35, 0.8) !important;
+    color: #ff9900 !important;  /* Neon orange */
+    border: 1px solid rgba(255, 153, 0, 0.5) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+button:hover, .stButton > button:hover {
+    background-color: rgba(25, 25, 55, 0.9) !important;
+    box-shadow: 0 0 15px rgba(255, 153, 0, 0.6) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Fix for tab buttons with overflowing text */
+[data-testid="stTabs"] button {
+    min-width: auto !important;
+    padding: 0.75rem 1rem !important;
+    height: auto !important;
+    white-space: normal !important;
+    min-height: 50px !important;
+    line-height: 1.2 !important;
+    flex-grow: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Make tab lists scrollable on smaller screens */
+[data-testid="stTabs"] [role="tablist"] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    margin-bottom: 10px !important;
+    scrollbar-width: none !important;  /* Firefox */
+}
+
+/* Hide scrollbar for tab lists */
+[data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar {
+    display: none !important;  /* Chrome, Safari, Edge */
+}
+
+/* Style the selected tab */
+[data-testid="stTabs"] button[aria-selected="true"] {
+    background-color: rgba(51, 255, 204, 0.2) !important;
+    border-color: #33ffcc !important;
+    box-shadow: 0 0 10px rgba(51, 255, 204, 0.5) !important;
+}
+
+/* Style select boxes */
+.stSelectbox > div > div {
+    background-color: rgba(20, 20, 40, 0.8) !important;
+    border: 1px solid rgba(80, 80, 255, 0.3) !important;
+    color: #e0e0ff !important;
+}
+
+/* Slider track and thumb */
+.stSlider > div > div > div {
+    color: #ff9900 !important;  /* Neon orange */
+}
+
+/* Radio buttons and checkboxes */
+.stRadio > div, .stCheckbox > div {
+    color: #e0e0ff !important;
+}
+
+/* Dataframe styling */
+.stDataFrame {
+    background-color: rgba(20, 20, 40, 0.7) !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(80, 80, 255, 0.3) !important;
+    padding: 1rem !important;
+    box-shadow: 0 0 15px rgba(30, 144, 255, 0.2) !important;
+    overflow: auto !important;
+}
+
+.stDataFrame table {
+    color: #e0e0ff !important;
+}
+
+.stDataFrame th {
+    background-color: rgba(30, 30, 60, 0.8) !important;
+    color: #ff66cc !important;  /* Neon pink */
+    font-weight: 600 !important;
+    text-shadow: 0 0 5px rgba(255, 102, 204, 0.3) !important;
+}
+
+/* Expander styling */
+.streamlit-expanderHeader {
+    background-color: rgba(20, 20, 40, 0.7) !important;
+    border-radius: 8px !important;
+    color: #33ffcc !important;  /* Neon teal */
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 15, 30, 0.8);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(51, 255, 204, 0.5);  /* Neon teal */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(51, 255, 204, 0.8);  /* Brighter neon teal */
+} 
