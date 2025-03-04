@@ -155,7 +155,7 @@ def process_ipl_data(filepath, team_mapping, venue_mapping):
     return match_df, delivery_df
 
 # Get the project root directory
-project_root = current_dir.parent.parent
+project_root = current_dir.parent
 
 # Path to the folder containing raw JSON files
 raw_data_folder = project_root / 'data' / 'raw'
@@ -1235,6 +1235,89 @@ def convert_json_to_parquet():
         print(f"Successfully converted {json_file} to {parquet_file}")
     
     print("All JSON files have been converted to Parquet format")
+
+def main():
+    """
+    Main function to process IPL data and generate statistics.
+    """
+    # Get the data directory
+    data_dir = Path(__file__).resolve().parent
+    
+    # Get the app data directory
+    app_data_dir = Path(__file__).resolve().parent.parent / "app" / "data"
+    os.makedirs(app_data_dir, exist_ok=True)
+    
+    # Initialize empty mappings
+    team_mapping = {}
+    venue_mapping = {}
+    
+    try:
+        # Find the matches file for team and venue normalization
+        # First, check if there's a processed matches file
+        processed_matches_file = data_dir / "processed" / "matches.csv"
+        if not processed_matches_file.exists():
+            processed_matches_file = data_dir / "processed" / "matches.parquet"
+        
+        # If processed file exists and has the right format, use it for normalization
+        if processed_matches_file.exists() and processed_matches_file.suffix.lower() in ['.csv', '.parquet']:
+            team_mapping = normalize_and_abbreviate_teams(str(processed_matches_file))
+            venue_mapping = normalize_and_shorten_venues(str(processed_matches_file))
+    except Exception as e:
+        print(f"Warning: Could not load team and venue mappings: {e}")
+        print("Proceeding with empty mappings.")
+    
+    # Process all match files
+    match_files = sorted(glob.glob(str(data_dir / "raw" / "*.json")))
+    
+    if not match_files:
+        raise FileNotFoundError("No match files found in the raw directory")
+    
+    all_match_df = pd.DataFrame()
+    all_delivery_df = pd.DataFrame()
+    
+    for match_file in match_files:
+        match_df, delivery_df = process_ipl_data(match_file, team_mapping, venue_mapping)
+        all_match_df = pd.concat([all_match_df, match_df], ignore_index=True)
+        all_delivery_df = pd.concat([all_delivery_df, delivery_df], ignore_index=True)
+    
+    # Assign batter positions
+    all_delivery_df['batter_position'] = all_delivery_df.groupby(['match_id', 'inning', 'batting_team']).apply(assign_batter_positions).reset_index(level=[0,1,2], drop=True)
+    
+    # Sort deliveries by match_id, inning, over, and ball
+    all_delivery_df = all_delivery_df.sort_values(by=['match_id', 'inning', 'over', 'ball'])
+    all_delivery_df.reset_index(drop=True, inplace=True)
+    
+    # Save main dataframes to app data directory
+    print("Saving main dataframes to app data directory...")
+    all_match_df.to_parquet(app_data_dir / 'all_matches.parquet', compression='snappy')
+    all_delivery_df.to_parquet(app_data_dir / 'all_deliveries.parquet', compression='snappy')
+    print(f"Main dataframes saved to {app_data_dir}")
+    
+    # Pre-compute data for overview section
+    print("Pre-computing data for the overview section...")
+    # ... (overview section processing)
+    print(f"Pre-computed data for overview section saved to {app_data_dir}")
+    
+    # Pre-compute data for team analysis section
+    print("Pre-computing data for the team analysis section...")
+    # ... (team analysis section processing)
+    print(f"Pre-computed data for team analysis section saved to {app_data_dir}")
+    
+    # Pre-compute data for player analysis section
+    print("Pre-computing data for player analysis section...")
+    # ... (player analysis section processing)
+    print(f"Pre-computed data for player analysis section saved to: {app_data_dir}")
+    
+    # Pre-compute data for match analysis section
+    print("Pre-computing data for match analysis section...")
+    # ... (match analysis section processing)
+    print(f"Pre-computed data for match analysis section saved to {app_data_dir}")
+    
+    # Pre-compute data for season analysis section
+    print("Pre-computing data for season analysis section...")
+    # ... (season analysis section processing)
+    
+    print("All data pre-processing complete!")
 
 if __name__ == "__main__":
     # Add a command-line argument to convert JSON to Parquet

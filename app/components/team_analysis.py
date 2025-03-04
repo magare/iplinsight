@@ -454,12 +454,16 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
             # Team win percentages at this venue (use pre-computed data)
             venue_team_data = venue_team_stats[venue_team_stats['Venue'] == selected_venue]
             
+            # Rename Win_Rate column for better readability
+            if 'Win_Rate' in venue_team_data.columns:
+                venue_team_data = venue_team_data.rename(columns={'Win_Rate': 'Win Rate (%)'})
+            
             fig = px.bar(
-                venue_team_data.sort_values('Win_Rate', ascending=False),
+                venue_team_data.sort_values('Win Rate (%)', ascending=False),
                 x='Team',
-                y='Win_Rate',
+                y='Win Rate (%)',
                 title=f'Team Win Rates at {selected_venue}',
-                text=venue_team_data['Win_Rate'].round(1),
+                text=venue_team_data['Win Rate (%)'].round(1),
                 template='plotly_dark',
                 color_discrete_sequence=['#00ff88']
             )

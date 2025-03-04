@@ -18,12 +18,12 @@ def load_overview_data():
     avg_wickets_by_season = pd.read_parquet(base_path / "overview_avg_wickets_by_season.parquet")
     team_participation = pd.read_parquet(base_path / "overview_team_participation.parquet")
     
-    # Format the win rate to match the original display format
-    team_participation['Win Rate (%)'] = team_participation['Win_Rate'].apply(lambda x: f"{x:.1f}")
+    # Rename columns to make them more human-readable
     team_participation = team_participation.rename(columns={
         'Seasons_Played': 'Seasons Played',
         'Total_Matches': 'Total Matches',
-        'Wins': 'Wins'
+        'Wins': 'Wins',
+        'Win_Rate': 'Win Rate (%)'
     })
     
     return {
@@ -170,8 +170,38 @@ def display_team_participation(matches_df=None):
         hide_index=True
     )
 
+def display_key_questions():
+    """Display key questions to be explored."""
+    st.subheader("Key Questions We'll Explore")
+    
+    questions = [
+        "🏆 Has the dominance of certain teams changed over the course of IPL history?",
+        "🎯 How significant is the toss in determining the match outcome?",
+        "🌟 Which players consistently perform well in high-pressure situations?",
+        "🏟️ Do certain venues favor batting or bowling teams?",
+        "📊 How has the scoring pattern evolved over different seasons?"
+    ]
+    
+    for q in questions:
+        st.markdown(f"- {q}")
+
+def display_data_limitations():
+    """Display data limitations."""
+    st.info("""
+    **Note on Data Limitations:**
+    - Fielder information might not be consistently available for all seasons
+    - Weather conditions and pitch reports are not part of the dataset
+    - Detailed player statistics (age, experience, etc.) are not included
+    """)
+    
+    # Add CricSheet attribution separately with HTML
+    st.markdown("""
+    **Data Source:** <a href="https://cricsheet.org/" target="_blank">CricSheet</a>
+    """, unsafe_allow_html=True)
+
 def display_dataset_info():
     """Display information about the dataset structure."""
+    st.subheader("Dataset Structure")
     col1, col2 = st.columns(2)
     
     with col1:
@@ -217,28 +247,4 @@ def display_dataset_info():
         **Game Context:**
         - `inning`: 1st or 2nd innings
         - `over` & `ball`: Delivery sequence
-        """)
-
-def display_key_questions():
-    """Display key questions to be explored."""
-    st.subheader("Key Questions We'll Explore")
-    
-    questions = [
-        "🏆 Has the dominance of certain teams changed over the course of IPL history?",
-        "🎯 How significant is the toss in determining the match outcome?",
-        "🌟 Which players consistently perform well in high-pressure situations?",
-        "🏟️ Do certain venues favor batting or bowling teams?",
-        "📊 How has the scoring pattern evolved over different seasons?"
-    ]
-    
-    for q in questions:
-        st.markdown(f"- {q}")
-
-def display_data_limitations():
-    """Display data limitations."""
-    st.info("""
-    **Note on Data Limitations:**
-    - Fielder information might not be consistently available for all seasons
-    - Weather conditions and pitch reports are not part of the dataset
-    - Detailed player statistics (age, experience, etc.) are not included
-    """) 
+        """) 

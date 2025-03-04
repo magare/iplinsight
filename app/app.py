@@ -105,13 +105,15 @@ def render_overview():
     st.subheader("Tournament Growth Over Years")
     plot_tournament_growth(matches, deliveries)
     
-    st.subheader("Understanding the Dataset")
-    display_dataset_info()
+    # Team Participation Table
+    display_team_participation(matches)
+    
+    # Key questions and data limitations
     display_key_questions()
     display_data_limitations()
     
-    # Team Participation Table
-    display_team_participation(matches)
+    # Dataset structure information (moved to the bottom)
+    display_dataset_info()
 
 def render_team_analysis():
     display_team_analysis(matches, deliveries)
@@ -176,10 +178,17 @@ selected_tab = st.sidebar.radio("",
 
 # Add information at the bottom of the sidebar
 st.sidebar.markdown("---")
-st.sidebar.markdown("""
+
+# Get the min and max seasons from the data
+min_season = int(matches['season'].min())
+max_season = int(matches['season'].max())
+season_range = f"{min_season}-{max_season}"
+
+st.sidebar.markdown(f"""
 <div style="opacity: 0.7; font-size: 0.8rem; text-align: center;">
     <p>Made with ❤️ for cricket analytics</p>
-    <p>Data from 2008-2022 IPL seasons</p>
+    <p>Data from {season_range} IPL seasons</p>
+    <p>Data source: <a href="https://cricsheet.org/" target="_blank">CricSheet</a></p>
 </div>
 """, unsafe_allow_html=True)
 

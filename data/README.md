@@ -21,7 +21,6 @@ The IPL data can be obtained from various sources:
 
 - [Cricsheet](https://cricsheet.org/): Provides ball-by-ball data in YAML/JSON format
 - [IPL Official Website](https://www.iplt20.com/): Official statistics and match data
-- [Kaggle IPL Datasets](https://www.kaggle.com/datasets?search=ipl): Various IPL datasets
 
 ## Data Format
 

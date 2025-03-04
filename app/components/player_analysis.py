@@ -667,6 +667,11 @@ def display_allrounder_analysis(deliveries_df=None):
         (allrounder_stats['wickets'] >= min_wickets)
     ]
     
+    # Check if there are any players that meet the criteria
+    if filtered_stats.empty:
+        st.warning("No players match the selected criteria. Please adjust the filters.")
+        return
+    
     # Create tabs for different analyses
     analysis_tabs = st.tabs([
         "Overall Rankings",
@@ -745,6 +750,11 @@ def display_allrounder_analysis(deliveries_df=None):
         
         player_stats = filtered_stats[filtered_stats['player'] == selected_player]
         
+        # Check if player_stats is empty
+        if player_stats.empty:
+            st.warning(f"No data available for {selected_player} with the current filters. Please adjust the filters.")
+            return
+        
         # Display detailed stats in columns
         col1, col2 = st.columns(2)
         
@@ -821,6 +831,11 @@ def display_head_to_head_analysis(deliveries_df=None):
     # Filter data
     filtered_stats = h2h_stats[h2h_stats['balls'] >= min_balls]
     
+    # Check if there are any matchups that meet the criteria
+    if filtered_stats.empty:
+        st.warning("No matchups meet the selected criteria. Please adjust the filters.")
+        return
+    
     # Create tabs for different analyses
     analysis_tabs = st.tabs([
         "Batsman vs Bowler",
@@ -841,9 +856,15 @@ def display_head_to_head_analysis(deliveries_df=None):
         
         with col2:
             # Select bowler
+            # Filter bowlers who have faced the selected batsman
+            bowlers_vs_batsman = filtered_stats[filtered_stats['batsman'] == selected_batsman]['bowler'].unique()
+            if len(bowlers_vs_batsman) == 0:
+                st.warning(f"No bowlers found for {selected_batsman} with the current filters.")
+                return
+                
             selected_bowler = st.selectbox(
                 "Select bowler",
-                options=sorted(filtered_stats['bowler'].unique())
+                options=sorted(bowlers_vs_batsman)
             )
         
         # Get specific matchup stats
@@ -867,7 +888,7 @@ def display_head_to_head_analysis(deliveries_df=None):
                 st.metric("Matches", matchup_stats['matches'].iloc[0])
                 st.metric("Dominance Ratio", f"{matchup_stats['dominance_ratio'].iloc[0]:.2f}")
         else:
-            st.info("No data available for this matchup")
+            st.info(f"No data available for the matchup between {selected_batsman} and {selected_bowler}")
     
     # Top Matchups Tab
     with analysis_tabs[1]:
@@ -875,29 +896,37 @@ def display_head_to_head_analysis(deliveries_df=None):
         
         with col1:
             # Most dominant batting performances
-            fig = px.bar(
-                filtered_stats.nlargest(10, 'dominance_ratio'),
-                x='batsman',
-                y='dominance_ratio',
-                color='bowler',
-                title='Top 10 Dominant Batting Performances',
-                hover_data=['runs', 'balls', 'dismissals']
-            )
-            fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            top_batting = filtered_stats.nlargest(10, 'dominance_ratio')
+            if not top_batting.empty:
+                fig = px.bar(
+                    top_batting,
+                    x='batsman',
+                    y='dominance_ratio',
+                    color='bowler',
+                    title='Top 10 Dominant Batting Performances',
+                    hover_data=['runs', 'balls', 'dismissals']
+                )
+                fig.update_layout(xaxis_tickangle=-45)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No data available for dominant batting performances")
         
         with col2:
             # Most dominant bowling performances
-            fig = px.bar(
-                filtered_stats.nsmallest(10, 'strike_rate'),
-                x='bowler',
-                y='strike_rate',
-                color='batsman',
-                title='Top 10 Dominant Bowling Performances',
-                hover_data=['runs', 'balls', 'dismissals']
-            )
-            fig.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig, use_container_width=True)
+            top_bowling = filtered_stats.nsmallest(10, 'strike_rate')
+            if not top_bowling.empty:
+                fig = px.bar(
+                    top_bowling,
+                    x='bowler',
+                    y='strike_rate',
+                    color='batsman',
+                    title='Top 10 Dominant Bowling Performances',
+                    hover_data=['runs', 'balls', 'dismissals']
+                )
+                fig.update_layout(xaxis_tickangle=-45)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No data available for dominant bowling performances")
     
     # Matchup Matrix Tab
     with analysis_tabs[2]:
@@ -907,13 +936,13 @@ def display_head_to_head_analysis(deliveries_df=None):
         selected_batsmen = st.multiselect(
             "Select batsmen",
             options=sorted(filtered_stats['batsman'].unique()),
-            default=sorted(filtered_stats['batsman'].unique())[:5]
+            default=sorted(filtered_stats['batsman'].unique())[:min(5, len(filtered_stats['batsman'].unique()))]
         )
         
         selected_bowlers = st.multiselect(
             "Select bowlers",
             options=sorted(filtered_stats['bowler'].unique()),
-            default=sorted(filtered_stats['bowler'].unique())[:5]
+            default=sorted(filtered_stats['bowler'].unique())[:min(5, len(filtered_stats['bowler'].unique()))]
         )
         
         if selected_batsmen and selected_bowlers:
@@ -923,30 +952,23 @@ def display_head_to_head_analysis(deliveries_df=None):
                 (filtered_stats['bowler'].isin(selected_bowlers))
             ]
             
-            # Create matrix for strike rate
-            strike_rate_matrix = matrix_data.pivot(
-                index='batsman',
-                columns='bowler',
-                values='strike_rate'
-            ).fillna(0)
-            
-            # Create heatmap
-            fig = px.imshow(
-                strike_rate_matrix,
-                title='Strike Rate Matrix',
-                labels=dict(x="Bowler", y="Batsman", color="Strike Rate"),
-                aspect="auto"
-            )
-            st.plotly_chart(fig, use_container_width=True)
-            
-            # Display detailed stats
-            st.subheader("Detailed Matchup Statistics")
-            detailed_stats = matrix_data[['batsman', 'bowler', 'runs', 'balls', 'dismissals', 'strike_rate', 'average']]
-            detailed_stats = detailed_stats.sort_values(['batsman', 'bowler'])
-            st.dataframe(
-                detailed_stats.style.format({
-                    'strike_rate': '{:.2f}',
-                    'average': '{:.2f}'
-                }),
-                use_container_width=True
-            ) 
+            if not matrix_data.empty:
+                # Create matrix for strike rate
+                strike_rate_matrix = matrix_data.pivot(
+                    index='batsman',
+                    columns='bowler',
+                    values='strike_rate'
+                ).fillna(0)
+                
+                # Create heatmap
+                fig = px.imshow(
+                    strike_rate_matrix,
+                    title='Strike Rate Matrix',
+                    labels=dict(x="Bowler", y="Batsman", color="Strike Rate"),
+                    aspect="auto"
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No data available for the selected players")
+        else:
+            st.info("Please select at least one batsman and one bowler") 
