@@ -36,6 +36,45 @@ def load_precomputed_json(file_path: Path) -> Dict:
         print(f"Error loading precomputed data from {file_path}: {e}")
         return {}
 
+def load_precomputed_parquet(file_path: Path) -> Dict:
+    """
+    Load precomputed data from a Parquet file.
+    
+    Args:
+        file_path (Path): Path to the Parquet file.
+        
+    Returns:
+        Dict: Loaded data or empty dict if file not found.
+    """
+    # Convert file_path from .json to .parquet if needed
+    if str(file_path).endswith('.json'):
+        parquet_path = Path(str(file_path).replace('.json', '.parquet'))
+    else:
+        parquet_path = file_path
+    
+    try:
+        if parquet_path.exists():
+            df = pd.read_parquet(parquet_path)
+            # Convert DataFrame to dict
+            if len(df) == 1:
+                # If it's a single row DataFrame (converted from a dict)
+                return df.iloc[0].to_dict()
+            else:
+                # If it's a multi-row DataFrame (converted from a list)
+                return df.to_dict(orient='records')
+        else:
+            # Try to fall back to JSON if Parquet doesn't exist
+            if file_path.exists():
+                return load_precomputed_json(file_path)
+            print(f"Warning: Precomputed file not found: {parquet_path}")
+            return {}
+    except Exception as e:
+        print(f"Error loading precomputed data from {parquet_path}: {e}")
+        # Try to fall back to JSON if Parquet loading fails
+        if file_path.exists():
+            return load_precomputed_json(file_path)
+        return {}
+
 def load_dream_team_all_time_stats() -> pd.DataFrame:
     """
     Load precomputed all-time dream team statistics.
@@ -45,9 +84,39 @@ def load_dream_team_all_time_stats() -> pd.DataFrame:
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_all_time_stats.json'
-    data = load_precomputed_json(file_path)
-    if data:
-        return pd.DataFrame(data)
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file might have a different structure
+            df = pd.read_parquet(parquet_path)
+            
+            # If it's a DataFrame with a single column containing the data
+            if len(df.columns) == 1 and isinstance(df.iloc[0, 0], (list, np.ndarray)):
+                return pd.DataFrame(df.iloc[0, 0])
+            
+            # If it's already a proper DataFrame with player data
+            elif 'player' in df.columns:
+                return df
+            
+            # If it's a DataFrame with a single row containing the data
+            elif len(df) == 1:
+                for col in df.columns:
+                    if isinstance(df.iloc[0][col], (list, np.ndarray)):
+                        return pd.DataFrame(df.iloc[0][col])
+            
+            return df
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        data = load_precomputed_json(file_path)
+        if data:
+            return pd.DataFrame(data)
+    
     return pd.DataFrame()
 
 def load_dream_team_season_stats(season: int) -> pd.DataFrame:
@@ -55,16 +124,36 @@ def load_dream_team_season_stats(season: int) -> pd.DataFrame:
     Load precomputed season-specific dream team statistics.
     
     Args:
-        season (int): Season year.
+        season (int): IPL season year.
         
     Returns:
         pd.DataFrame: DataFrame containing season-specific player statistics.
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_season_stats.json'
-    data = load_precomputed_json(file_path)
-    if data and str(season) in data:
-        return pd.DataFrame(data[str(season)])
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file has a different structure - it's a DataFrame with season columns
+            df = pd.read_parquet(parquet_path)
+            if str(season) in df.columns:
+                # Extract the array from the first row of the season column
+                season_data = df.iloc[0][str(season)]
+                if isinstance(season_data, (list, np.ndarray)):
+                    return pd.DataFrame(season_data)
+            return pd.DataFrame()
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        data = load_precomputed_json(file_path)
+        if data and str(season) in data:
+            return pd.DataFrame(data[str(season)])
+    
     return pd.DataFrame()
 
 def load_dream_team_venue_stats(venue: str) -> pd.DataFrame:
@@ -72,62 +161,170 @@ def load_dream_team_venue_stats(venue: str) -> pd.DataFrame:
     Load precomputed venue-specific dream team statistics.
     
     Args:
-        venue (str): Venue name.
+        venue (str): Stadium/venue name.
         
     Returns:
         pd.DataFrame: DataFrame containing venue-specific player statistics.
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_venue_stats.json'
-    data = load_precomputed_json(file_path)
-    if data and venue in data:
-        return pd.DataFrame(data[venue])
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file has a different structure - it's a DataFrame with venue columns or rows
+            df = pd.read_parquet(parquet_path)
+            
+            # Check if venues are columns
+            if venue in df.columns:
+                venue_data = df.iloc[0][venue]
+                if isinstance(venue_data, (list, np.ndarray)):
+                    return pd.DataFrame(venue_data)
+            
+            # Check if venues are in a 'venue' column
+            elif 'venue' in df.columns:
+                venue_data = df[df['venue'] == venue]
+                if not venue_data.empty:
+                    return venue_data
+                
+            return pd.DataFrame()
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        data = load_precomputed_json(file_path)
+        if data and venue in data:
+            return pd.DataFrame(data[venue])
+    
     return pd.DataFrame()
 
 def load_dream_team_player_history(player: str) -> pd.DataFrame:
     """
-    Load precomputed player history.
+    Load precomputed player history for dream team.
     
     Args:
-        player (str): Player's name.
+        player (str): Player name.
         
     Returns:
-        pd.DataFrame: DataFrame containing the player's history of dream team appearances.
+        pd.DataFrame: DataFrame containing player's match history.
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_player_history.json'
-    data = load_precomputed_json(file_path)
-    if data and player in data:
-        return pd.DataFrame(data[player])
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file has a different structure - it's a DataFrame with player columns or rows
+            df = pd.read_parquet(parquet_path)
+            
+            # Check if players are columns
+            if player in df.columns:
+                player_data = df.iloc[0][player]
+                if isinstance(player_data, (list, np.ndarray)):
+                    return pd.DataFrame(player_data)
+            
+            # Check if players are in a 'player' column
+            elif 'player' in df.columns:
+                player_data = df[df['player'] == player]
+                if not player_data.empty:
+                    return player_data
+                
+            return pd.DataFrame()
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        data = load_precomputed_json(file_path)
+        if data and player in data:
+            return pd.DataFrame(data[player])
+    
     return pd.DataFrame()
 
 def load_dream_team_match_team(match_id: str) -> pd.DataFrame:
     """
-    Load precomputed match dream team.
+    Load precomputed dream team for a specific match.
     
     Args:
         match_id (str): Match ID.
         
     Returns:
-        pd.DataFrame: DataFrame containing the dream team for the match.
+        pd.DataFrame: DataFrame containing dream team for the match.
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_match_teams.json'
-    data = load_precomputed_json(file_path)
-    if data and str(match_id) in data:
-        return pd.DataFrame(data[str(match_id)])
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file has a different structure - it's a DataFrame with match_id columns or rows
+            df = pd.read_parquet(parquet_path)
+            
+            # Check if match_ids are columns
+            if match_id in df.columns:
+                match_data = df.iloc[0][match_id]
+                if isinstance(match_data, (list, np.ndarray)):
+                    return pd.DataFrame(match_data)
+            
+            # Check if match_ids are in a 'match_id' column
+            elif 'match_id' in df.columns:
+                match_data = df[df['match_id'] == match_id]
+                if not match_data.empty:
+                    return match_data
+                
+            return pd.DataFrame()
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        data = load_precomputed_json(file_path)
+        if data and str(match_id) in data:
+            return pd.DataFrame(data[str(match_id)])
+    
     return pd.DataFrame()
 
 def load_dream_team_all_matches() -> Dict[int, List[Dict]]:
     """
-    Load precomputed all matches dream teams.
+    Load precomputed dream teams for all matches.
     
     Returns:
-        Dict[int, List[Dict]]: Dictionary mapping season to a list of match entries.
+        Dict[int, List[Dict]]: Dictionary mapping seasons to lists of match dream teams.
     """
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     file_path = data_dir / 'dream_team_all_matches.json'
-    return load_precomputed_json(file_path)
+    
+    # Try to load from Parquet first
+    parquet_path = file_path.with_suffix('.parquet')
+    if parquet_path.exists():
+        try:
+            # The Parquet file has a different structure - it's a DataFrame with season columns
+            df = pd.read_parquet(parquet_path)
+            
+            # Convert DataFrame back to dictionary
+            result = {}
+            for col in df.columns:
+                if isinstance(df.iloc[0][col], (list, np.ndarray)):
+                    result[col] = df.iloc[0][col].tolist()
+            
+            if result:
+                return result
+        except Exception as e:
+            print(f"Error loading Parquet file: {e}")
+            # Fall back to JSON
+    
+    # Fall back to JSON if Parquet loading fails
+    if file_path.exists():
+        return load_precomputed_json(file_path)
+    
+    return {}
 
 @st.cache_data
 def load_dream_team_data() -> Tuple[pd.DataFrame, pd.DataFrame, Dict[str, Dict]]:
@@ -143,10 +340,10 @@ def load_dream_team_data() -> Tuple[pd.DataFrame, pd.DataFrame, Dict[str, Dict]]
     data_dir = Path(__file__).resolve().parent.parent / 'data'
     
     # Load match data
-    matches_df = pd.read_csv(data_dir / 'matches.csv')
+    matches_df = pd.read_parquet(data_dir / 'matches.parquet')
     
     # Load dream team data
-    dream_team_df = pd.read_csv(data_dir / 'dream_team_stats.csv')
+    dream_team_df = pd.read_parquet(data_dir / 'dream_team_stats.parquet')
     
     # Create match info dictionary for quick lookup
     match_info = {}

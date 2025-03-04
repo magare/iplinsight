@@ -12,17 +12,17 @@ def load_team_analysis_data():
     base_path = Path(__file__).resolve().parent.parent / "data"
     
     # Load pre-computed datasets
-    team_stats = pd.read_csv(base_path / "team_stats.csv")
-    batting_first_stats = pd.read_csv(base_path / "batting_first_stats.csv")
-    nrr_data = pd.read_csv(base_path / "nrr_data.csv")
-    avg_nrr_by_season = pd.read_csv(base_path / "avg_nrr_by_season.csv")
-    playoff_stats = pd.read_csv(base_path / "playoff_stats.csv")
+    team_stats = pd.read_parquet(base_path / "team_stats.parquet")
+    batting_first_stats = pd.read_parquet(base_path / "batting_first_stats.parquet")
+    nrr_data = pd.read_parquet(base_path / "nrr_data.parquet")
+    avg_nrr_by_season = pd.read_parquet(base_path / "avg_nrr_by_season.parquet")
+    playoff_stats = pd.read_parquet(base_path / "playoff_stats.parquet")
     
     # Special handling for the head-to-head matrix which has teams as index
-    head_to_head_matrix = pd.read_csv(base_path / "head_to_head_matrix.csv", index_col=0)
+    head_to_head_matrix = pd.read_parquet(base_path / "head_to_head_matrix.parquet")
     
-    venue_team_stats = pd.read_csv(base_path / "venue_team_stats.csv")
-    team_phase_stats = pd.read_csv(base_path / "team_phase_stats.csv")
+    venue_team_stats = pd.read_parquet(base_path / "venue_team_stats.parquet")
+    team_phase_stats = pd.read_parquet(base_path / "team_phase_stats.parquet")
     
     return {
         'team_stats': team_stats,

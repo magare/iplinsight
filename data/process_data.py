@@ -1192,3 +1192,53 @@ if not os.path.exists(app_data_dir / 'dream_team_stats.parquet'):
     print("Computing dream team data...")
     create_dream_team_dataset_from_dataframes(all_match_df, all_delivery_df)
     print("Dream team data processing complete!")
+
+def convert_json_to_parquet():
+    """
+    Convert all JSON files in the app/data directory to Parquet format.
+    This function is used to optimize data loading in the app.
+    """
+    # Get the app/data directory
+    app_data_dir = Path(__file__).resolve().parent.parent / "app" / "data"
+    
+    # Find all JSON files in the directory
+    json_files = list(app_data_dir.glob("*.json"))
+    
+    if not json_files:
+        print("No JSON files found in app/data directory")
+        return
+    
+    print(f"Found {len(json_files)} JSON files to convert")
+    
+    # Convert each JSON file to Parquet
+    for json_file in json_files:
+        parquet_file = json_file.with_suffix(".parquet")
+        print(f"Converting {json_file} to {parquet_file}")
+        
+        # Load JSON data
+        with open(json_file, 'r') as f:
+            data = json.load(f)
+        
+        # Convert to DataFrame if it's a list or dict with uniform structure
+        if isinstance(data, list):
+            df = pd.DataFrame(data)
+        elif isinstance(data, dict):
+            # For nested dictionaries, we need to handle differently
+            # Option 1: Convert to a single row DataFrame with each key as a column
+            df = pd.DataFrame([data])
+        else:
+            print(f"Unsupported JSON structure in {json_file}")
+            continue
+        
+        # Write to Parquet
+        df.to_parquet(parquet_file, compression='snappy')
+        print(f"Successfully converted {json_file} to {parquet_file}")
+    
+    print("All JSON files have been converted to Parquet format")
+
+if __name__ == "__main__":
+    # Add a command-line argument to convert JSON to Parquet
+    if len(sys.argv) > 1 and sys.argv[1] == "--convert-json-to-parquet":
+        convert_json_to_parquet()
+    else:
+        main()

@@ -43,25 +43,66 @@ def load_precomputed_json(filename):
         st.error(f"Error loading {filename}: {str(e)}")
         return {}
 
+def load_precomputed_parquet(filename):
+    """
+    Load precomputed data from Parquet files.
+    
+    Args:
+        filename (str): Name of the Parquet file to load.
+        
+    Returns:
+        dict: Dictionary containing the loaded data.
+    """
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    
+    # Convert filename from .json to .parquet if needed
+    if filename.endswith('.json'):
+        parquet_filename = filename.replace('.json', '.parquet')
+    else:
+        parquet_filename = filename
+        
+    file_path = data_dir / parquet_filename
+    
+    if not os.path.exists(file_path):
+        # Try to fall back to JSON if Parquet doesn't exist
+        json_path = data_dir / filename.replace('.parquet', '.json')
+        if os.path.exists(json_path):
+            return load_precomputed_json(filename.replace('.parquet', '.json'))
+        st.error(f"Precomputed data file not found: {parquet_filename}")
+        return {}
+    
+    try:
+        df = pd.read_parquet(file_path)
+        # Convert DataFrame to dict
+        if len(df) == 1:
+            # If it's a single row DataFrame (converted from a dict)
+            return df.iloc[0].to_dict()
+        else:
+            # If it's a multi-row DataFrame (converted from a list)
+            return df.to_dict(orient='records')
+    except Exception as e:
+        st.error(f"Error loading {parquet_filename}: {str(e)}")
+        return {}
+
 def load_venue_metadata():
     """Load precomputed venue metadata."""
-    return load_precomputed_json('venue_metadata.json')
+    return load_precomputed_parquet('venue_metadata.json')
 
 def load_venue_team_performance():
-    """Load precomputed team performance at venues."""
-    return load_precomputed_json('venue_team_performance.json')
+    """Load precomputed venue team performance data."""
+    return load_precomputed_parquet('venue_team_performance.json')
 
 def load_venue_scoring_patterns():
-    """Load precomputed scoring patterns for venues."""
-    return load_precomputed_json('venue_scoring_patterns.json')
+    """Load precomputed venue scoring patterns data."""
+    return load_precomputed_parquet('venue_scoring_patterns.json')
 
 def load_venue_toss_impact():
-    """Load precomputed toss impact for venues."""
-    return load_precomputed_json('venue_toss_impact.json')
+    """Load precomputed venue toss impact data."""
+    return load_precomputed_parquet('venue_toss_impact.json')
 
 def load_venue_weather_impact():
-    """Load precomputed weather impact for venues."""
-    return load_precomputed_json('venue_weather_impact.json')
+    """Load precomputed venue weather impact data."""
+    return load_precomputed_parquet('venue_weather_impact.json')
 
 # ---------------------------
 # Legacy Calculation Functions (Kept for reference)

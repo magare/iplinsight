@@ -19,28 +19,29 @@ from utils.chart_utils import responsive_plotly_chart, update_chart_for_responsi
 
 def load_precomputed_data(filename):
     """
-    Load precomputed data from CSV files.
+    Load precomputed data from Parquet files.
     
     Args:
-        filename (str): Name of the CSV file to load.
+        filename (str): Name of the file to load.
         
     Returns:
         pd.DataFrame: DataFrame containing the loaded data.
     """
     data_dir = Path(__file__).resolve().parent.parent / "data"
+    
+    # Convert legacy filename to parquet if needed
+    if filename.endswith('.csv'):
+        filename = filename.replace('.csv', '.parquet')
+    
     file_path = data_dir / filename
     
     if not os.path.exists(file_path):
         st.error(f"Precomputed data file not found: {filename}")
         return pd.DataFrame()
     
-    # Handle index columns for certain files
-    if filename in ['season_standings.csv', 'season_points_progression.csv',
-                   'season_batting_stats.csv', 'season_bowling_stats.csv',
-                   'season_fielding_stats.csv', 'season_all_round_stats.csv']:
-        return pd.read_csv(file_path, index_col=0)
-    else:
-        return pd.read_csv(file_path)
+    # All parquet files can be loaded with a single method, no need to handle index separately
+    # as parquet preserves the index information
+    return pd.read_parquet(file_path)
 
 # ---------------------------
 # Season Stats Loading Functions
@@ -49,36 +50,36 @@ def load_precomputed_data(filename):
 def load_season_stats(season):
     """
     Load precomputed season statistics.
-
+    
     Args:
-        season: The season to load statistics for.
+        season (int): Season year to load data for.
         
     Returns:
         dict: Dictionary containing various season statistics.
     """
-    # Load basic season stats
-    season_stats = load_precomputed_data(f'season_{season}_stats.csv')
+    # Load season stats
+    season_stats = load_precomputed_data(f'season_{season}_stats.parquet')
     
-    # Load team standings
-    standings = load_precomputed_data(f'season_{season}_standings.csv')
+    # Load standings
+    standings = load_precomputed_data(f'season_{season}_standings.parquet')
     
     # Load key matches
-    key_matches = load_precomputed_data(f'season_{season}_key_matches.csv')
+    key_matches = load_precomputed_data(f'season_{season}_key_matches.parquet')
     
     # Load batting stats
-    batting_stats = load_precomputed_data(f'season_{season}_batting_stats.csv')
+    batting_stats = load_precomputed_data(f'season_{season}_batting_stats.parquet')
     
     # Load bowling stats
-    bowling_stats = load_precomputed_data(f'season_{season}_bowling_stats.csv')
+    bowling_stats = load_precomputed_data(f'season_{season}_bowling_stats.parquet')
     
     # Load fielding stats
-    fielding_stats = load_precomputed_data(f'season_{season}_fielding_stats.csv')
+    fielding_stats = load_precomputed_data(f'season_{season}_fielding_stats.parquet')
     
     # Load all-round stats
-    all_round_stats = load_precomputed_data(f'season_{season}_all_round_stats.csv')
+    all_round_stats = load_precomputed_data(f'season_{season}_all_round_stats.parquet')
     
     # Load points progression
-    points_progression = load_precomputed_data(f'season_{season}_points_progression.csv')
+    points_progression = load_precomputed_data(f'season_{season}_points_progression.parquet')
     
     return {
         'season_stats': season_stats,

@@ -10,14 +10,14 @@ def load_player_analysis_data():
     base_path = Path(__file__).resolve().parent.parent / "data"
     
     # Load pre-computed datasets
-    batting_stats = pd.read_csv(base_path / "player_batting_stats.csv")
-    batting_phase_stats = pd.read_csv(base_path / "player_batting_phase_stats.csv")
-    position_stats = pd.read_csv(base_path / "player_position_stats.csv")
-    bowling_stats = pd.read_csv(base_path / "player_bowling_stats.csv")
-    wicket_types = pd.read_csv(base_path / "player_wicket_types.csv")
-    bowling_phase_stats = pd.read_csv(base_path / "player_bowling_phase_stats.csv")
-    allrounder_stats = pd.read_csv(base_path / "player_allrounder_stats.csv")
-    h2h_stats = pd.read_csv(base_path / "player_h2h_stats.csv")
+    batting_stats = pd.read_parquet(base_path / "player_batting_stats.parquet")
+    batting_phase_stats = pd.read_parquet(base_path / "player_batting_phase_stats.parquet")
+    position_stats = pd.read_parquet(base_path / "player_position_stats.parquet")
+    bowling_stats = pd.read_parquet(base_path / "player_bowling_stats.parquet")
+    wicket_types = pd.read_parquet(base_path / "player_wicket_types.parquet")
+    bowling_phase_stats = pd.read_parquet(base_path / "player_bowling_phase_stats.parquet")
+    allrounder_stats = pd.read_parquet(base_path / "player_allrounder_stats.parquet")
+    h2h_stats = pd.read_parquet(base_path / "player_h2h_stats.parquet")
     
     return {
         'batting_stats': batting_stats,
@@ -649,8 +649,6 @@ def calculate_allrounder_stats(deliveries_df=None):
         
         # Calculate overall all-rounder score
         allrounders['allrounder_score'] = (allrounders['batting_score'] + allrounders['bowling_score']) / 2
-        
-        return allrounders
 
 def display_allrounder_analysis(deliveries_df=None):
     """Display comprehensive all-rounder analysis using pre-computed data when available."""
