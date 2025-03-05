@@ -179,24 +179,60 @@ def calculate_position_stats(deliveries_df=None):
         return position_stats
 
 def display_batting_analysis(deliveries_df=None):
-    """Display comprehensive batting analysis using pre-computed data when available."""
+    """Display batting analysis dashboard"""
     st.subheader("Batting Analysis")
     
-    # Calculate all batting statistics
+    # Add custom CSS to fix tab styling
+    st.markdown("""
+    <style>
+    /* Fix for red underline in tabs */
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+    .st-emotion-cache-1inwz65,
+    .st-emotion-cache-1y4pk3h,
+    .st-emotion-cache-16idsys {
+        display: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: none !important;
+    }
+    
+    /* Fix for button hover */
+    [data-testid="stTabs"] [role="tab"] {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 5px !important;
+    }
+    
+    [data-testid="stTabs"] [role="tab"]:hover {
+        z-index: 100 !important;
+        transform: translateY(-2px) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Load data
+    if deliveries_df is None:
+        st.error("No data available for analysis")
+        return
+    
+    # Calculate stats
     batting_stats = calculate_batting_stats(deliveries_df)
     milestone_stats = calculate_milestone_stats(deliveries_df)
     phase_stats = calculate_phase_stats(deliveries_df)
     position_stats = calculate_position_stats(deliveries_df)
     
-    # Merge milestone stats if they're not already merged
-    if 'thirties' not in batting_stats.columns:
-        batting_stats = pd.merge(batting_stats, milestone_stats, on='batter')
+    # Filters
+    st.markdown("### Filter Players")
+    col1, col2 = st.columns(2)
+    with col1:
+        min_matches = st.slider("Minimum Matches", 1, 100, 10)
+    with col2:
+        min_runs = st.slider("Minimum Runs", 0, 5000, 200)
     
-    # Filter options
-    min_matches = st.slider("Minimum matches played", 1, 100, 20)
-    min_runs = st.slider("Minimum runs scored", 100, 5000, 500)
-    
-    # Filter data
+    # Filter data based on user selection
     filtered_stats = batting_stats[
         (batting_stats['matches_batting'] >= min_matches) & 
         (batting_stats['runs'] >= min_runs)
@@ -448,19 +484,59 @@ def calculate_bowling_phase_stats(deliveries_df=None):
         return phase_stats
 
 def display_bowling_analysis(deliveries_df=None):
-    """Display comprehensive bowling analysis using pre-computed data when available."""
+    """Display bowling analysis dashboard"""
     st.subheader("Bowling Analysis")
     
-    # Calculate all bowling statistics
+    # Add custom CSS to fix tab styling
+    st.markdown("""
+    <style>
+    /* Fix for red underline in tabs */
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+    .st-emotion-cache-1inwz65,
+    .st-emotion-cache-1y4pk3h,
+    .st-emotion-cache-16idsys {
+        display: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: none !important;
+    }
+    
+    /* Fix for button hover */
+    [data-testid="stTabs"] [role="tab"] {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 5px !important;
+    }
+    
+    [data-testid="stTabs"] [role="tab"]:hover {
+        z-index: 100 !important;
+        transform: translateY(-2px) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Load data
+    if deliveries_df is None:
+        st.error("No data available for analysis")
+        return
+    
+    # Calculate stats
     bowling_stats = calculate_bowling_stats(deliveries_df)
     wicket_types = calculate_wicket_types(deliveries_df)
     phase_stats = calculate_bowling_phase_stats(deliveries_df)
     
-    # Filter options
-    min_overs = st.slider("Minimum overs bowled", 10, 500, 50)
-    min_wickets = st.slider("Minimum wickets taken", 1, 100, 20)
+    # Filters
+    st.markdown("### Filter Players")
+    col1, col2 = st.columns(2)
+    with col1:
+        min_overs = st.slider("Minimum overs bowled", 10, 500, 50)
+    with col2:
+        min_wickets = st.slider("Minimum wickets taken", 1, 100, 20)
     
-    # Filter data
+    # Filter data based on user selection
     filtered_stats = bowling_stats[
         (bowling_stats['overs'] >= min_overs) & 
         (bowling_stats['is_wicket'] >= min_wickets)
@@ -652,26 +728,61 @@ def calculate_allrounder_stats(deliveries_df=None):
         allrounders['allrounder_score'] = (allrounders['batting_score'] + allrounders['bowling_score']) / 2
 
 def display_allrounder_analysis(deliveries_df=None):
-    """Display comprehensive all-rounder analysis using pre-computed data when available."""
+    """Display all-rounder analysis dashboard"""
     st.subheader("All-Rounder Analysis")
     
-    # Calculate all-rounder statistics
+    # Add custom CSS to fix tab styling
+    st.markdown("""
+    <style>
+    /* Fix for red underline in tabs */
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+    .st-emotion-cache-1inwz65,
+    .st-emotion-cache-1y4pk3h,
+    .st-emotion-cache-16idsys {
+        display: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: none !important;
+    }
+    
+    /* Fix for button hover */
+    [data-testid="stTabs"] [role="tab"] {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 5px !important;
+    }
+    
+    [data-testid="stTabs"] [role="tab"]:hover {
+        z-index: 100 !important;
+        transform: translateY(-2px) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Load data
+    if deliveries_df is None:
+        st.error("No data available for analysis")
+        return
+    
+    # Calculate stats
     allrounder_stats = calculate_allrounder_stats(deliveries_df)
     
-    # Filter options
-    min_batting_runs = st.slider("Minimum batting runs", 100, 2000, 500)
-    min_wickets = st.slider("Minimum wickets", 10, 100, 20)
+    # Filters
+    st.markdown("### Filter Players")
+    col1, col2 = st.columns(2)
+    with col1:
+        min_batting_runs = st.slider("Minimum batting runs", 100, 2000, 500)
+    with col2:
+        min_wickets = st.slider("Minimum wickets", 10, 100, 20)
     
-    # Filter data
+    # Filter data based on user selection
     filtered_stats = allrounder_stats[
         (allrounder_stats['batting_runs'] >= min_batting_runs) & 
         (allrounder_stats['wickets'] >= min_wickets)
     ]
-    
-    # Check if there are any players that meet the criteria
-    if filtered_stats.empty:
-        st.warning("No players match the selected criteria. Please adjust the filters.")
-        return
     
     # Create tabs for different analyses
     analysis_tabs = st.tabs([
@@ -820,22 +931,61 @@ def calculate_head_to_head_stats(deliveries_df=None):
         return h2h_stats
 
 def display_head_to_head_analysis(deliveries_df=None):
-    """Display head-to-head analysis between batsmen and bowlers using pre-computed data when available."""
+    """Display head-to-head analysis dashboard"""
     st.subheader("Head-to-Head Analysis")
     
-    # Calculate head-to-head statistics
+    # Add custom CSS to fix tab styling
+    st.markdown("""
+    <style>
+    /* Fix for red underline in tabs */
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+    .st-emotion-cache-1inwz65,
+    .st-emotion-cache-1y4pk3h,
+    .st-emotion-cache-16idsys {
+        display: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: none !important;
+    }
+    
+    /* Fix for button hover */
+    [data-testid="stTabs"] [role="tab"] {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 5px !important;
+    }
+    
+    [data-testid="stTabs"] [role="tab"]:hover {
+        z-index: 100 !important;
+        transform: translateY(-2px) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Load data
+    if deliveries_df is None:
+        st.error("No data available for analysis")
+        return
+    
+    # Calculate stats
     h2h_stats = calculate_head_to_head_stats(deliveries_df)
     
-    # Filter options
-    min_balls = st.slider("Minimum balls faced", 6, 100, 12)  # At least 2 overs
+    # Filters
+    st.markdown("### Filter Players")
+    col1, col2 = st.columns(2)
+    with col1:
+        min_balls = st.slider("Minimum balls faced", 6, 100, 12)  # At least 2 overs
+    with col2:
+        min_runs = st.slider("Minimum runs scored", 0, 5000, 200)
     
-    # Filter data
-    filtered_stats = h2h_stats[h2h_stats['balls'] >= min_balls]
-    
-    # Check if there are any matchups that meet the criteria
-    if filtered_stats.empty:
-        st.warning("No matchups meet the selected criteria. Please adjust the filters.")
-        return
+    # Filter data based on user selection
+    filtered_stats = h2h_stats[
+        (h2h_stats['balls'] >= min_balls) & 
+        (h2h_stats['runs'] >= min_runs)
+    ]
     
     # Create tabs for different analyses
     analysis_tabs = st.tabs([

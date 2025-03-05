@@ -2,6 +2,7 @@ import streamlit as st
 import json
 from typing import Dict, Any, Optional, Union
 from .color_palette import NEON_COLORS, CHART_STYLING, apply_neon_style
+import plotly.graph_objects as go
 
 def get_device_type() -> str:
     """

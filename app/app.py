@@ -40,6 +40,40 @@ def load_css():
     css_file = Path(__file__).parent / "static" / "style.css"
     with open(css_file) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
+    # Add additional CSS to fix tab underline and button hover issues
+    st.markdown("""
+    <style>
+    /* Fix for red underline in tabs */
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+    [data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+    .st-emotion-cache-1inwz65,
+    .st-emotion-cache-1y4pk3h,
+    .st-emotion-cache-16idsys,
+    .st-emotion-cache-1inwz65 div,
+    .st-emotion-cache-1y4pk3h div,
+    .st-emotion-cache-16idsys div {
+        display: none !important;
+        border: none !important;
+        border-bottom: none !important;
+        background: none !important;
+    }
+    
+    /* Fix for button hover */
+    button, .stButton > button, [data-testid="stTabs"] button, [data-testid="stTabs"] [role="tab"] {
+        position: relative !important;
+        z-index: 10 !important;
+        margin-top: 5px !important;
+    }
+    
+    button:hover, .stButton > button:hover, [data-testid="stTabs"] button:hover, [data-testid="stTabs"] [role="tab"]:hover {
+        z-index: 100 !important;
+        transform: translateY(-2px) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 try:
     load_css()
@@ -226,6 +260,35 @@ st.sidebar.markdown(f"""
     <p>Data from {season_range} IPL seasons</p>
     <p>Data source: <a href="https://cricsheet.org/" target="_blank">CricSheet</a></p>
 </div>
+""", unsafe_allow_html=True)
+
+# Apply custom styling to fix tab underline issue
+st.markdown("""
+<style>
+/* Fix for the red underline in the main tabs */
+.st-emotion-cache-1inwz65, 
+.st-emotion-cache-1y4pk3h,
+.st-emotion-cache-16idsys,
+div[data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+div[data-testid="stTabs"] [role="tab"][aria-selected="true"]::before {
+    border-bottom-color: transparent !important;
+    border-bottom: none !important;
+    background: none !important;
+    display: none !important;
+}
+
+/* Fix for button hover issue */
+button, .stButton > button, [data-testid="stTabs"] button, [data-testid="stTabs"] [role="tab"] {
+    position: relative !important;
+    z-index: 10 !important;
+    margin-top: 5px !important;
+}
+
+button:hover, .stButton > button:hover, [data-testid="stTabs"] button:hover, [data-testid="stTabs"] [role="tab"]:hover {
+    z-index: 100 !important;
+    transform: translateY(-2px) !important;
+}
+</style>
 """, unsafe_allow_html=True)
 
 if selected_tab == "Overview":

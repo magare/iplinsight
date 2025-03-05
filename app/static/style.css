@@ -58,94 +58,140 @@ h3 {
 }
 
 /* Style for all buttons */
-button, .stButton > button {
+button, .stButton > button, [data-testid="stTabs"] button {
     background-color: rgba(15, 15, 35, 0.8) !important;
     color: #ff9900 !important;  /* Neon orange */
     border: 1px solid rgba(255, 153, 0, 0.5) !important;
     border-radius: 6px !important;
     box-shadow: 0 0 10px rgba(255, 153, 0, 0.3) !important;
     transition: all 0.3s ease !important;
+    position: relative !important;
+    z-index: 10 !important;
+    margin-top: 5px !important; /* Add margin to prevent overlap */
 }
 
-button:hover, .stButton > button:hover {
+button:hover, .stButton > button:hover, [data-testid="stTabs"] button:hover {
     background-color: rgba(25, 25, 55, 0.9) !important;
     box-shadow: 0 0 15px rgba(255, 153, 0, 0.6) !important;
     transform: translateY(-2px) !important;
+    z-index: 100 !important; /* Very high z-index to ensure it's on top */
 }
 
-/* Fix for tab buttons with overflowing text */
-[data-testid="stTabs"] button {
-    min-width: auto !important;
-    padding: 0.75rem 1rem !important;
-    height: auto !important;
-    white-space: normal !important;
+/* ===== COMPLETELY OVERRIDE STREAMLIT TAB STYLING ===== */
+
+/* Tab container */
+[data-testid="stTabs"] {
+    position: relative !important;
+    z-index: 1 !important;
+    margin-bottom: 20px !important;
+}
+
+/* Tab list container */
+[data-testid="stTabs"] [role="tablist"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 5px !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 15px !important;
+    position: relative !important;
+    z-index: 5 !important;
+    border-bottom: none !important;
+    background: none !important;
+}
+
+/* Individual tab buttons */
+[data-testid="stTabs"] [role="tab"] {
+    flex: 0 0 auto !important;
+    min-width: 120px !important;
     min-height: 50px !important;
-    line-height: 1.2 !important;
-    flex-grow: 1 !important;
+    padding: 10px 15px !important;
+    margin: 0 3px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(255, 153, 0, 0.5) !important;
+    background-color: rgba(15, 15, 35, 0.8) !important;
+    color: #ff9900 !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    z-index: 10 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    text-align: center !important;
+    margin-top: 5px !important;
 }
 
-/* Make tab lists scrollable on smaller screens */
-[data-testid="stTabs"] [role="tablist"] {
-    flex-wrap: nowrap !important; /* Changed back to nowrap for horizontal scrolling */
-    overflow-x: auto !important; /* Enable horizontal scrolling */
-    overflow-y: hidden !important;
-    margin-bottom: 10px !important;
-    display: flex !important;
-    justify-content: flex-start !important; /* Align to the start */
-    gap: 5px !important; /* Add gap between buttons */
-    scrollbar-width: thin !important; /* Firefox */
-    padding-bottom: 5px !important; /* Add padding to avoid content being cut off */
+/* Selected tab styling */
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+    background-color: rgba(51, 255, 204, 0.2) !important;
+    border-color: #33ffcc !important;
+    box-shadow: 0 0 10px rgba(51, 255, 204, 0.5) !important;
+    color: #33ffcc !important;
+    font-weight: 600 !important;
 }
 
-/* Remove the red line at the bottom of selected tabs */
-[data-testid="stTabs"] button::after {
+/* AGGRESSIVELY REMOVE ALL UNDERLINES */
+[data-testid="stTabs"] [role="tab"]::before,
+[data-testid="stTabs"] [role="tab"]::after,
+[data-testid="stTabs"] [role="tab"] > div::before,
+[data-testid="stTabs"] [role="tab"] > div::after,
+[data-testid="stTabs"] [role="tab"][aria-selected="true"]::before,
+[data-testid="stTabs"] [role="tab"][aria-selected="true"]::after,
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::before,
+[data-testid="stTabs"] [role="tab"][aria-selected="true"] > div::after,
+.st-emotion-cache-1inwz65,
+.st-emotion-cache-1inwz65::before,
+.st-emotion-cache-1inwz65::after,
+.st-emotion-cache-1inwz65 > div::before,
+.st-emotion-cache-1inwz65 > div::after,
+.st-emotion-cache-1y4pk3h,
+.st-emotion-cache-1y4pk3h::before,
+.st-emotion-cache-1y4pk3h::after,
+.st-emotion-cache-1y4pk3h > div::before,
+.st-emotion-cache-1y4pk3h > div::after,
+.st-emotion-cache-16idsys,
+.st-emotion-cache-16idsys::before,
+.st-emotion-cache-16idsys::after,
+.st-emotion-cache-16idsys > div::before,
+.st-emotion-cache-16idsys > div::after {
     display: none !important;
+    border: none !important;
+    border-bottom: none !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    content: none !important;
 }
 
-/* Mobile-specific adjustments for tab buttons */
-@media (max-width: 768px) {
-    [data-testid="stTabs"] [role="tablist"] {
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        justify-content: flex-start !important;
-        padding-bottom: 10px !important;
-        -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
-    }
-    
-    [data-testid="stTabs"] button {
-        flex: 0 0 auto !important; /* Don't grow or shrink */
-        min-width: 120px !important; /* Set minimum width */
-        margin: 0 3px !important;
-        font-size: 0.85rem !important; /* Slightly smaller font */
-    }
-    
-    /* Remove the brick wall pattern */
-    [data-testid="stTabs"] button:nth-child(4n+3),
-    [data-testid="stTabs"] button:nth-child(4n+4) {
-        margin-left: 3px !important;
-    }
+/* Tab hover effect */
+[data-testid="stTabs"] [role="tab"]:hover {
+    background-color: rgba(25, 25, 55, 0.9) !important;
+    box-shadow: 0 0 15px rgba(255, 153, 0, 0.6) !important;
+    transform: translateY(-2px) !important;
+    z-index: 100 !important; /* Very high z-index to ensure it's on top */
+}
+
+/* Tab content container */
+[data-testid="stTabs"] [role="tabpanel"] {
+    padding: 15px !important;
+    background-color: rgba(20, 20, 40, 0.3) !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(80, 80, 255, 0.2) !important;
 }
 
 /* Hide scrollbar for tab lists but keep functionality */
 [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar {
-    height: 4px !important; /* Small height for the scrollbar */
+    height: 4px !important;
     background: rgba(15, 15, 30, 0.3) !important;
 }
 
 [data-testid="stTabs"] [role="tablist"]::-webkit-scrollbar-thumb {
-    background: rgba(51, 255, 204, 0.5) !important; /* Neon teal */
+    background: rgba(51, 255, 204, 0.5) !important;
     border-radius: 4px !important;
-}
-
-/* Style the selected tab */
-[data-testid="stTabs"] button[aria-selected="true"] {
-    background-color: rgba(51, 255, 204, 0.2) !important;
-    border-color: #33ffcc !important;
-    box-shadow: 0 0 10px rgba(51, 255, 204, 0.5) !important;
 }
 
 /* Style select boxes */
@@ -262,4 +308,81 @@ button:hover, .stButton > button:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(51, 255, 204, 0.8);  /* Brighter neon teal */
+}
+
+/* Enhanced Chart Styling with Neon Effects */
+.stPlotlyChart {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(102, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stPlotlyChart:hover {
+    box-shadow: 0 0 25px rgba(102, 255, 255, 0.4);
+}
+
+/* Neon glow for chart elements */
+.stPlotlyChart .traces .point {
+    transition: all 0.3s ease !important;
+}
+
+.stPlotlyChart .traces .point:hover {
+    filter: drop-shadow(0 0 8px rgba(102, 255, 255, 0.8)) !important;
+}
+
+.stPlotlyChart .traces .bars .point {
+    transition: all 0.3s ease !important;
+}
+
+.stPlotlyChart .traces .bars .point:hover {
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(102, 255, 255, 0.8)) !important;
+}
+
+/* Neon glow for chart titles */
+.stPlotlyChart .gtitle {
+    text-shadow: 0 0 5px rgba(51, 255, 204, 0.5) !important;
+}
+
+/* Animation for chart loading */
+@keyframes chartFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stPlotlyChart {
+    animation: chartFadeIn 0.6s ease-out;
+}
+
+/* Neon grid lines */
+.stPlotlyChart .gridlayer path {
+    stroke-opacity: 0.1 !important;
+    stroke-dasharray: 2, 2 !important;
+}
+
+/* Neon axis lines */
+.stPlotlyChart .xy .zl {
+    stroke-width: 2px !important;
+    stroke-opacity: 0.3 !important;
+}
+
+/* Enhance legend items */
+.stPlotlyChart .legend .traces {
+    transition: all 0.3s ease !important;
+}
+
+.stPlotlyChart .legend .traces:hover {
+    filter: brightness(1.2) !important;
+}
+
+/* Neon text glow for axis titles */
+.stPlotlyChart .xtitle, .stPlotlyChart .ytitle {
+    text-shadow: 0 0 5px rgba(224, 224, 255, 0.3) !important;
 } 
