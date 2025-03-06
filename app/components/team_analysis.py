@@ -372,6 +372,15 @@ def plot_head_to_head_analysis(matches_df=None, deliveries_df=None):
     """Plot comprehensive head-to-head analysis using pre-computed data."""
     st.subheader("Head-to-Head Win Matrix")
     
+    # Add explanation for non-technical users
+    st.markdown("""
+    <div style="background-color: rgba(0,255,136,0.1); padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+        <p><strong>How to read this chart:</strong> This matrix shows the number of matches won by teams listed on the left (rows) against teams listed at the bottom (columns).</p>
+        <p>For example, if you see a "2" where row "RR" meets column "KKR", it means Rajasthan Royals (RR) has won 2 matches against Kolkata Knight Riders (KKR).</p>
+        <p>Darker green indicates more wins. Hover over any cell for details.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Load pre-computed data
     data = load_team_analysis_data()
     win_matrix = data['head_to_head_matrix']
@@ -381,14 +390,50 @@ def plot_head_to_head_analysis(matches_df=None, deliveries_df=None):
         win_matrix,
         text_auto=True,
         aspect='auto',
-        color_continuous_scale=[[0, '#000000'], [1, '#00ff88']],  # Black to neon green
+        color_continuous_scale=[[0, '#000000'], [0.01, '#001a09'], [1, '#00ff88']],  # Black to neon green with better gradient
+        labels=dict(x="Opponent Team", y="Team", color="Wins"),
         title='Head-to-Head Win Matrix',
         template='plotly_dark'
     )
+    
+    # Improve hover information
+    hovertemplate = (
+        "<b>%{y}</b> has won <b>%{z}</b> matches<br>" +
+        "against <b>%{x}</b><extra></extra>"
+    )
+    fig.update_traces(hovertemplate=hovertemplate)
+    
+    # Add annotations to explain the axes
+    fig.add_annotation(
+        x=0.5,
+        y=-0.15,
+        xref="paper",
+        yref="paper",
+        text="Teams as Opponents (Lost Against)",
+        showarrow=False,
+        font=dict(size=12, color="#00ff88")
+    )
+    
+    fig.add_annotation(
+        x=-0.15,
+        y=0.5,
+        xref="paper",
+        yref="paper",
+        text="Teams (Won)",
+        showarrow=False,
+        textangle=-90,
+        font=dict(size=12, color="#00ff88")
+    )
+    
     fig.update_layout(
-        margin=dict(t=60, b=80),
+        margin=dict(t=60, b=100, l=100, r=20),
         plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)'
+        paper_bgcolor='rgba(0,0,0,0)',
+        coloraxis_colorbar=dict(
+            title="Number of Wins",
+            tickvals=[0, 1, 2],
+            ticktext=["0 wins", "1 win", "2+ wins"],
+        )
     )
     responsive_plotly_chart(fig, use_container_width=True)
 
