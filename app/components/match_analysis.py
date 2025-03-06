@@ -657,12 +657,22 @@ def display_match_details(matches_df, match_id=None):
     if match_id is None:
         match_id = st.selectbox("Select Match", 
                                options=sorted(matches_df['match_id'].unique()),
-                               format_func=lambda x: f"Match {x}: {matches_df[matches_df['match_id'] == x]['team1'].values[0]} vs {matches_df[matches_df['match_id'] == x]['team2'].values[0]} ({matches_df[matches_df['match_id'] == x]['date'].values[0]})")
+                               format_func=lambda x: f"Match {x}: {matches_df[matches_df['match_id'] == x]['team1'].values[0]} vs {matches_df[matches_df['match_id'] == x]['team2'].values[0]} ({matches_df[matches_df['match_id'] == x]['date'].dt.date.values[0] if pd.api.types.is_datetime64_any_dtype(matches_df['date']) else matches_df[matches_df['match_id'] == x]['date'].values[0].split('T')[0] if isinstance(matches_df[matches_df['match_id'] == x]['date'].values[0], str) and 'T' in matches_df[matches_df['match_id'] == x]['date'].values[0] else matches_df[matches_df['match_id'] == x]['date'].values[0]})")
     
     match_data = matches_df[matches_df['match_id'] == match_id].iloc[0]
     
+    # Format the date - remove timestamp if present
+    formatted_date = match_data['date']
+    if pd.api.types.is_datetime64_any_dtype(matches_df['date']):
+        formatted_date = match_data['date'].date()
+    elif isinstance(match_data['date'], str):
+        if 'T' in match_data['date']:
+            formatted_date = match_data['date'].split('T')[0]
+        elif ' ' in match_data['date'] and ':' in match_data['date']:
+            formatted_date = match_data['date'].split(' ')[0]
+    
     # Match header
-    st.header(f"{match_data['team1']} vs {match_data['team2']} - {match_data['date']} - {match_data['venue']}")
+    st.header(f"{match_data['team1']} vs {match_data['team2']} - {formatted_date} - {match_data['venue']}")
     
     # Match Details
     st.subheader("Match Details:")
