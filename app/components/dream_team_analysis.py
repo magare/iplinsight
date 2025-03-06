@@ -630,13 +630,23 @@ class DreamTeamAnalysis:
                 st.subheader("Season Performance Analysis")
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("Most Dream Team Appearances",
-                              f"{best_xi['appearances'].max():.0f}",
-                              f"by {best_xi.iloc[0]['player']}")
+                    try:
+                        max_appearances = int(best_xi['appearances'].max())
+                        player_name = best_xi.iloc[0]['player']
+                        st.metric("Most Dream Team Appearances",
+                                f"{max_appearances}",
+                                f"by {player_name}")
+                    except (TypeError, ValueError, KeyError, AttributeError, IndexError):
+                        st.metric("Most Dream Team Appearances", "N/A")
                 with col2:
-                    st.metric("Highest Average Points",
-                              f"{best_xi['avg_points'].max():.1f}",
-                              f"by {best_xi.loc[best_xi['avg_points'].idxmax(), 'player']}")
+                    try:
+                        max_avg_points = float(best_xi['avg_points'].max())
+                        max_points_player = best_xi.loc[best_xi['avg_points'].idxmax(), 'player']
+                        st.metric("Highest Average Points",
+                                f"{max_avg_points:.1f}",
+                                f"by {max_points_player}")
+                    except (TypeError, ValueError, KeyError, AttributeError):
+                        st.metric("Highest Average Points", "N/A")
                 with col3:
                     st.metric("Most Consistent Role",
                               best_xi['primary_role'].mode().iloc[0],

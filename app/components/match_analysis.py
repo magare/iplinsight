@@ -192,7 +192,14 @@ def display_toss_analysis(matches_df):
         col1, col2 = st.columns(2)
         
         with col1:
-            st.metric("Match Win % When Winning Toss", f"{toss_stats[5]:.1f}%")
+            # Fix the TypeError by ensuring we're working with a numeric value
+            toss_win_percentage = toss_stats[5]
+            # Check if it's a DataFrame and extract the value if needed
+            if hasattr(toss_win_percentage, 'iloc'):
+                toss_win_percentage = float(toss_win_percentage.iloc[0])
+            # Ensure we have a float to format
+            toss_win_percentage = float(toss_win_percentage)
+            st.metric("Match Win % When Winning Toss", f"{toss_win_percentage:.1f}%")
             fig = px.bar(
                 toss_stats[6].reset_index(),
                 x='index',
@@ -212,7 +219,15 @@ def display_toss_analysis(matches_df):
         
         with col2:
             # Since we can't compute correlation from precomputed data, we'll show a different metric
-            st.metric("Toss Decision Impact", f"{abs(toss_stats[6]['win_percentage'].diff().iloc[-1]):.1f}%")
+            try:
+                # Get the win percentage difference between batting and fielding first
+                win_pct_diff = abs(toss_stats[6]['win_percentage'].diff().iloc[-1])
+                # Ensure it's a float for formatting
+                win_pct_diff = float(win_pct_diff)
+                st.metric("Toss Decision Impact", f"{win_pct_diff:.1f}%")
+            except (TypeError, IndexError, AttributeError):
+                # Fallback in case of any error
+                st.metric("Toss Decision Impact", "N/A")
             st.caption("Difference in win % between batting and fielding first")
     
     # Toss Decisions Tab
@@ -485,9 +500,33 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
     
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("High Scoring Threshold", f"{scoring_stats[0]['high_threshold'].iloc[0]:.0f} runs")
+        try:
+            high_threshold = float(scoring_stats[0]['high_threshold'].iloc[0])
+            st.metric("High Scoring Threshold", f"{high_threshold:.0f} runs")
+        except (AttributeError, KeyError, IndexError, ValueError, TypeError):
+            # Try alternative access methods if the normal one fails
+            try:
+                if isinstance(scoring_stats[0], dict) and 'high_threshold' in scoring_stats[0]:
+                    high_threshold = float(scoring_stats[0]['high_threshold'])
+                    st.metric("High Scoring Threshold", f"{high_threshold:.0f} runs")
+                else:
+                    st.metric("High Scoring Threshold", "N/A")
+            except:
+                st.metric("High Scoring Threshold", "N/A")
     with col2:
-        st.metric("Low Scoring Threshold", f"{scoring_stats[0]['low_threshold'].iloc[0]:.0f} runs")
+        try:
+            low_threshold = float(scoring_stats[0]['low_threshold'].iloc[0])
+            st.metric("Low Scoring Threshold", f"{low_threshold:.0f} runs")
+        except (AttributeError, KeyError, IndexError, ValueError, TypeError):
+            # Try alternative access methods if the normal one fails
+            try:
+                if isinstance(scoring_stats[0], dict) and 'low_threshold' in scoring_stats[0]:
+                    low_threshold = float(scoring_stats[0]['low_threshold'])
+                    st.metric("Low Scoring Threshold", f"{low_threshold:.0f} runs")
+                else:
+                    st.metric("Low Scoring Threshold", "N/A")
+            except:
+                st.metric("Low Scoring Threshold", "N/A")
     
     tabs = st.tabs([
         "Venue Analysis",
@@ -572,17 +611,53 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
             )
             responsive_plotly_chart(fig, use_container_width=True)
         with col2:
-            phase_comparison = pd.DataFrame({
-                'High Scoring': scoring_stats[9],
-                'Low Scoring': scoring_stats[10]
-            })
-            fig = px.bar(
-                phase_comparison,
-                barmode='group',
-                title='Run Rates by Phase',
-                labels={'value': 'Average Runs', 'variable': 'Match Type'}
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
+            # Fix the DataFrame creation by checking structure and providing an index if needed
+            try:
+                # Check if the data has indexes
+                if hasattr(scoring_stats[9], 'index') and hasattr(scoring_stats[10], 'index'):
+                    # If both have matching indexes, use them
+                    phase_comparison = pd.DataFrame({
+                        'High Scoring': scoring_stats[9],
+                        'Low Scoring': scoring_stats[10]
+                    })
+                else:
+                    # If they're scalar values or don't have indexes, create an index
+                    # First check if they are dictionaries
+                    if isinstance(scoring_stats[9], dict) and isinstance(scoring_stats[10], dict):
+                        # Use the dictionary keys as index
+                        phase_comparison = pd.DataFrame({
+                            'High Scoring': list(scoring_stats[9].values()),
+                            'Low Scoring': list(scoring_stats[10].values())
+                        }, index=list(scoring_stats[9].keys()))
+                    else:
+                        # Try to convert to series if they're not already
+                        high_scoring = pd.Series(scoring_stats[9]) if not isinstance(scoring_stats[9], pd.Series) else scoring_stats[9]
+                        low_scoring = pd.Series(scoring_stats[10]) if not isinstance(scoring_stats[10], pd.Series) else scoring_stats[10]
+                        
+                        # Create a DataFrame with an explicit index
+                        if len(high_scoring) == 3 and len(low_scoring) == 3:
+                            # Assume it's powerplay, middle, death overs
+                            phase_comparison = pd.DataFrame({
+                                'High Scoring': high_scoring.values,
+                                'Low Scoring': low_scoring.values
+                            }, index=['Powerplay', 'Middle Overs', 'Death Overs'])
+                        else:
+                            # Use numeric indices
+                            phase_comparison = pd.DataFrame({
+                                'High Scoring': high_scoring.values,
+                                'Low Scoring': low_scoring.values
+                            }, index=[f"Phase {i+1}" for i in range(len(high_scoring))])
+                
+                fig = px.bar(
+                    phase_comparison,
+                    barmode='group',
+                    title='Run Rates by Phase',
+                    labels={'value': 'Average Runs', 'variable': 'Match Type'}
+                )
+                responsive_plotly_chart(fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error displaying phase comparison: {e}")
+                st.info("The phase comparison data could not be displayed due to a formatting issue.")
 
 
 def display_match_dream_team(match_id):

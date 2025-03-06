@@ -171,7 +171,7 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
     selected_teams = st.multiselect(
         "Select teams to compare (max 5 recommended):", 
         teams,
-        default=teams[:5]  # Default to 5 most successful teams
+        default=teams[:5]  # Default to 5 teams
     )
     
     if not selected_teams:
@@ -184,24 +184,18 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
     # Filter data for selected teams
     filtered_avg_nrr = avg_nrr_by_season[avg_nrr_by_season['team1'].isin(selected_teams)]
     
-    # Use a consistent color palette for the teams
-    neon_colors = ['#00ff88', '#ff0088', '#00ffff', '#ff00ff', '#ffff00', '#ff8800', '#88ff00', '#0088ff']
+    # Use a consistent color palette with fixed hex colors (instead of relying on plotly names)
+    distinct_colors = [
+        "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
+        "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+        "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5"
+    ]
+    team_colors = {team: distinct_colors[i % len(distinct_colors)] for i, team in enumerate(teams)}
     
-    # Create team-to-color mapping for consistency across charts
-    team_colors = {team: neon_colors[i % len(neon_colors)] for i, team in enumerate(teams)}
+    # Create Bar Chart for Average NRR by Season
+    fig = go.Figure()
     
-    # Average NRR by Season for each team (line chart instead of bar)
-    fig = px.line(
-        filtered_avg_nrr,
-        x='season',
-        y='nrr',
-        color='team1',
-        markers=True,
-        template='plotly_dark',
-        color_discrete_map=team_colors
-    )
-    
-    # Add horizontal line at NRR = 0
+    # Add a horizontal line at NRR = 0 first so it's below the bars
     fig.add_shape(
         type="line",
         x0=filtered_avg_nrr['season'].min(),
@@ -211,21 +205,64 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
         line=dict(color="rgba(255, 255, 255, 0.5)", width=1, dash="dash")
     )
     
+    # Add annotation to explain what positive/negative NRR means
+    fig.add_annotation(
+        x=filtered_avg_nrr['season'].max(),
+        y=0.05,
+        text="↑ Positive NRR (Good)",
+        showarrow=False,
+        font=dict(size=10, color="white"),
+        align="right",
+        xanchor="right",
+        yanchor="bottom"
+    )
+    
+    fig.add_annotation(
+        x=filtered_avg_nrr['season'].max(),
+        y=-0.05,
+        text="↓ Negative NRR (Poor)",
+        showarrow=False,
+        font=dict(size=10, color="white"),
+        align="right",
+        xanchor="right",
+        yanchor="top"
+    )
+    
+    # Add trace for each team
+    for team in selected_teams:
+        team_data = filtered_avg_nrr[filtered_avg_nrr['team1'] == team]
+        
+        # Add bar chart instead of line chart
+        fig.add_trace(go.Bar(
+            x=team_data['season'],
+            y=team_data['nrr'],
+            name=team,
+            marker_color=team_colors[team],
+            hovertemplate=f"<b>{team}</b><br>Season: %{{x}}<br>NRR: %{{y:.3f}}<extra></extra>"
+        ))
+    
     fig.update_layout(
-        height=500,  # Taller chart
-        xaxis_title="Season",
+        title={
+            'text': 'Team Performance by Net Run Rate Across Seasons',
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {'size': 18}
+        },
+        height=500,
+        xaxis_title="IPL Season",
         yaxis_title="Net Run Rate",
         xaxis_tickangle=-45,
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=40, b=80, l=80, r=40),
+        margin=dict(t=60, b=80, l=80, r=40),
+        barmode='group',  # Group bars by team for each season
         yaxis=dict(
             gridcolor='rgba(128,128,128,0.1)',
             zeroline=True,
             zerolinecolor='rgba(255,255,255,0.5)'
         ),
         xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-        hovermode="x unified",
+        hovermode="closest",
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -235,43 +272,21 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
         )
     )
     
-    # Update hover template to show more information
-    fig.update_traces(
-        hovertemplate="<b>%{fullData.name}</b><br>Season: %{x}<br>NRR: %{y:.3f}"
-    )
-    
     responsive_plotly_chart(fig, use_container_width=True)
     
     # Add some spacing
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Distribution of NRR for each team (full width)
-    st.markdown("### Net Run Rate Distribution")
+    # Second chart - NRR Performance
+    st.markdown("### Net Run Rate Performance")
     
     # Filter data for selected teams
     filtered_nrr = nrr_df[nrr_df['team1'].isin(selected_teams)]
     
+    # Create a more understandable visualization - Violin plot with points overlaid
     fig2 = go.Figure()
     
-    # Add box plot for each selected team
-    for team in selected_teams:
-        team_nrr = filtered_nrr[filtered_nrr['team1'] == team]['nrr']
-        
-        # Calculate some statistics
-        mean_nrr = team_nrr.mean()
-        median_nrr = team_nrr.median()
-        
-        fig2.add_trace(go.Box(
-            y=team_nrr,
-            name=team,
-            boxpoints='outliers',
-            marker_color=team_colors[team],
-            line=dict(color=team_colors[team]),
-            customdata=[[team, mean_nrr, median_nrr] for _ in range(len(team_nrr))],
-            hovertemplate="<b>%{customdata[0]}</b><br>Match NRR: %{y:.3f}<br>Mean NRR: %{customdata[1]:.3f}<br>Median NRR: %{customdata[2]:.3f}"
-        ))
-    
-    # Add horizontal line at NRR = 0
+    # Add a horizontal line at NRR = 0
     fig2.add_shape(
         type="line",
         x0=-0.5,
@@ -281,9 +296,89 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
         line=dict(color="rgba(255, 255, 255, 0.5)", width=1, dash="dash")
     )
     
+    # Add annotation to explain NRR values
+    fig2.add_annotation(
+        x=len(selected_teams)/2,
+        y=max(filtered_nrr['nrr'].max(), 2) * 0.9,
+        text="Higher NRR indicates stronger performance",
+        showarrow=False,
+        font=dict(size=12, color="white"),
+        align="center",
+        xanchor="center",
+        yanchor="top",
+        bgcolor="rgba(0,0,0,0.5)",
+        borderpad=4
+    )
+    
+    # Add violin plots for each team
+    for i, team in enumerate(selected_teams):
+        team_nrr = filtered_nrr[filtered_nrr['team1'] == team]['nrr']
+        
+        # Calculate statistics
+        mean_nrr = team_nrr.mean()
+        median_nrr = team_nrr.median()
+        positive_pct = (team_nrr > 0).mean() * 100
+        
+        # Get RGB values safely for the fillcolor
+        color = team_colors[team]
+        # Get hex color components or use a default rgba if there's an issue
+        try:
+            r = int(color[1:3], 16)
+            g = int(color[3:5], 16)
+            b = int(color[5:7], 16)
+            fillcolor = f"rgba({r},{g},{b},0.5)"
+        except (ValueError, IndexError):
+            # Fallback to a safe default with 50% opacity
+            fillcolor = f"{color}80"  # 80 in hex = 50% opacity
+        
+        # Add violin plot
+        fig2.add_trace(go.Violin(
+            x=[team] * len(team_nrr),
+            y=team_nrr,
+            name=team,
+            box_visible=True,
+            meanline_visible=True,
+            line_color=team_colors[team],
+            fillcolor=fillcolor,
+            points="all",
+            pointpos=0,
+            jitter=0.3,
+            marker=dict(
+                color=team_colors[team],
+                size=4,
+                opacity=0.6
+            ),
+            hoverinfo="skip"
+        ))
+        
+        # Add mean indicator and label
+        fig2.add_trace(go.Scatter(
+            x=[team],
+            y=[mean_nrr],
+            mode="markers+text",
+            marker=dict(
+                symbol="diamond",
+                size=12,
+                color=team_colors[team],
+                line=dict(color="white", width=1),
+            ),
+            text=["Mean"],
+            textposition="top center",
+            name=f"{team} Mean",
+            customdata=[[team, mean_nrr, median_nrr, positive_pct]],
+            hovertemplate="<b>%{customdata[0]}</b><br>Mean NRR: %{customdata[1]:.3f}<br>Median NRR: %{customdata[2]:.3f}<br>Positive NRR: %{customdata[3]:.1f}%<extra></extra>"
+        ))
+    
     fig2.update_layout(
-        height=500,  # Taller chart
-        yaxis_title="Net Run Rate",
+        title={
+            'text': 'Distribution of Match Net Run Rates',
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {'size': 18}
+        },
+        height=500,
+        xaxis_title="Team",
+        yaxis_title="Net Run Rate (NRR)",
         template='plotly_dark',
         yaxis=dict(
             gridcolor='rgba(128,128,128,0.1)',
@@ -296,27 +391,24 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=40, b=80, l=80, r=40),
-        boxmode='group',
+        margin=dict(t=60, b=80, l=80, r=40),
         showlegend=False
     )
     
     responsive_plotly_chart(fig2, use_container_width=True)
     
-    # Add some interpretative text about NRR
+    # Add an explanation for how to interpret the violin plots
     st.markdown("""
-    <div style="background-color: rgba(30, 30, 60, 0.7); padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid rgba(80, 80, 255, 0.3);">
-        <h4 style="margin-top: 0;">Understanding the Charts</h4>
+    <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 10px; margin-top: 15px; border: 1px solid rgba(80, 80, 255, 0.3);">
+        <p><b>How to read this chart:</b> 
         <ul>
-            <li><b>Line Chart:</b> Shows how each team's average NRR has changed over different IPL seasons. Teams consistently above 0 tend to be more dominant.</li>
-            <li><b>Box Plot:</b> Shows the distribution of NRR across all matches for each team:
-                <ul>
-                    <li>The box represents the middle 50% of a team's NRR values</li>
-                    <li>The line inside the box is the median NRR</li>
-                    <li>Points outside the whiskers are outlier performances (exceptionally good or bad)</li>
-                </ul>
-            </li>
+            <li>Each "violin" shows the distribution of match NRRs for a team</li>
+            <li>Wider sections indicate more matches with that NRR value</li>
+            <li>The diamond marker shows the team's mean NRR</li>
+            <li>The box inside shows the median and interquartile range</li>
+            <li>Each dot represents an individual match</li>
         </ul>
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -475,7 +567,11 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
     with col1:
         st.metric("Total Matches", f"{total_matches:,}")
     with col2:
-        st.metric("Avg. First Innings Score", f"{avg_first_innings:.1f}")
+        try:
+            avg_first_innings_value = float(avg_first_innings)
+            st.metric("Avg. First Innings Score", f"{avg_first_innings_value:.1f}")
+        except (TypeError, ValueError):
+            st.metric("Avg. First Innings Score", "N/A")
     with col3:
         st.metric("Chasing Wins", f"{chasing_wins:,}")
     with col4:
@@ -920,23 +1016,102 @@ def plot_phase_analysis(matches_df=None, deliveries_df=None):
             
             net_rr_df = pd.DataFrame(net_rr)
             
-            fig = px.bar(
-                net_rr_df,
-                x='Phase',
-                y='Net Run Rate',
-                title=f'Net Run Rate by Phase - {selected_team}',
+            # Add a column for color based on positive/negative values
+            net_rr_df['Color'] = net_rr_df['Net Run Rate'].apply(
+                lambda x: '#2ecc71' if x >= 0 else '#e74c3c'
+            )
+            
+            # Sort phases in a meaningful order
+            phase_order = ['Powerplay', 'Middle Overs', 'Death Overs']
+            net_rr_df['Phase'] = pd.Categorical(
+                net_rr_df['Phase'], 
+                categories=phase_order, 
+                ordered=True
+            )
+            net_rr_df = net_rr_df.sort_values('Phase')
+            
+            fig = go.Figure()
+            
+            # Add horizontal line at y=0
+            fig.add_shape(
+                type="line",
+                x0=-0.5,
+                y0=0,
+                x1=len(net_rr_df) - 0.5,
+                y1=0,
+                line=dict(color="rgba(255, 255, 255, 0.5)", width=1, dash="dash")
+            )
+            
+            # Add bars
+            fig.add_trace(go.Bar(
+                x=net_rr_df['Phase'],
+                y=net_rr_df['Net Run Rate'],
                 text=net_rr_df['Net Run Rate'].round(2),
-                template='plotly_dark',
-                color_discrete_sequence=['#00ff88']
-            )
+                textposition='outside',
+                marker_color=net_rr_df['Color'],
+                hovertemplate='<b>%{x}</b><br>Net Run Rate: %{y:.2f}<extra></extra>'
+            ))
+            
+            # Add annotations to explain what positive and negative values mean
+            if len(net_rr_df) > 0:
+                max_y = max(abs(net_rr_df['Net Run Rate'].max()), abs(net_rr_df['Net Run Rate'].min())) * 1.1
+                
+                fig.add_annotation(
+                    x=net_rr_df['Phase'].iloc[-1],
+                    y=max_y/2,
+                    text="↑ Batting faster than bowling",
+                    showarrow=False,
+                    font=dict(size=10, color="#2ecc71"),
+                    xanchor="right",
+                    yanchor="bottom"
+                )
+                
+                fig.add_annotation(
+                    x=net_rr_df['Phase'].iloc[-1],
+                    y=-max_y/2,
+                    text="↓ Bowling better than batting",
+                    showarrow=False,
+                    font=dict(size=10, color="#e74c3c"),
+                    xanchor="right",
+                    yanchor="top"
+                )
+            
             fig.update_layout(
-                height=400,
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                title={
+                    'text': f'Net Run Rate by Phase - {selected_team}',
+                    'x': 0.5,
+                    'xanchor': 'center',
+                    'font': {'size': 16}
+                },
+                template='plotly_dark',
+                xaxis_title="Match Phase",
+                yaxis_title="Net Run Rate (Runs per Over)",
                 plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)'
+                paper_bgcolor='rgba(0,0,0,0)',
+                margin=dict(t=60, b=40, l=60, r=60),
+                height=400,
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    zeroline=False
+                ),
+                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
+            
             responsive_plotly_chart(fig, use_container_width=True)
+            
+            # Add explanation of what the chart means
+            st.markdown("""
+            <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid rgba(80, 80, 255, 0.3); font-size: 0.9em;">
+                <p style="margin-bottom: 5px;"><b>Understanding Net Run Rate by Phase:</b></p>
+                <ul style="margin-top: 0; padding-left: 20px;">
+                    <li><span style="color: #2ecc71;">Positive values</span>: Team scores faster than they concede runs</li>
+                    <li><span style="color: #e74c3c;">Negative values</span>: Team concedes runs faster than they score</li>
+                    <li><b>Powerplay</b>: Overs 1-6</li>
+                    <li><b>Middle Overs</b>: Overs 7-15</li>
+                    <li><b>Death Overs</b>: Overs 16-20</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
     
     # For the Historical Trends Tab, we still need the original dataframes
     # Historical Trends Tab

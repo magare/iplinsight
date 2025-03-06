@@ -138,12 +138,24 @@ def render_overview():
         st.metric("Total Runs", format_large_number(stats['total_runs']))
         st.metric("Total Boundaries", format_large_number(stats['total_boundaries']))
         st.metric("Total Sixes", format_large_number(stats['total_sixes']))
-        st.metric("Avg. Runs/Match", f"{stats['avg_runs_per_match']:.1f}")
+        try:
+            avg_runs = float(stats['avg_runs_per_match'])
+            st.metric("Avg. Runs/Match", f"{avg_runs:.1f}")
+        except (TypeError, ValueError):
+            st.metric("Avg. Runs/Match", "N/A")
     with col3:
         st.subheader("Bowling Insights")
         st.metric("Total Wickets", format_large_number(stats['total_wickets']))
-        st.metric("Total Overs", format_large_number(int(stats['total_overs'])))
-        st.metric("Avg. Wickets/Match", f"{stats['avg_wickets_per_match']:.1f}")
+        try:
+            total_overs = int(stats['total_overs'])
+            st.metric("Total Overs", format_large_number(total_overs))
+        except (TypeError, ValueError):
+            st.metric("Total Overs", "N/A")
+        try:
+            avg_wickets = float(stats['avg_wickets_per_match'])
+            st.metric("Avg. Wickets/Match", f"{avg_wickets:.1f}")
+        except (TypeError, ValueError):
+            st.metric("Avg. Wickets/Match", "N/A")
     
     st.subheader("Tournament Growth Over Years")
     plot_tournament_growth(matches, deliveries)

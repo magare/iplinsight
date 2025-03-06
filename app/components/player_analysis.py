@@ -262,31 +262,248 @@ def display_batting_analysis(deliveries_df=None):
             responsive_plotly_chart(fig, use_container_width=True)
             
             # Strike Rate vs Average scatter plot
+            st.write("### Strike Rate vs Average")
+            
+            # Create a filtered dataframe with minimum matches requirement to reduce density
+            min_matches = 10  # Minimum matches required to be included
+            qualified_players = filtered_stats[filtered_stats['matches_batting'] >= min_matches].copy()
+            
+            # Calculate quadrant boundaries based on median values
+            avg_median = qualified_players['batting_average'].median()
+            sr_median = qualified_players['batting_strike_rate'].median()
+            
+            # Label quadrants for interpretation
+            qualified_players['performance_quadrant'] = qualified_players.apply(
+                lambda x: (
+                    "High SR, High Avg<br>(Match Winners)" if x['batting_strike_rate'] >= sr_median and x['batting_average'] >= avg_median else
+                    "High SR, Low Avg<br>(Aggressive)" if x['batting_strike_rate'] >= sr_median else
+                    "Low SR, High Avg<br>(Anchors)" if x['batting_average'] >= avg_median else
+                    "Low SR, Low Avg<br>(Struggling)"
+                ),
+                axis=1
+            )
+            
+            # Add size based on runs scored for additional context
+            qualified_players['marker_size'] = qualified_players['runs'].apply(lambda x: max(10, min(x/50, 30)))
+            
+            # Color based on boundary percentage for additional insight
+            qualified_players['color_value'] = qualified_players['boundary_percentage'] 
+            
+            # Create the improved scatter plot
             fig = px.scatter(
-                filtered_stats,
+                qualified_players,
                 x='batting_average',
                 y='batting_strike_rate',
-                text='batter',
-                title='Strike Rate vs Average',
-                hover_data=['runs', 'matches_batting']
+                color='color_value',
+                size='marker_size',
+                color_continuous_scale='Viridis',
+                hover_name='batter',
+                hover_data={
+                    'batting_average': ':.2f', 
+                    'batting_strike_rate': ':.2f',
+                    'runs': True,
+                    'matches_batting': True,
+                    'boundary_percentage': ':.1f%',
+                    'performance_quadrant': True,
+                    'marker_size': False,
+                    'color_value': False
+                },
+                labels={
+                    'batting_average': 'Batting Average',
+                    'batting_strike_rate': 'Strike Rate',
+                    'color_value': 'Boundary %'
+                }
             )
-            fig.update_traces(textposition='top center')
-            responsive_plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            # Boundary percentage analysis
-            fig = px.scatter(
-                filtered_stats,
-                x='boundary_percentage',
-                y='dot_ball_percentage',
-                text='batter',
-                title='Boundary % vs Dot Ball %',
-                hover_data=['runs', 'batting_strike_rate']
+            
+            # Add quadrant lines
+            fig.add_shape(type="line", x0=avg_median, y0=0, x1=avg_median, y1=200,
+                          line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
+            fig.add_shape(type="line", x0=0, y0=sr_median, x1=100, y1=sr_median,
+                          line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
+            
+            # Add quadrant labels
+            fig.add_annotation(x=avg_median + (100-avg_median)/2, y=sr_median + (200-sr_median)/2, 
+                              text="Match Winners<br>High SR, High Avg", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=avg_median/2, y=sr_median + (200-sr_median)/2, 
+                              text="Aggressive<br>High SR, Low Avg", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=avg_median + (100-avg_median)/2, y=sr_median/2, 
+                              text="Anchors<br>Low SR, High Avg", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=avg_median/2, y=sr_median/2, 
+                              text="Struggling<br>Low SR, Low Avg", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            
+            # Update layout for better readability
+            fig.update_layout(
+                coloraxis_colorbar=dict(title="Boundary %"),
+                title=None,
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                margin=dict(l=50, r=50, t=30, b=50),
+                height=450,
+                xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
+                yaxis=dict(gridcolor='rgba(255,255,255,0.1)')
             )
-            fig.update_traces(textposition='top center')
+            
+            # Show player names for top performers only
+            top_performers = qualified_players.nlargest(8, 'runs')
+            for i, row in top_performers.iterrows():
+                fig.add_annotation(
+                    x=row['batting_average'],
+                    y=row['batting_strike_rate'],
+                    text=row['batter'],
+                    showarrow=False,
+                    font=dict(size=10, color="white"),
+                    bgcolor="rgba(0,0,0,0.5)",
+                    borderpad=2,
+                    yshift=10
+                )
+            
             responsive_plotly_chart(fig, use_container_width=True)
             
-            # Milestones comparison
+            # Add an explanation for the chart
+            st.markdown("""
+            <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 10px; margin-top: 15px; font-size: 0.9em;">
+                <p><b>How to read this chart:</b></p>
+                <ul>
+                    <li>Each bubble represents a player who has played at least 10 matches</li>
+                    <li>Bubble size indicates total runs scored</li>
+                    <li>Color represents boundary percentage (brighter = more boundaries)</li>
+                    <li>The dashed lines divide players into four performance quadrants</li>
+                    <li>Only top run-scorers are labeled to reduce clutter</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            # Boundary percentage vs Dot Ball percentage - improved
+            st.write("### Boundary % vs Dot Ball %")
+            
+            # Use the same qualified players dataframe to reduce density
+            # Add computed field for scoring efficiency
+            qualified_players['scoring_efficiency'] = qualified_players['batting_strike_rate'] / 100
+            
+            # Create the improved scatter plot
+            fig = px.scatter(
+                qualified_players,
+                x='dot_ball_percentage',
+                y='boundary_percentage',
+                size='marker_size',  # Reuse the same size mapping
+                color='scoring_efficiency',
+                color_continuous_scale='RdYlGn',
+                hover_name='batter',
+                hover_data={
+                    'dot_ball_percentage': ':.1f%', 
+                    'boundary_percentage': ':.1f%',
+                    'batting_strike_rate': ':.2f',
+                    'runs': True,
+                    'matches_batting': True,
+                    'marker_size': False,
+                    'scoring_efficiency': False
+                },
+                labels={
+                    'dot_ball_percentage': 'Dot Ball %',
+                    'boundary_percentage': 'Boundary %',
+                    'scoring_efficiency': 'Scoring Efficiency'
+                }
+            )
+            
+            # Calculate median values for quadrant lines
+            dot_ball_median = qualified_players['dot_ball_percentage'].median()
+            boundary_median = qualified_players['boundary_percentage'].median()
+            
+            # Add quadrant lines
+            fig.add_shape(type="line", x0=dot_ball_median, y0=0, x1=dot_ball_median, y1=50,
+                         line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
+            fig.add_shape(type="line", x0=0, y0=boundary_median, x1=100, y1=boundary_median,
+                         line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
+            
+            # Add quadrant labels
+            fig.add_annotation(x=dot_ball_median + (100-dot_ball_median)/2, y=boundary_median + (50-boundary_median)/2, 
+                              text="High Risk, High Reward<br>(Explosive)", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=dot_ball_median/2, y=boundary_median + (50-boundary_median)/2, 
+                              text="Low Risk, High Reward<br>(Efficient)", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=dot_ball_median + (100-dot_ball_median)/2, y=boundary_median/2, 
+                              text="High Risk, Low Reward<br>(Inefficient)", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            fig.add_annotation(x=dot_ball_median/2, y=boundary_median/2, 
+                              text="Low Risk, Low Reward<br>(Conservative)", showarrow=False, 
+                              font=dict(size=10, color="white"), align="center",
+                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+            
+            # Draw a visual reference line for "break-even" efficiency
+            x_vals = np.linspace(0, 100, 100)
+            y_vals = [100 - x for x in x_vals]  # Simplified model
+            fig.add_trace(go.Scatter(
+                x=x_vals, 
+                y=y_vals, 
+                mode='lines', 
+                line=dict(color='rgba(255,255,255,0.2)', dash='dot'),
+                name='Theoretical Efficiency Line',
+                hoverinfo='skip'
+            ))
+            
+            # Update layout for better readability
+            fig.update_layout(
+                coloraxis_colorbar=dict(title="Scoring<br>Efficiency"),
+                title=None,
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                margin=dict(l=50, r=50, t=30, b=50),
+                height=450,
+                xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
+                yaxis=dict(gridcolor='rgba(255,255,255,0.1)')
+            )
+            
+            # Show player names for top performers only
+            # Use different metrics for selecting which players to label
+            # Label those with highest boundary % and lowest dot ball %
+            efficiency_performers = qualified_players.nlargest(4, 'boundary_percentage')
+            efficiency_performers = pd.concat([
+                efficiency_performers,
+                qualified_players.nsmallest(4, 'dot_ball_percentage')
+            ]).drop_duplicates()
+            
+            for i, row in efficiency_performers.iterrows():
+                fig.add_annotation(
+                    x=row['dot_ball_percentage'],
+                    y=row['boundary_percentage'],
+                    text=row['batter'],
+                    showarrow=False,
+                    font=dict(size=10, color="white"),
+                    bgcolor="rgba(0,0,0,0.5)",
+                    borderpad=2,
+                    yshift=10
+                )
+            
+            responsive_plotly_chart(fig, use_container_width=True)
+            
+            # Add an explanation for the chart
+            st.markdown("""
+            <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 10px; margin-top: 15px; font-size: 0.9em;">
+                <p><b>How to read this chart:</b></p>
+                <ul>
+                    <li>Each bubble represents a player who has played at least 10 matches</li>
+                    <li>Bubble size indicates total runs scored</li>
+                    <li>Color represents scoring efficiency (green = more efficient)</li>
+                    <li>The dotted diagonal line represents a theoretical balance between dots and boundaries</li>
+                    <li>Players are labeled based on exceptional boundary hitting or low dot ball percentage</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Top milestones chart follows below
             milestone_fig = go.Figure(data=[
                 go.Bar(name='30s', x=filtered_stats.nlargest(10, 'runs')['batter'], 
                       y=filtered_stats.nlargest(10, 'runs')['thirties']),

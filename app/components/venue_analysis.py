@@ -468,9 +468,19 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
         
         # Display pitch characteristics
         chars = metadata['characteristics']
-        st.metric("Average First Innings Score", f"{chars['avg_first_innings_score']:.1f}")
-        st.metric("Batting First Win %", 
-                 f"{(chars['batting_first_wins'] / metadata['total_matches']) * 100:.1f}%")
+        try:
+            avg_score = float(chars['avg_first_innings_score'])
+            st.metric("Average First Innings Score", f"{avg_score:.1f}")
+        except (TypeError, ValueError, KeyError):
+            st.metric("Average First Innings Score", "N/A")
+            
+        try:
+            bat_first_wins = float(chars['batting_first_wins'])
+            total_matches = float(metadata['total_matches'])
+            win_pct = (bat_first_wins / total_matches) * 100 if total_matches > 0 else 0
+            st.metric("Batting First Win %", f"{win_pct:.1f}%")
+        except (TypeError, ValueError, KeyError, ZeroDivisionError):
+            st.metric("Batting First Win %", "N/A")
         
         # Pitch type indicator
         if chars['is_high_scoring']:
@@ -888,15 +898,17 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
                 st.info("No toss decision data available")
         
         with col2:
-            st.metric("Toss Win Impact", f"{stats['toss_win_pct']:.1f}%")
-            st.metric(
-                "Bat First Success",
-                f"{stats['decision_success']['bat_first_pct']:.1f}%"
-            )
-            st.metric(
-                "Field First Success",
-                f"{stats['decision_success']['field_first_pct']:.1f}%"
-            )
+            try:
+                toss_win_pct = float(stats['toss_win_pct'])
+                st.metric("Toss Win Impact", f"{toss_win_pct:.1f}%")
+            except (TypeError, ValueError, KeyError):
+                st.metric("Toss Win Impact", "N/A")
+                
+            try:
+                bat_first_pct = float(stats['decision_success']['bat_first_pct'])
+                st.metric("Bat First Success", f"{bat_first_pct:.1f}%")
+            except (TypeError, ValueError, KeyError):
+                st.metric("Bat First Success", "N/A")
     
     # Team Preferences Tab
     with tabs[1]:
@@ -920,7 +932,11 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
                         st.info(f"No toss decision data available for {team}")
                 
                 with col2:
-                    st.metric("Success Rate", f"{team_stats['success_rate']:.1f}%")
+                    try:
+                        success_rate = float(team_stats['success_rate'])
+                        st.metric("Success Rate", f"{success_rate:.1f}%")
+                    except (TypeError, ValueError, KeyError):
+                        st.metric("Success Rate", "N/A")
         else:
             st.info("No team-wise toss preference data available")
     
@@ -973,12 +989,20 @@ def display_weather_analysis(matches_df: pd.DataFrame) -> None:
     with col1:
         st.metric("Total Matches", venue_stats['total_matches'])
         st.metric("Rain-Affected Matches", venue_stats['rain_affected_matches'])
-        st.metric("Rain Impact", f"{venue_stats['rain_percentage']:.1f}%")
+        try:
+            rain_pct = float(venue_stats['rain_percentage'])
+            st.metric("Rain Impact", f"{rain_pct:.1f}%")
+        except (TypeError, ValueError, KeyError):
+            st.metric("Rain Impact", "N/A")
     
     with col2:
         st.metric("Day Matches", venue_stats['day_matches'])
         st.metric("Evening Matches", venue_stats['evening_matches'])
-        st.metric("Evening Match %", f"{venue_stats['evening_percentage']:.1f}%")
+        try:
+            evening_pct = float(venue_stats['evening_percentage'])
+            st.metric("Evening Match %", f"{evening_pct:.1f}%")
+        except (TypeError, ValueError, KeyError):
+            st.metric("Evening Match %", "N/A")
     
     # Create pie chart for match timing distribution
     timing_data = pd.DataFrame({

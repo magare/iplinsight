@@ -112,15 +112,28 @@ def display_season_highlights(matches_df, deliveries_df, season):
         
         with col1:
             st.metric("Total Matches", season_data.get('total_matches', 0))
-            st.metric("Average Match Score", f"{season_data.get('avg_match_score', 0):.1f}")
+            try:
+                avg_score = float(season_data.get('avg_match_score', 0))
+                st.metric("Average Match Score", f"{avg_score:.1f}")
+            except (TypeError, ValueError):
+                st.metric("Average Match Score", "N/A")
         
         with col2:
             st.metric("Total Runs", season_data.get('total_runs', 0))
             st.metric("Total Wickets", season_data.get('total_wickets', 0))
         
         with col3:
-            st.metric("Sixes per Match", f"{season_data.get('sixes_per_match', 0):.1f}")
-            st.metric("Fours per Match", f"{season_data.get('fours_per_match', 0):.1f}")
+            try:
+                sixes_per_match = float(season_data.get('sixes_per_match', 0))
+                st.metric("Sixes per Match", f"{sixes_per_match:.1f}")
+            except (TypeError, ValueError):
+                st.metric("Sixes per Match", "N/A")
+            
+            try:
+                fours_per_match = float(season_data.get('fours_per_match', 0))
+                st.metric("Fours per Match", f"{fours_per_match:.1f}")
+            except (TypeError, ValueError):
+                st.metric("Fours per Match", "N/A")
         
         # Display season winner
         if 'winner' in season_data:
