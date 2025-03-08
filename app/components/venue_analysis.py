@@ -12,8 +12,8 @@ import seaborn as sns
 from utils.chart_utils import responsive_plotly_chart, update_chart_for_responsive_layout
 
 # Define consistent color scheme to match the rest of the app
-COLOR_SEQUENCE = px.colors.qualitative.Plotly
-TEMPLATE = "plotly_white"
+COLOR_SEQUENCE = ['#00ff88', '#ff0088', '#00ffff']  # Neon green, pink, cyan
+TEMPLATE = "plotly_dark"
 
 # ---------------------------
 # Helper Functions
@@ -317,7 +317,7 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
                 theta=categories,
                 fill='toself',
                 name=selected_venue,
-                line=dict(color="#00AC69") # Using consistent green color
+                line=dict(color="#00ff88") # Using consistent neon green color
             ))
             
             fig.update_layout(
@@ -332,7 +332,8 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
                 height=300,
                 template=TEMPLATE,
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="white")
             )
             
             st.plotly_chart(fig, use_container_width=True)
@@ -459,14 +460,32 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 title=f"Average Runs per Over at {selected_venue}",
                 labels={'over': 'Over', 'runs_per_match': 'Avg. Runs'},
                 markers=True,
-                color_discrete_sequence=["#00AC69"], # Using consistent green color
+                color_discrete_sequence=[COLOR_SEQUENCE[0]], # Using consistent neon green color
                 template=TEMPLATE
             )
             fig.update_layout(
-                xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+                xaxis=dict(
+                    tickmode='linear',
+                    tick0=1,
+                    dtick=1,
+                    title='Over',
+                    gridcolor='rgba(128,128,128,0.1)'
+                ),
+                yaxis=dict(
+                    title='Avg. Runs',
+                    gridcolor='rgba(128,128,128,0.1)'
+                ),
                 margin=dict(l=10, r=10, t=40, b=10),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                ),
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="white")
             )
             
             responsive_plotly_chart(fig)
@@ -521,15 +540,17 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 title=f"Average Wickets per Over at {selected_venue}",
                 labels={'over': 'Over', 'wickets_per_match': 'Avg. Wickets'},
                 color='runs_per_match',
-                color_continuous_scale='RdYlGn_r',
+                color_continuous_scale=['#00ff88', '#ff0088'],
                 template=TEMPLATE
             )
             fig.update_layout(
-                xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+                xaxis=dict(tickmode='linear', tick0=1, dtick=1, gridcolor='rgba(128,128,128,0.1)'),
+                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 margin=dict(l=10, r=10, t=40, b=10),
                 coloraxis_colorbar=dict(title="Avg. Runs"),
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="white")
             )
             
             responsive_plotly_chart(fig)
@@ -578,7 +599,7 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 x='matches',
                 color='win_rate',
                 labels={'team': 'Opposition', 'matches': 'Matches Played', 'win_rate': 'Win Rate (%)'},
-                color_continuous_scale='RdYlGn',
+                color_continuous_scale=[COLOR_SEQUENCE[1], COLOR_SEQUENCE[0]],  # Pink to neon green
                 range_color=[0, 100],
                 text='wins',
                 orientation='h',
@@ -592,12 +613,9 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 height=400,
                 paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor="rgba(0,0,0,0)",
-                yaxis=dict(
-                    tickmode='array',  # Use array tick mode to show all teams
-                    tickvals=list(range(len(opposition_df))),  # Ensure a tick for each team
-                    ticktext=opposition_df['team'],
-                    automargin=True  # Ensure labels don't get cut off
-                )
+                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                font=dict(color="white")
             )
             
             responsive_plotly_chart(fig)
@@ -646,14 +664,27 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         
         fig.update_layout(
             xaxis=dict(
-                tickmode='linear', 
-                tick0=1, 
+                tickmode='linear',
+                tick0=1,
                 dtick=1,
-                automargin=True  # Ensure labels don't get cut off
+                title='Over',
+                gridcolor='rgba(128,128,128,0.1)'
+            ),
+            yaxis=dict(
+                title='Avg. Runs',
+                gridcolor='rgba(128,128,128,0.1)'
             ),
             margin=dict(l=10, r=10, t=40, b=10),
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)"
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white")
         )
         
         responsive_plotly_chart(fig)
@@ -673,14 +704,20 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         
         wicket_fig.update_layout(
             xaxis=dict(
-                tickmode='linear', 
-                tick0=1, 
+                tickmode='linear',
+                tick0=1,
                 dtick=1,
-                automargin=True  # Ensure labels don't get cut off
+                title='Over',
+                gridcolor='rgba(128,128,128,0.1)'
+            ),
+            yaxis=dict(
+                title='Wicket Probability (%)',
+                gridcolor='rgba(128,128,128,0.1)'
             ),
             margin=dict(l=10, r=10, t=40, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)"
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white")
         )
         
         responsive_plotly_chart(wicket_fig)
@@ -718,8 +755,10 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                     tickmode='array',  # Use array tick mode to show all phases
                     tickvals=list(range(len(phase_df['phase'].unique()))),  # Ensure a tick for each phase
                     ticktext=phase_df['phase'].unique(),
-                    automargin=True  # Ensure labels don't get cut off
-                )
+                    gridcolor='rgba(128,128,128,0.1)'
+                ),
+                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                font=dict(color="white")
             )
             
             st.plotly_chart(phase_fig, use_container_width=True)
@@ -742,7 +781,15 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             wicket_phase_fig.update_layout(
                 margin=dict(l=10, r=10, t=40, b=10),
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                xaxis=dict(
+                    tickmode='array',  # Use array tick mode to show all phases
+                    tickvals=list(range(len(phase_df['phase'].unique()))),  # Ensure a tick for each phase
+                    ticktext=phase_df['phase'].unique(),
+                    gridcolor='rgba(128,128,128,0.1)'
+                ),
+                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                font=dict(color="white")
             )
             
             st.plotly_chart(wicket_phase_fig, use_container_width=True)
@@ -795,14 +842,16 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
             labels=decision_labels,
             values=decision_values,
             hole=.4,
-            marker_colors=['#00AC69', '#4361EE'] # Using consistent app colors
+            marker_colors=[COLOR_SEQUENCE[0], COLOR_SEQUENCE[1]] # Using consistent app colors
         )])
         
         decision_fig.update_layout(
             title_text="Toss Decisions",
             margin=dict(l=10, r=10, t=40, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)"
+            plot_bgcolor="rgba(0,0,0,0)",
+            template=TEMPLATE,
+            font=dict(color="white")
         )
         
         st.plotly_chart(decision_fig, use_container_width=True)
@@ -827,7 +876,7 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
             title="Success Rate by Toss Decision",
             labels={'Success Rate': 'Win Percentage (%)'},
             text_auto='.1f',
-            color_discrete_sequence=['#00AC69', '#4361EE'], # Using consistent app colors
+            color_discrete_sequence=[COLOR_SEQUENCE[0], COLOR_SEQUENCE[1]], # Using consistent app colors
             template=TEMPLATE
         )
         
@@ -835,9 +884,11 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
         success_fig.update_layout(
             margin=dict(l=10, r=10, t=40, b=10),
             showlegend=False,
-            yaxis=dict(range=[0, 100]),
+            yaxis=dict(range=[0, 100], gridcolor='rgba(128,128,128,0.1)'),
+            xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)"
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white")
         )
         
         st.plotly_chart(success_fig, use_container_width=True)
