@@ -587,18 +587,18 @@ class DreamTeamAnalysis:
             with col1:
                 st.markdown("### Top Run Scorers")
                 st.dataframe(metrics_df[['player', 'total_runs', 'appearances']]
-                             .sort_values('total_runs', ascending=False).head(10))
+                            .sort_values('total_runs', ascending=False).head(10).reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
             with col2:
                 st.markdown("### Top Wicket Takers")
                 st.dataframe(metrics_df[['player', 'total_wickets', 'appearances']]
-                             .sort_values('total_wickets', ascending=False).head(10))
+                            .sort_values('total_wickets', ascending=False).head(10).reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
             with col3:
                 st.markdown("### Best Fielders")
                 metrics_df['total_dismissals'] = (metrics_df['total_catches'] +
-                                                  metrics_df['total_stumpings'] +
-                                                  metrics_df['total_run_outs'])
+                                                metrics_df['total_stumpings'] +
+                                                metrics_df['total_run_outs'])
                 st.dataframe(metrics_df[['player', 'total_dismissals', 'appearances']]
-                             .sort_values('total_dismissals', ascending=False).head(10))
+                            .sort_values('total_dismissals', ascending=False).head(10).reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
         
         # --- Season Analysis ---
         with tabs[1]:
@@ -626,7 +626,7 @@ class DreamTeamAnalysis:
                 st.subheader(f"Season {selected_season} Best XI")
                 best_xi = season_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
-                                      'total_runs', 'total_wickets', 'total_catches']])
+                                      'total_runs', 'total_wickets', 'total_catches']].reset_index(drop=True))
                 st.subheader("Season Performance Analysis")
                 col1, col2, col3 = st.columns(3)
                 with col1:
@@ -677,7 +677,7 @@ class DreamTeamAnalysis:
                     'batting_points': '{:.2f}',
                     'bowling_points': '{:.2f}',
                     'fielding_points': '{:.2f}'
-                }))
+                }).reset_index(drop=True))
                 fig = px.bar(
                     dream_team_df,
                     x='player',
@@ -691,11 +691,11 @@ class DreamTeamAnalysis:
                 with col1:
                     st.subheader("Batting Performances")
                     batting_stats = dream_team_df[['player', 'runs', 'boundaries', 'sixes', 'strike_rate']].sort_values('runs', ascending=False)
-                    st.dataframe(batting_stats)
+                    st.dataframe(batting_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
                 with col2:
                     st.subheader("Bowling Performances")
                     bowling_stats = dream_team_df[['player', 'wickets', 'maidens', 'economy_rate']].sort_values('wickets', ascending=False)
-                    st.dataframe(bowling_stats)
+                    st.dataframe(bowling_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
         
         # --- Venue Analysis ---
         with tabs[3]:
@@ -723,7 +723,7 @@ class DreamTeamAnalysis:
                 st.subheader("Venue Best XI")
                 best_xi = venue_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
-                                      'total_runs', 'total_wickets', 'total_catches']])
+                                      'total_runs', 'total_wickets', 'total_catches']].reset_index(drop=True))
                 st.subheader("Venue Statistics")
                 total_matches = self.matches_df[self.matches_df['venue'] == selected_venue].shape[0]
                 col1, col2, col3 = st.columns(3)
@@ -780,7 +780,7 @@ class DreamTeamAnalysis:
                            'Total Wickets': ('wickets', 'sum'),
                            'Total Catches': ('catches', 'sum')}
                     )
-                    st.dataframe(season_breakdown)
+                    st.dataframe(season_breakdown.reset_index().assign(Season=lambda x: x['season']).set_index('Season'))
                     st.subheader("Venue Breakdown")
                     venue_breakdown = player_history.groupby('venue').agg(
                         Appearances=('match_id', 'count'),
@@ -789,10 +789,10 @@ class DreamTeamAnalysis:
                            'Total Wickets': ('wickets', 'sum'),
                            'Total Catches': ('catches', 'sum')}
                     )
-                    st.dataframe(venue_breakdown)
+                    st.dataframe(venue_breakdown.reset_index().set_index('venue'))
                     st.subheader("Recent Form")
                     recent_matches = player_history.sort_values('date', ascending=False).head(5)
-                    st.dataframe(recent_matches[['date', 'teams', 'total_points', 'runs', 'wickets', 'catches']])
+                    st.dataframe(recent_matches[['date', 'teams', 'total_points', 'runs', 'wickets', 'catches']].reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
                 else:
                     st.warning(f"No dream team appearances found for {selected_player}")
         
@@ -805,7 +805,7 @@ class DreamTeamAnalysis:
                     if st.button(f"Load Dream Team for Match {match_id}"):
                         dream_team = self.get_match_dream_team(match_id)
                         if not dream_team.empty:
-                            st.dataframe(dream_team)
+                            st.dataframe(dream_team.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
                         else:
                             st.write("No data available for this match.")
 

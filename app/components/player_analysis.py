@@ -621,7 +621,7 @@ def display_batting_analysis(deliveries_df=None):
         detailed_stats = player_position_stats[['position', 'innings', 'runs', 'batting_average', 'batting_strike_rate']]
         detailed_stats = detailed_stats.sort_values('position')
         st.dataframe(
-            detailed_stats.style.format({
+            detailed_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index').style.format({
                 'batting_average': '{:.2f}',
                 'batting_strike_rate': '{:.2f}'
             }),
