@@ -780,7 +780,17 @@ def display_bowling_analysis(deliveries_df=None):
                 title='Top 10 Wicket Takers',
                 hover_data=['bowling_economy', 'bowling_average', 'bowling_strike_rate']
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    title="Bowler",
+                    tickfont=dict(size=10),
+                    showticklabels=True,
+                    tickmode="auto"
+                ),
+                yaxis=dict(title="No. Wicket"),
+                margin=dict(l=20, r=20, t=50, b=100)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
             
             # Economy vs Strike Rate
@@ -788,11 +798,83 @@ def display_bowling_analysis(deliveries_df=None):
                 filtered_stats,
                 x='bowling_economy',
                 y='bowling_strike_rate',
-                text='bowler',
-                title='Economy Rate vs Strike Rate',
-                hover_data=['is_wicket', 'bowling_average']
+                text=None,  # Remove default text for all points
+                title='Bowling Performance: Economy vs Strike Rate',
+                hover_data=['bowler', 'is_wicket', 'bowling_average'],
+                color='is_wicket',
+                color_continuous_scale='Viridis',
+                size='is_wicket',
+                size_max=20,
+                opacity=0.7
             )
-            fig.update_traces(textposition='top center')
+            
+            # Only label the top 5 elite performers
+            elite_bowlers = filtered_stats[
+                (filtered_stats['bowling_economy'] < filtered_stats['bowling_economy'].quantile(0.15)) & 
+                (filtered_stats['bowling_strike_rate'] < filtered_stats['bowling_strike_rate'].quantile(0.15))
+            ].nlargest(5, 'is_wicket')
+            
+            # Add text annotations only for elite bowlers
+            for idx, row in elite_bowlers.iterrows():
+                fig.add_annotation(
+                    x=row['bowling_economy'],
+                    y=row['bowling_strike_rate'],
+                    text=row['bowler'],
+                    showarrow=True,
+                    arrowhead=2,
+                    arrowsize=1,
+                    arrowcolor="#636363",
+                    arrowwidth=1,
+                    ax=15,
+                    ay=-15,
+                    font=dict(size=10, color="#303030"),
+                    bgcolor="rgba(255, 255, 255, 0.8)",
+                    bordercolor="rgba(0, 0, 0, 0.2)",
+                    borderwidth=1,
+                    borderpad=3
+                )
+            
+            # Add quadrant lines to separate performance regions
+            x_mean = filtered_stats['bowling_economy'].mean()
+            y_mean = filtered_stats['bowling_strike_rate'].mean()
+            fig.add_shape(type="line", x0=x_mean, y0=min(filtered_stats['bowling_strike_rate']), 
+                         x1=x_mean, y1=max(filtered_stats['bowling_strike_rate']),
+                         line=dict(color="Gray", width=1, dash="dash"))
+            fig.add_shape(type="line", x0=min(filtered_stats['bowling_economy']), y0=y_mean, 
+                         x1=max(filtered_stats['bowling_economy']), y1=y_mean,
+                         line=dict(color="Gray", width=1, dash="dash"))
+            
+            # Add single annotation explaining the chart
+            fig.add_annotation(
+                x=min(filtered_stats['bowling_economy']),
+                y=min(filtered_stats['bowling_strike_rate']) + 2,
+                text="⭐ ELITE ZONE",
+                showarrow=False,
+                font=dict(size=12, color="#303030"),
+                xanchor="left",
+                yanchor="bottom",
+                bgcolor="rgba(255, 255, 255, 0.8)",
+                bordercolor="rgba(50, 171, 96, 0.7)",
+                borderwidth=2,
+                borderpad=4
+            )
+            
+            # Update axes labels
+            fig.update_xaxes(title="Economy Rate (Runs per Over)")
+            fig.update_yaxes(title="Strike Rate (Balls per Wicket)")
+            
+            # Update layout
+            fig.update_layout(
+                plot_bgcolor='rgba(248, 248, 248, 0.95)',
+                coloraxis_colorbar=dict(
+                    title="Wickets",
+                    thicknessmode="pixels", thickness=15,
+                    lenmode="pixels", len=200,
+                    yanchor="top", y=1,
+                    ticks="outside"
+                ),
+                margin=dict(l=20, r=20, t=50, b=20)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -804,7 +886,17 @@ def display_bowling_analysis(deliveries_df=None):
                 title='Top 10 Dot Ball Percentages',
                 hover_data=['bowling_economy', 'is_wicket']
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    title="Bowler",
+                    tickfont=dict(size=10),
+                    showticklabels=True,
+                    tickmode="auto"
+                ),
+                yaxis=dict(title="Dot Ball Percentage"),
+                margin=dict(l=20, r=20, t=50, b=100)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
             
             # Wickets per match
@@ -815,7 +907,17 @@ def display_bowling_analysis(deliveries_df=None):
                 title='Top 10 Wickets per Match',
                 hover_data=['is_wicket', 'matches_bowling']
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    title="Bowler",
+                    tickfont=dict(size=10),
+                    showticklabels=True,
+                    tickmode="auto"
+                ),
+                yaxis=dict(title="Wickets per Match"),
+                margin=dict(l=20, r=20, t=50, b=100)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Wicket Analysis Tab
@@ -866,6 +968,15 @@ def display_bowling_analysis(deliveries_df=None):
                 title=f'Economy Rate by Match Phase - {selected_bowler}',
                 color='phase'
             )
+            fig.update_layout(
+                xaxis=dict(
+                    title="Match Phase",
+                    tickfont=dict(size=12),
+                    showticklabels=True
+                ),
+                yaxis=dict(title="Economy Rate"),
+                margin=dict(l=20, r=20, t=50, b=50)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -876,6 +987,15 @@ def display_bowling_analysis(deliveries_df=None):
                 y='is_wicket',
                 title=f'Wickets by Match Phase - {selected_bowler}',
                 color='phase'
+            )
+            fig.update_layout(
+                xaxis=dict(
+                    title="Match Phase",
+                    tickfont=dict(size=12),
+                    showticklabels=True
+                ),
+                yaxis=dict(title="Number of Wickets"),
+                margin=dict(l=20, r=20, t=50, b=50)
             )
             responsive_plotly_chart(fig, use_container_width=True)
         
@@ -1022,7 +1142,17 @@ def display_allrounder_analysis(deliveries_df=None):
                 title='Top 10 All-Rounders (Composite Score)',
                 hover_data=['batting_runs', 'wickets']
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    title="Player",
+                    tickfont=dict(size=10),
+                    showticklabels=True,
+                    tickmode="auto"
+                ),
+                yaxis=dict(title="All-Rounder Score"),
+                margin=dict(l=20, r=20, t=50, b=100)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
@@ -1275,7 +1405,17 @@ def display_head_to_head_analysis(deliveries_df=None):
                     title='Top 10 Dominant Batting Performances',
                     hover_data=['runs', 'balls', 'dismissals']
                 )
-                fig.update_layout(xaxis_tickangle=-45)
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    xaxis=dict(
+                        title="Batsman",
+                        tickfont=dict(size=10),
+                        showticklabels=True,
+                        tickmode="auto"
+                    ),
+                    yaxis=dict(title="Dominance Ratio"),
+                    margin=dict(l=20, r=20, t=50, b=100)
+                )
                 responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No data available for dominant batting performances")
@@ -1292,7 +1432,17 @@ def display_head_to_head_analysis(deliveries_df=None):
                     title='Top 10 Dominant Bowling Performances',
                     hover_data=['runs', 'balls', 'dismissals']
                 )
-                fig.update_layout(xaxis_tickangle=-45)
+                fig.update_layout(
+                    xaxis_tickangle=-45,
+                    xaxis=dict(
+                        title="Bowler",
+                        tickfont=dict(size=10),
+                        showticklabels=True,
+                        tickmode="auto"
+                    ),
+                    yaxis=dict(title="Strike Rate"),
+                    margin=dict(l=20, r=20, t=50, b=100)
+                )
                 responsive_plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No data available for dominant bowling performances")
