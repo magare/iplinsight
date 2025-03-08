@@ -201,12 +201,7 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
         st.warning("Please select at least one team to view the Net Run Rate analysis.")
         return
     
-    # Full-width container for first chart
-    st.markdown("### Average Net Run Rate by Season")
-    
-    # Filter data for selected teams
-    filtered_avg_nrr = avg_nrr_by_season[avg_nrr_by_season['team1'].isin(selected_teams)]
-    
+    # Define team_colors for use in all charts
     # Use a consistent color palette with fixed hex colors (instead of relying on plotly names)
     distinct_colors = [
         "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
@@ -215,85 +210,106 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
     ]
     team_colors = {team: distinct_colors[i % len(distinct_colors)] for i, team in enumerate(teams)}
     
-    # Create Bar Chart for Average NRR by Season
-    fig = go.Figure()
+    # Full-width container for first chart
+    st.markdown("### Win Percentage by Teams")
     
-    # Add a horizontal line at NRR = 0 first so it's below the bars
-    fig.add_shape(
-        type="line",
-        x0=filtered_avg_nrr['season'].min(),
-        y0=0,
-        x1=filtered_avg_nrr['season'].max(),
-        y1=0,
-        line=dict(color="rgba(255, 255, 255, 0.5)", width=1, dash="dash")
-    )
+    # Use the original team stats dataframe from the data
+    team_stats_df = data.get('team_stats', pd.DataFrame())
     
-    # Add annotation to explain what positive/negative NRR means
-    fig.add_annotation(
-        x=filtered_avg_nrr['season'].max(),
-        y=0.05,
-        text="↑ Positive NRR (Good)",
-        showarrow=False,
-        font=dict(size=10, color="white"),
-        align="right",
-        xanchor="right",
-        yanchor="bottom"
-    )
-    
-    fig.add_annotation(
-        x=filtered_avg_nrr['season'].max(),
-        y=-0.05,
-        text="↓ Negative NRR (Poor)",
-        showarrow=False,
-        font=dict(size=10, color="white"),
-        align="right",
-        xanchor="right",
-        yanchor="top"
-    )
-    
-    # Add trace for each team
-    for team in selected_teams:
-        team_data = filtered_avg_nrr[filtered_avg_nrr['team1'] == team]
-        
-        # Add bar chart instead of line chart
-        fig.add_trace(go.Bar(
-            x=team_data['season'],
-            y=team_data['nrr'],
-            name=team,
-            marker_color=team_colors[team],
-            hovertemplate=f"<b>{team}</b><br>Season: %{{x}}<br>NRR: %{{y:.3f}}<extra></extra>"
-        ))
-    
-    fig.update_layout(
-        title={
-            'text': 'Team Net Run Rate (NRR) Across Seasons',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 18}
-        },
-        height=500,
-        xaxis_title="Season",
-        yaxis_title="Net Run Rate (NRR)",
-        template='plotly_dark',
-        yaxis=dict(
-            gridcolor='rgba(128,128,128,0.1)'
-        ),
-        xaxis=dict(
-            tickmode='array',  # Use array tick mode to show all seasons
-            tickvals=filtered_avg_nrr['season'].unique(),  # Ensure a tick for each season
-            ticktext=filtered_avg_nrr['season'].unique(),
-            tickangle=-45,
-            gridcolor='rgba(128,128,128,0.1)',
-            automargin=True  # Ensure labels don't get cut off
-        ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=60, b=80, l=80, r=40),
-        barmode='relative',
-        hovermode='closest'
-    )
-    
-    responsive_plotly_chart(fig, use_container_width=True)
+    if not team_stats_df.empty:
+        # Check if we have the right columns for this analysis
+        if all(col in team_stats_df.columns for col in ['Team', 'Matches', 'Wins', 'Losses']):
+            # Filter for selected teams
+            filtered_team_stats = team_stats_df[team_stats_df['Team'].isin(selected_teams)]
+            
+            if filtered_team_stats.empty:
+                st.warning("No data available for the selected teams.")
+            else:
+                # Calculate win percentage
+                filtered_team_stats['Win_Percentage'] = (filtered_team_stats['Wins'] / filtered_team_stats['Matches'] * 100).round(1)
+                
+                # Sort by win percentage (descending)
+                filtered_team_stats = filtered_team_stats.sort_values('Win_Percentage', ascending=False)
+                
+                # Create chart for win percentage
+                fig = go.Figure()
+                
+                # Add main bar chart for win percentage
+                fig.add_trace(go.Bar(
+                    x=filtered_team_stats['Team'],
+                    y=filtered_team_stats['Win_Percentage'],
+                    name='Win Percentage',
+                    marker_color=[team_colors.get(team, "#1f77b4") for team in filtered_team_stats['Team']],
+                    text=filtered_team_stats['Win_Percentage'].round(1).astype(str) + '%',
+                    textposition='auto',
+                    hovertemplate='<b>%{x}</b><br>Win Rate: %{y:.1f}%<br>Matches: %{customdata[0]}<br>Wins: %{customdata[1]}<br>Losses: %{customdata[2]}<extra></extra>',
+                    customdata=filtered_team_stats[['Matches', 'Wins', 'Losses']].values
+                ))
+                
+                # Update layout
+                fig.update_layout(
+                    title={
+                        'text': 'Team Win Percentage Comparison',
+                        'x': 0.5,
+                        'xanchor': 'center',
+                        'font': {'size': 18}
+                    },
+                    height=500,
+                    xaxis_title="Team",
+                    yaxis_title="Win Percentage (%)",
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        range=[0, 100]  # Fix y-axis from 0 to 100%
+                    ),
+                    template='plotly_dark',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    margin=dict(t=60, b=80, l=80, r=40),
+                    hovermode='closest'
+                )
+                
+                # Add a reference line at 50% win rate
+                fig.add_shape(
+                    type="line",
+                    x0=-0.5,
+                    y0=50,
+                    x1=len(filtered_team_stats) - 0.5,
+                    y1=50,
+                    line=dict(color="rgba(255, 255, 255, 0.5)", width=1, dash="dash")
+                )
+                
+                # Add annotation to explain the 50% line
+                fig.add_annotation(
+                    x=len(filtered_team_stats) - 1,
+                    y=52,
+                    text="50% Win Rate",
+                    showarrow=False,
+                    font=dict(size=10, color="white"),
+                    align="right",
+                    xanchor="right",
+                    yanchor="bottom"
+                )
+                
+                # Use try-except to handle any rendering errors
+                try:
+                    responsive_plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.error(f"Error rendering chart: {str(e)}")
+                    st.write("Please try selecting different teams or refresh the page.")
+                
+                # Add a data table below the chart for more detailed information
+                st.markdown("#### Detailed Team Performance Stats")
+                
+                # Prepare a more readable dataframe for display
+                display_df = filtered_team_stats[['Team', 'Matches', 'Wins', 'Losses', 'Win_Percentage']].copy()
+                display_df.columns = ['Team', 'Matches Played', 'Wins', 'Losses', 'Win Percentage (%)']
+                
+                # Display the table
+                st.dataframe(display_df.set_index('Team'), use_container_width=True)
+        else:
+            st.warning("Required data columns for Win Percentage analysis are not available.")
+    else:
+        st.warning("No team statistics data available. Please select at least one team.")
     
     # Add some spacing
     st.markdown("<br>", unsafe_allow_html=True)
