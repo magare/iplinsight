@@ -16,7 +16,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from config import PRECOMPUTED_DATA, MAX_ROWS_DISPLAY
 from utils.chart_utils import responsive_plotly_chart, get_neon_color_discrete_sequence
 from utils.data_loader import load_precomputed_data, format_large_number, calculate_basic_stats
-from utils.color_palette import NEON_COLORS, CHART_STYLING
+from utils.color_palette import NEON_COLORS, CHART_STYLING, apply_neon_style
 from utils.error_handler import error_boundary, ErrorBoundary
 from utils.state_manager import get_state, is_mobile
 from utils.ui_components import (
@@ -99,35 +99,23 @@ def display_overview_metrics(matches: pd.DataFrame, deliveries: pd.DataFrame) ->
         "Avg. Wickets/Match": f"{float(stats.get('avg_wickets_per_match', 0)):.1f}" if 'avg_wickets_per_match' in stats else "N/A"
     }
     
-    # Responsive layout
-    # Get device type to determine columns
-    device_type = get_state('device_type', 'desktop')
+    # Create a header for all metrics sections
+    HeaderComponent.subsection_header("Key IPL Statistics")
     
-    if device_type == 'mobile':
-        # For mobile, show metrics in a single column
-        HeaderComponent.subsection_header("Tournament Scale")
+    # Always show metrics in three columns, but adjust the UI for mobile
+    cols = st.columns(3)
+    
+    with cols[0]:
+        st.markdown("#### Tournament Scale")
         DataDisplayComponent.metrics_display(tournament_metrics, 1)
         
-        HeaderComponent.subsection_header("Batting Insights")
+    with cols[1]:
+        st.markdown("#### Batting Insights")
         DataDisplayComponent.metrics_display(batting_metrics, 1)
         
-        HeaderComponent.subsection_header("Bowling Insights")
+    with cols[2]:
+        st.markdown("#### Bowling Insights")
         DataDisplayComponent.metrics_display(bowling_metrics, 1)
-    else:
-        # For desktop, show metrics in three columns
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            HeaderComponent.subsection_header("Tournament Scale")
-            DataDisplayComponent.metrics_display(tournament_metrics, 1)
-            
-        with col2:
-            HeaderComponent.subsection_header("Batting Insights")
-            DataDisplayComponent.metrics_display(batting_metrics, 1)
-            
-        with col3:
-            HeaderComponent.subsection_header("Bowling Insights")
-            DataDisplayComponent.metrics_display(bowling_metrics, 1)
 
 @error_boundary
 def load_overview_data() -> Dict[str, pd.DataFrame]:
@@ -143,6 +131,14 @@ def load_overview_data() -> Dict[str, pd.DataFrame]:
         avg_runs_by_season = load_precomputed_data(PRECOMPUTED_DATA['avg_runs_by_season'])
         avg_wickets_by_season = load_precomputed_data(PRECOMPUTED_DATA['avg_wickets_by_season'])
         team_participation = load_precomputed_data(PRECOMPUTED_DATA['team_participation'])
+        
+        # Rename columns in avg_runs_by_season if needed
+        if not avg_runs_by_season.empty and 'total_runs' in avg_runs_by_season.columns and 'avg_runs' not in avg_runs_by_season.columns:
+            avg_runs_by_season = avg_runs_by_season.rename(columns={'total_runs': 'avg_runs'})
+            
+        # Rename columns in avg_wickets_by_season if needed
+        if not avg_wickets_by_season.empty and 'wickets' in avg_wickets_by_season.columns and 'avg_wickets' not in avg_wickets_by_season.columns:
+            avg_wickets_by_season = avg_wickets_by_season.rename(columns={'wickets': 'avg_wickets'})
         
         # Rename columns to make them more human-readable
         if not team_participation.empty:
@@ -172,39 +168,28 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None) -> None:
         matches_df: Matches dataframe
         deliveries_df: Deliveries dataframe
     """
-    # Load precomputed data if needed
-    data = load_overview_data()
-    
-    # Set up the columns based on device type
-    device_type = get_state('device_type', 'desktop')
-    if device_type == 'mobile':
-        # For mobile, stack plots vertically
-        col1 = st.container()
-        col2 = st.container()
-        col3 = st.container()
-    else:
-        # For desktop, show side by side
-        col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        # Matches per season
-        if 'matches_per_season' in data and not data['matches_per_season'].empty:
-            df = data['matches_per_season']
-            fig = px.bar(
-                df, 
-                x='season', 
-                y='matches',
-                title='Matches per Season',
-                labels={'season': 'Season', 'matches': 'Number of Matches'},
-                color_discrete_sequence=get_neon_color_discrete_sequence(1)
-            )
-            # Apply common styling
-            fig.update_layout(**CHART_STYLING)
-            responsive_plotly_chart(fig)
+    try:
+        # Set up the columns based on device type
+        device_type = get_state('device_type', 'desktop')
+        if device_type == 'mobile':
+            # For mobile, stack plots vertically
+            col1 = st.container()
+            col2 = st.container()
+            col3 = st.container()
         else:
-            # Compute on the fly if precomputed data is not available
+            # For desktop, show side by side
+            col1, col2, col3 = st.columns(3)
+        
+        # Define colors from NEON_COLORS for consistency
+        matches_color = NEON_COLORS[0]  # Neon green
+        runs_color = NEON_COLORS[2]     # Neon cyan
+        wickets_color = NEON_COLORS[1]  # Neon pink
+        
+        # Matches per season
+        with col1:
             if matches_df is not None:
                 try:
+                    logger.info(f"Computing matches per season from raw data")
                     matches_per_season = matches_df.groupby('season').size().reset_index(name='matches')
                     fig = px.bar(
                         matches_per_season, 
@@ -212,111 +197,102 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None) -> None:
                         y='matches',
                         title='Matches per Season',
                         labels={'season': 'Season', 'matches': 'Number of Matches'},
-                        color_discrete_sequence=get_neon_color_discrete_sequence(1)
+                        color_discrete_sequence=[matches_color]
                     )
                     fig.update_layout(**CHART_STYLING)
                     responsive_plotly_chart(fig)
                 except Exception as e:
                     logger.error(f"Error generating matches per season chart: {e}")
                     st.error("Could not generate matches per season chart.")
-    
-    with col2:
-        # Average runs per season
-        if 'avg_runs_by_season' in data and not data['avg_runs_by_season'].empty:
-            df = data['avg_runs_by_season']
-            fig = px.line(
-                df, 
-                x='season', 
-                y='avg_runs',
-                title='Average Runs per Match by Season',
-                labels={'season': 'Season', 'avg_runs': 'Average Runs per Match'},
-                markers=True,
-                color_discrete_sequence=get_neon_color_discrete_sequence(1, 1)
-            )
-            fig.update_layout(**CHART_STYLING)
-            responsive_plotly_chart(fig)
-        else:
-            # Compute on the fly if precomputed data is not available
+        
+        # Average runs per match by season
+        with col2:
             if matches_df is not None and deliveries_df is not None:
                 try:
-                    # Join the deliveries and matches dataframes
-                    runs_by_match = deliveries_df.groupby('match_id')['total_runs'].sum().reset_index()
+                    logger.info(f"Computing average runs per season from raw data")
+                    
+                    # Identify the columns we need
+                    logger.info(f"Deliveries columns: {list(deliveries_df.columns)}")
+                    logger.info(f"Matches columns: {list(matches_df.columns)}")
+                    
+                    # Use 'total_runs' for summing runs (adjust if your column name is different)
+                    runs_column = 'total_runs'
+                    match_id_column = 'match_id'  # Both dataframes use match_id
+                    
+                    # Compute total runs per match
+                    runs_by_match = deliveries_df.groupby(match_id_column)[runs_column].sum().reset_index()
+                    
+                    # Join with match data to get seasons
                     matches_with_runs = pd.merge(
-                        matches_df[['id', 'season']], 
-                        runs_by_match, 
-                        left_on='id', 
-                        right_on='match_id',
+                        matches_df[[match_id_column, 'season']], # Use match_id from matches_df
+                        runs_by_match,
+                        on=match_id_column,  # Join on match_id
                         how='inner'
                     )
                     
-                    # Calculate average runs per season
-                    avg_runs_by_season = matches_with_runs.groupby('season')['total_runs'].mean().reset_index()
-                    avg_runs_by_season = avg_runs_by_season.rename(columns={'total_runs': 'avg_runs'})
+                    # Group by season and calculate average runs per match
+                    avg_runs_by_season = matches_with_runs.groupby('season')[runs_column].mean().reset_index()
+                    avg_runs_by_season.rename(columns={runs_column: 'avg_runs'}, inplace=True)
                     
+                    # Create the chart
                     fig = px.line(
-                        avg_runs_by_season, 
-                        x='season', 
+                        avg_runs_by_season,
+                        x='season',
                         y='avg_runs',
                         title='Average Runs per Match by Season',
                         labels={'season': 'Season', 'avg_runs': 'Average Runs per Match'},
                         markers=True,
-                        color_discrete_sequence=get_neon_color_discrete_sequence(1, 1)
+                        color_discrete_sequence=[runs_color]
                     )
                     fig.update_layout(**CHART_STYLING)
                     responsive_plotly_chart(fig)
                 except Exception as e:
-                    logger.error(f"Error generating average runs chart: {e}")
+                    logger.error(f"Error generating average runs chart: {str(e)}")
                     st.error("Could not generate average runs chart.")
-    
-    with col3:
-        # Average wickets per season
-        if 'avg_wickets_by_season' in data and not data['avg_wickets_by_season'].empty:
-            df = data['avg_wickets_by_season']
-            fig = px.line(
-                df, 
-                x='season', 
-                y='avg_wickets',
-                title='Average Wickets per Match by Season',
-                labels={'season': 'Season', 'avg_wickets': 'Average Wickets per Match'},
-                markers=True,
-                color_discrete_sequence=get_neon_color_discrete_sequence(1, 2)
-            )
-            fig.update_layout(**CHART_STYLING)
-            responsive_plotly_chart(fig)
-        else:
-            # Compute on the fly if precomputed data is not available
+        
+        # Average wickets per match by season
+        with col3:
             if matches_df is not None and deliveries_df is not None:
                 try:
-                    # Calculate wickets by match
-                    wickets_by_match = deliveries_df.groupby('match_id')['is_wicket'].sum().reset_index()
+                    logger.info(f"Computing average wickets per season from raw data")
                     
-                    # Join with matches to get season info
+                    # Identify columns for wicket counting
+                    wicket_column = 'is_wicket'
+                    match_id_column = 'match_id'  # Both dataframes use match_id
+                    
+                    # Compute total wickets per match
+                    wickets_by_match = deliveries_df.groupby(match_id_column)[wicket_column].sum().reset_index()
+                    
+                    # Join with match data to get seasons
                     matches_with_wickets = pd.merge(
-                        matches_df[['id', 'season']], 
-                        wickets_by_match, 
-                        left_on='id', 
-                        right_on='match_id',
+                        matches_df[[match_id_column, 'season']], # Use match_id from matches_df
+                        wickets_by_match,
+                        on=match_id_column,  # Join on match_id
                         how='inner'
                     )
                     
-                    # Calculate average wickets per season
-                    avg_wickets_by_season = matches_with_wickets.groupby('season')['is_wicket'].mean().reset_index()
-                    avg_wickets_by_season = avg_wickets_by_season.rename(columns={'is_wicket': 'avg_wickets'})
+                    # Group by season and calculate average wickets per match
+                    avg_wickets_by_season = matches_with_wickets.groupby('season')[wicket_column].mean().reset_index()
+                    avg_wickets_by_season.rename(columns={wicket_column: 'avg_wickets'}, inplace=True)
                     
+                    # Create the chart
                     fig = px.line(
-                        avg_wickets_by_season, 
-                        x='season', 
+                        avg_wickets_by_season,
+                        x='season',
                         y='avg_wickets',
                         title='Average Wickets per Match by Season',
                         labels={'season': 'Season', 'avg_wickets': 'Average Wickets per Match'},
                         markers=True,
-                        color_discrete_sequence=get_neon_color_discrete_sequence(1, 2)
+                        color_discrete_sequence=[wickets_color]
                     )
                     fig.update_layout(**CHART_STYLING)
                     responsive_plotly_chart(fig)
                 except Exception as e:
-                    logger.error(f"Error generating average wickets chart: {e}")
+                    logger.error(f"Error generating average wickets chart: {str(e)}")
                     st.error("Could not generate average wickets chart.")
+    except Exception as e:
+        logger.error(f"Error in plot_tournament_growth: {str(e)}")
+        st.error("Could not generate tournament growth charts.")
 
 @error_boundary
 def display_team_participation(matches_df=None) -> None:
@@ -500,4 +476,4 @@ def display_dataset_info() -> None:
                 - dismissal_kind: How batsman got out
                 - player_dismissed: Dismissed player
                 - fielder: Fielder involved in dismissal
-                """) 
+                """)
