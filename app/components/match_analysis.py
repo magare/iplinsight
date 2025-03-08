@@ -104,7 +104,7 @@ def display_match_result_analysis(matches_df):
                 yaxis=dict(
                     gridcolor='rgba(128,128,128,0.1)',
                     tickmode='linear',  # Show all ticks with consistent spacing
-                    dtick=5,            # Tick every 5 units
+                    dtick=10,            # Tick every 10 units (increased from 5 to reduce clutter)
                     automargin=True     # Ensure labels don't get cut off
                 ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
@@ -128,7 +128,7 @@ def display_match_result_analysis(matches_df):
                 yaxis=dict(
                     gridcolor='rgba(128,128,128,0.1)',
                     tickmode='linear',  # Show all ticks with consistent spacing
-                    dtick=5,            # Tick every 5 units
+                    dtick=10,            # Tick every 10 units (increased from 5 to reduce clutter)
                     automargin=True     # Ensure labels don't get cut off
                 ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
@@ -429,7 +429,13 @@ def display_scoring_analysis(matches_df, deliveries_df):
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',  # Use array tick mode to show all venues
+                tickvals=list(range(len(venue_scores_df))),  # Ensure a tick for each venue
+                ticktext=venue_scores_df['venue'],  # Use venue names as tick text
+                automargin=True  # Ensure labels don't get cut off
+            )
         )
         responsive_plotly_chart(fig, use_container_width=True)
     
@@ -591,7 +597,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Top Venues for High Scoring Matches',
                 labels={'value': 'Number of Matches', 'index': 'Venue'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all venues
+                    tickvals=list(range(len(scoring_stats[1].head(10)))),  # Ensure a tick for each venue
+                    ticktext=scoring_stats[1].head(10).index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
@@ -599,7 +613,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Top Venues for Low Scoring Matches',
                 labels={'value': 'Number of Matches', 'index': 'Venue'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all venues
+                    tickvals=list(range(len(scoring_stats[2].head(10)))),  # Ensure a tick for each venue
+                    ticktext=scoring_stats[2].head(10).index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Team Analysis Tab
@@ -786,7 +808,16 @@ def display_match_dream_team(match_id):
                     labels={'value': 'Points', 'variable': 'Category'},
                     barmode='stack'
                 )
-                fig.update_layout(height=400)
+                fig.update_layout(
+                    height=400,
+                    xaxis=dict(
+                        tickmode='array',  # Use array tick mode to show all players
+                        tickvals=list(range(len(dream_team_df))),  # Ensure a tick for each player
+                        ticktext=dream_team_df['player'].tolist(),  # Use player names as tick text
+                        tickangle=-45,  # Angle labels for better readability
+                        automargin=True  # Ensure labels don't get cut off
+                    )
+                )
                 responsive_plotly_chart(fig, use_container_width=True)
             
             with col2:
