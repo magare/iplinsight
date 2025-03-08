@@ -1023,7 +1023,8 @@ def display_bowling_analysis(deliveries_df=None):
                 'bowling_average': '{:.2f}',
                 'bowling_strike_rate': '{:.2f}'
             }),
-            use_container_width=True
+            use_container_width=True,
+            hide_index=True  # Hide the index column
         )
 
 def calculate_allrounder_stats(deliveries_df=None):
@@ -1169,16 +1170,107 @@ def display_allrounder_analysis(deliveries_df=None):
             responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
-            # Batting vs Bowling score scatter
+            # Batting vs Bowling score scatter - Improved bubble chart
             fig = px.scatter(
                 filtered_stats,
                 x='batting_score',
                 y='bowling_score',
-                text='player',
-                title='Batting vs Bowling Performance',
-                hover_data=['batting_runs', 'wickets', 'allrounder_score']
+                size='allrounder_score',  # Size based on all-rounder score
+                color='allrounder_score',  # Color based on all-rounder score
+                color_continuous_scale='Viridis',  # Consistent color scheme
+                size_max=40,  # Maximum bubble size
+                opacity=0.8,
+                hover_name='player',  # Show player name on hover
+                hover_data={
+                    'batting_runs': True,
+                    'wickets': True, 
+                    'batting_average': ':.2f', 
+                    'bowling_economy': ':.2f',
+                    'allrounder_score': ':.2f',
+                    'batting_score': False,
+                    'bowling_score': False
+                },
+                title='Batting vs Bowling Performance'
             )
-            fig.update_traces(textposition='top center')
+            
+            # Add quadrant lines
+            x_mean = filtered_stats['batting_score'].mean()
+            y_mean = filtered_stats['bowling_score'].mean()
+            
+            fig.add_shape(type="line", x0=x_mean, y0=min(filtered_stats['bowling_score']), 
+                         x1=x_mean, y1=max(filtered_stats['bowling_score']),
+                         line=dict(color="Gray", width=1, dash="dash"))
+            fig.add_shape(type="line", x0=min(filtered_stats['batting_score']), y0=y_mean, 
+                         x1=max(filtered_stats['batting_score']), y1=y_mean,
+                         line=dict(color="Gray", width=1, dash="dash"))
+            
+            # Label the quadrants
+            fig.add_annotation(
+                x=min(filtered_stats['batting_score']) + (x_mean - min(filtered_stats['batting_score']))/2,
+                y=min(filtered_stats['bowling_score']) + (y_mean - min(filtered_stats['bowling_score']))/2,
+                text="Bowling Specialists",
+                showarrow=False,
+                font=dict(size=10, color="#303030")
+            )
+            fig.add_annotation(
+                x=x_mean + (max(filtered_stats['batting_score']) - x_mean)/2,
+                y=min(filtered_stats['bowling_score']) + (y_mean - min(filtered_stats['bowling_score']))/2,
+                text="Elite All-rounders",
+                showarrow=False,
+                font=dict(size=10, color="#303030")
+            )
+            fig.add_annotation(
+                x=min(filtered_stats['batting_score']) + (x_mean - min(filtered_stats['batting_score']))/2,
+                y=y_mean + (max(filtered_stats['bowling_score']) - y_mean)/2,
+                text="Below Average",
+                showarrow=False,
+                font=dict(size=10, color="#303030")
+            )
+            fig.add_annotation(
+                x=x_mean + (max(filtered_stats['batting_score']) - x_mean)/2,
+                y=y_mean + (max(filtered_stats['bowling_score']) - y_mean)/2,
+                text="Batting Specialists",
+                showarrow=False,
+                font=dict(size=10, color="#303030")
+            )
+            
+            # Update axes labels
+            fig.update_xaxes(title="Batting Score")
+            fig.update_yaxes(title="Bowling Score")
+            
+            # Label top 5 all-rounders
+            top_allrounders = filtered_stats.nlargest(5, 'allrounder_score')
+            for idx, row in top_allrounders.iterrows():
+                fig.add_annotation(
+                    x=row['batting_score'],
+                    y=row['bowling_score'],
+                    text=row['player'],
+                    showarrow=True,
+                    arrowhead=2,
+                    arrowsize=1,
+                    arrowcolor="#636363",
+                    arrowwidth=1,
+                    ax=15,
+                    ay=-15,
+                    font=dict(size=10, color="#303030"),
+                    bgcolor="rgba(255, 255, 255, 0.8)",
+                    bordercolor="rgba(0, 0, 0, 0.2)",
+                    borderwidth=1,
+                    borderpad=3
+                )
+            
+            # Improve layout
+            fig.update_layout(
+                plot_bgcolor='rgba(248, 248, 248, 0.95)',
+                coloraxis_colorbar=dict(
+                    title="All-rounder Score",
+                    thicknessmode="pixels", thickness=15,
+                    lenmode="pixels", len=200,
+                    yanchor="top", y=1,
+                    ticks="outside"
+                ),
+                margin=dict(l=20, r=20, t=50, b=20)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Performance Matrix Tab
@@ -1186,29 +1278,174 @@ def display_allrounder_analysis(deliveries_df=None):
         col1, col2 = st.columns(2)
         
         with col1:
-            # Runs vs Wickets scatter
+            # Runs vs Wickets scatter - Improved
             fig = px.scatter(
                 filtered_stats,
                 x='batting_runs',
                 y='wickets',
-                text='player',
-                title='Runs vs Wickets Matrix',
-                hover_data=['batting_average', 'bowling_economy']
+                size='allrounder_score',  # Size based on all-rounder score
+                color='allrounder_score',  # Color based on all-rounder score
+                color_continuous_scale='Viridis',  # Consistent color scheme
+                size_max=40,  # Maximum bubble size
+                opacity=0.8,
+                hover_name='player',  # Show player name on hover
+                hover_data={
+                    'batting_runs': True,
+                    'wickets': True,
+                    'batting_average': ':.2f', 
+                    'bowling_strike_rate': ':.2f',
+                    'allrounder_score': ':.2f'
+                },
+                title='Runs vs Wickets Matrix'
             )
-            fig.update_traces(textposition='top center')
+            
+            # Add reference lines
+            x_median = filtered_stats['batting_runs'].median()
+            y_median = filtered_stats['wickets'].median()
+            
+            fig.add_shape(type="line", x0=x_median, y0=min(filtered_stats['wickets']), 
+                         x1=x_median, y1=max(filtered_stats['wickets']),
+                         line=dict(color="Gray", width=1, dash="dash"))
+            
+            # Label top 5 all-rounders
+            top_allrounders = filtered_stats.nlargest(5, 'allrounder_score')
+            for idx, row in top_allrounders.iterrows():
+                fig.add_annotation(
+                    x=row['batting_runs'],
+                    y=row['wickets'],
+                    text=row['player'],
+                    showarrow=True,
+                    arrowhead=2,
+                    arrowsize=1,
+                    arrowcolor="#636363",
+                    arrowwidth=1,
+                    ax=15,
+                    ay=-15,
+                    font=dict(size=10, color="#303030"),
+                    bgcolor="rgba(255, 255, 255, 0.8)",
+                    bordercolor="rgba(0, 0, 0, 0.2)",
+                    borderwidth=1,
+                    borderpad=3
+                )
+            
+            # Update axes labels
+            fig.update_xaxes(title="Batting Runs")
+            fig.update_yaxes(title="Wickets Taken")
+            
+            # Improve layout
+            fig.update_layout(
+                plot_bgcolor='rgba(248, 248, 248, 0.95)',
+                coloraxis_colorbar=dict(
+                    title="All-rounder Score",
+                    thicknessmode="pixels", thickness=15,
+                    lenmode="pixels", len=200,
+                    yanchor="top", y=1,
+                    ticks="outside"
+                ),
+                margin=dict(l=20, r=20, t=50, b=20)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         
         with col2:
-            # Strike Rate vs Economy scatter
+            # Strike Rate vs Economy scatter - Improved
             fig = px.scatter(
                 filtered_stats,
                 x='batting_strike_rate',
                 y='bowling_economy',
-                text='player',
-                title='Strike Rate vs Economy Rate',
-                hover_data=['batting_runs', 'wickets']
+                size='allrounder_score',  # Size based on all-rounder score
+                color='allrounder_score',  # Color based on all-rounder score
+                color_continuous_scale='Viridis',  # Consistent color scheme
+                size_max=40,  # Maximum bubble size
+                opacity=0.8,
+                hover_name='player',  # Show player name on hover
+                hover_data={
+                    'batting_runs': True,
+                    'wickets': True,
+                    'batting_average': ':.2f', 
+                    'bowling_strike_rate': ':.2f',
+                    'allrounder_score': ':.2f'
+                },
+                title='Strike Rate vs Economy Rate'
             )
-            fig.update_traces(textposition='top center')
+            
+            # Add reference lines
+            x_median = filtered_stats['batting_strike_rate'].median()
+            y_median = filtered_stats['bowling_economy'].median()
+            
+            fig.add_shape(type="line", x0=x_median, y0=min(filtered_stats['bowling_economy']), 
+                         x1=x_median, y1=max(filtered_stats['bowling_economy']),
+                         line=dict(color="Gray", width=1, dash="dash"))
+            fig.add_shape(type="line", x0=min(filtered_stats['batting_strike_rate']), y0=y_median, 
+                         x1=max(filtered_stats['batting_strike_rate']), y1=y_median,
+                         line=dict(color="Gray", width=1, dash="dash"))
+            
+            # Add quadrant labels
+            fig.add_annotation(
+                x=min(filtered_stats['batting_strike_rate']) + (x_median - min(filtered_stats['batting_strike_rate']))/2,
+                y=min(filtered_stats['bowling_economy']) + (y_median - min(filtered_stats['bowling_economy']))/2,
+                text="Low SR, Low Eco (Defensive)",
+                showarrow=False,
+                font=dict(size=9, color="#303030")
+            )
+            fig.add_annotation(
+                x=x_median + (max(filtered_stats['batting_strike_rate']) - x_median)/2,
+                y=min(filtered_stats['bowling_economy']) + (y_median - min(filtered_stats['bowling_economy']))/2,
+                text="High SR, Low Eco (Elite)",
+                showarrow=False,
+                font=dict(size=9, color="#303030")
+            )
+            fig.add_annotation(
+                x=min(filtered_stats['batting_strike_rate']) + (x_median - min(filtered_stats['batting_strike_rate']))/2,
+                y=y_median + (max(filtered_stats['bowling_economy']) - y_median)/2,
+                text="Low SR, High Eco (Below Average)",
+                showarrow=False,
+                font=dict(size=9, color="#303030")
+            )
+            fig.add_annotation(
+                x=x_median + (max(filtered_stats['batting_strike_rate']) - x_median)/2,
+                y=y_median + (max(filtered_stats['bowling_economy']) - y_median)/2,
+                text="High SR, High Eco (Aggressive)",
+                showarrow=False,
+                font=dict(size=9, color="#303030")
+            )
+            
+            # Label top 5 all-rounders
+            top_allrounders = filtered_stats.nlargest(5, 'allrounder_score')
+            for idx, row in top_allrounders.iterrows():
+                fig.add_annotation(
+                    x=row['batting_strike_rate'],
+                    y=row['bowling_economy'],
+                    text=row['player'],
+                    showarrow=True,
+                    arrowhead=2,
+                    arrowsize=1,
+                    arrowcolor="#636363",
+                    arrowwidth=1,
+                    ax=15,
+                    ay=-15,
+                    font=dict(size=10, color="#303030"),
+                    bgcolor="rgba(255, 255, 255, 0.8)",
+                    bordercolor="rgba(0, 0, 0, 0.2)",
+                    borderwidth=1,
+                    borderpad=3
+                )
+            
+            # Update axes labels
+            fig.update_xaxes(title="Batting Strike Rate")
+            fig.update_yaxes(title="Bowling Economy Rate")
+            
+            # Improve layout
+            fig.update_layout(
+                plot_bgcolor='rgba(248, 248, 248, 0.95)',
+                coloraxis_colorbar=dict(
+                    title="All-rounder Score",
+                    thicknessmode="pixels", thickness=15,
+                    lenmode="pixels", len=200,
+                    yanchor="top", y=1,
+                    ticks="outside"
+                ),
+                margin=dict(l=20, r=20, t=50, b=20)
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Detailed Stats Tab
