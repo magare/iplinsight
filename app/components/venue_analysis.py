@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from utils.chart_utils import responsive_plotly_chart, update_chart_for_responsive_layout
 
+# Define consistent color scheme to match the rest of the app
+COLOR_SEQUENCE = px.colors.qualitative.Plotly
+TEMPLATE = "plotly_white"
+
 # ---------------------------
 # Helper Functions
 # ---------------------------
@@ -172,7 +176,7 @@ def generate_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFr
     
     # Get matches at this venue
     venue_matches = matches_df[matches_df['venue'] == venue]
-    venue_deliveries = deliveries_df[deliveries_df['match_id'].isin(venue_matches['match_id'])]
+    venue_deliveries = deliveries_df[deliveries_df['match_id'].isin(venue_matches['match_id'])].copy()
     
     if len(venue_deliveries) == 0:
         return {}
@@ -186,9 +190,9 @@ def generate_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFr
         else:
             return 'Death'
     
-    # Add over and phase columns
-    venue_deliveries['over'] = (venue_deliveries['ball'].astype(int) - 1) // 6 + 1
-    venue_deliveries['phase'] = venue_deliveries['over'].apply(get_phase)
+    # Add over and phase columns - Fixed the DataFrame copy warnings
+    venue_deliveries.loc[:, 'over'] = (venue_deliveries['ball'].astype(int) - 1) // 6 + 1
+    venue_deliveries.loc[:, 'phase'] = venue_deliveries['over'].apply(get_phase)
     
     # Calculate phase-wise metrics
     phase_metrics = venue_deliveries.groupby(['phase', 'inning']).agg({
@@ -264,14 +268,14 @@ def generate_toss_impact(matches_df: pd.DataFrame, venue: str) -> Dict:
 
 def display_venue_overview(matches_df: pd.DataFrame) -> None:
     """Display overview of all venues with key stats."""
-    st.markdown("### Venue Overview")
+    st.subheader("Venue Overview")
     st.write("Explore the statistics and characteristics of IPL venues across seasons.")
     
     venue_data = generate_venue_metadata(matches_df)
     
     # Create venue selector
     venues = matches_df['venue'].unique()
-    selected_venue = st.selectbox("Select a venue", venues)
+    selected_venue = st.selectbox("Select a venue", venues, key="venue_overview_selector")
     
     if selected_venue and selected_venue in venue_data:
         venue_info = venue_data[selected_venue]
@@ -280,7 +284,7 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            st.subheader(selected_venue)
+            st.markdown(f"#### {selected_venue}")
             st.markdown(f"**City:** {venue_info['city']}")
             st.markdown(f"**Total Matches:** {venue_info['total_matches']}")
             st.markdown(f"**First Match:** {venue_info['first_match']}")
@@ -312,7 +316,8 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
                 r=values,
                 theta=categories,
                 fill='toself',
-                name=selected_venue
+                name=selected_venue,
+                line=dict(color="#00AC69") # Using consistent green color
             ))
             
             fig.update_layout(
@@ -324,7 +329,10 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
                 ),
                 showlegend=False,
                 margin=dict(l=10, r=10, t=30, b=10),
-                height=300
+                height=300,
+                template=TEMPLATE,
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             st.plotly_chart(fig, use_container_width=True)
@@ -344,13 +352,13 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
                 
                 st.markdown(f"**{match['date']}**: {match['team1']} vs {match['team2']} - **{winner}** won by {result}")
         else:
-            st.write("No matches found for this venue.")
+            st.info("No matches found for this venue.")
     else:
         st.warning("Please select a venue from the dropdown.")
 
 def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
     """Display team performance analysis at venues."""
-    st.markdown("### Team Performance at Venues")
+    st.subheader("Team Performance at Venues")
     st.write("Analyze how different teams have performed at various venues over IPL history.")
     
     # Get venue team stats if available
@@ -377,7 +385,7 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
     ]
     
     if len(team_venue_matches) == 0:
-        st.warning(f"{selected_team} has not played any matches at {selected_venue}.")
+        st.info(f"{selected_team} has not played any matches at {selected_venue}.")
         return
     
     # Calculate basic stats
@@ -411,7 +419,7 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         # Get team's batting deliveries
         batting_deliveries = team_venue_deliveries[
             team_venue_deliveries['batting_team'] == selected_team
-        ]
+        ].copy() # Create a copy to avoid the warning
         
         if len(batting_deliveries) > 0:
             # Calculate batting stats
@@ -434,8 +442,8 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             # Create innings progression chart
             st.markdown("##### Batting Progression")
             
-            # Calculate over-by-over stats
-            batting_deliveries['over'] = (batting_deliveries['ball'].astype(int) - 1) // 6 + 1
+            # Calculate over-by-over stats - Fixed the DataFrame copy warning
+            batting_deliveries.loc[:, 'over'] = (batting_deliveries['ball'].astype(int) - 1) // 6 + 1
             over_stats = batting_deliveries.groupby('over').agg({
                 'total_runs': 'sum',
                 'is_wicket': 'sum',
@@ -450,16 +458,20 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 y='runs_per_match',
                 title=f"Average Runs per Over at {selected_venue}",
                 labels={'over': 'Over', 'runs_per_match': 'Avg. Runs'},
-                markers=True
+                markers=True,
+                color_discrete_sequence=["#00AC69"], # Using consistent green color
+                template=TEMPLATE
             )
             fig.update_layout(
                 xaxis=dict(tickmode='linear', tick0=1, dtick=1),
-                margin=dict(l=10, r=10, t=40, b=10)
+                margin=dict(l=10, r=10, t=40, b=10),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             responsive_plotly_chart(fig)
         else:
-            st.warning(f"No batting data available for {selected_team} at {selected_venue}.")
+            st.info(f"No batting data available for {selected_team} at {selected_venue}.")
     
     # Bowling Analysis
     with bowling_tab:
@@ -468,7 +480,7 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         # Get team's bowling deliveries
         bowling_deliveries = team_venue_deliveries[
             team_venue_deliveries['bowling_team'] == selected_team
-        ]
+        ].copy() # Create a copy to avoid the warning
         
         if len(bowling_deliveries) > 0:
             # Calculate bowling stats
@@ -491,8 +503,8 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             # Create wickets by over chart
             st.markdown("##### Bowling Performance")
             
-            # Calculate over-by-over stats
-            bowling_deliveries['over'] = (bowling_deliveries['ball'].astype(int) - 1) // 6 + 1
+            # Calculate over-by-over stats - Fixed the DataFrame copy warning
+            bowling_deliveries.loc[:, 'over'] = (bowling_deliveries['ball'].astype(int) - 1) // 6 + 1
             over_stats = bowling_deliveries.groupby('over').agg({
                 'total_runs': 'sum',
                 'is_wicket': 'sum',
@@ -509,17 +521,20 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 title=f"Average Wickets per Over at {selected_venue}",
                 labels={'over': 'Over', 'wickets_per_match': 'Avg. Wickets'},
                 color='runs_per_match',
-                color_continuous_scale='Viridis'
+                color_continuous_scale='RdYlGn_r',
+                template=TEMPLATE
             )
             fig.update_layout(
                 xaxis=dict(tickmode='linear', tick0=1, dtick=1),
                 margin=dict(l=10, r=10, t=40, b=10),
-                coloraxis_colorbar=dict(title="Avg. Runs")
+                coloraxis_colorbar=dict(title="Avg. Runs"),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             responsive_plotly_chart(fig)
         else:
-            st.warning(f"No bowling data available for {selected_team} at {selected_venue}.")
+            st.info(f"No bowling data available for {selected_team} at {selected_venue}.")
     
     # Opposition Analysis
     with opposition_tab:
@@ -566,23 +581,26 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 color_continuous_scale='RdYlGn',
                 range_color=[0, 100],
                 text='wins',
-                orientation='h'
+                orientation='h',
+                template=TEMPLATE
             )
             
             fig.update_traces(texttemplate='%{text} wins', textposition='inside')
             fig.update_layout(
                 title=f"{selected_team}'s Record vs. Opposition at {selected_venue}",
                 margin=dict(l=10, r=10, t=40, b=10),
-                height=400
+                height=400,
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             responsive_plotly_chart(fig)
         else:
-            st.warning(f"No opposition data available for {selected_team} at {selected_venue}.")
+            st.info(f"No opposition data available for {selected_team} at {selected_venue}.")
 
 def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
     """Display scoring patterns at venues."""
-    st.markdown("### Venue Scoring Patterns")
+    st.subheader("Venue Scoring Patterns")
     st.write("Analyze how runs are scored and wickets fall across different phases of the game at each venue.")
     
     # Get list of venues
@@ -593,7 +611,7 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
     scoring_patterns = generate_scoring_patterns(matches_df, deliveries_df, selected_venue)
     
     if not scoring_patterns:
-        st.warning(f"No detailed scoring data available for {selected_venue}.")
+        st.info(f"No detailed scoring data available for {selected_venue}.")
         return
     
     # Create tabs for different analyses
@@ -615,12 +633,16 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             title=f"Average Runs per Over at {selected_venue}",
             labels={'over': 'Over', 'runs': 'Avg. Runs', 'inning': 'Inning'},
             markers=True,
-            line_shape='spline'
+            line_shape='spline',
+            color_discrete_sequence=COLOR_SEQUENCE,
+            template=TEMPLATE
         )
         
         fig.update_layout(
             xaxis=dict(tickmode='linear', tick0=1, dtick=1),
-            margin=dict(l=10, r=10, t=40, b=10)
+            margin=dict(l=10, r=10, t=40, b=10),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)"
         )
         
         responsive_plotly_chart(fig)
@@ -633,12 +655,16 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             color='inning',
             barmode='group',
             title=f"Wicket Likelihood by Over at {selected_venue} (%)",
-            labels={'over': 'Over', 'wickets': 'Wicket Probability (%)', 'inning': 'Inning'}
+            labels={'over': 'Over', 'wickets': 'Wicket Probability (%)', 'inning': 'Inning'},
+            color_discrete_sequence=COLOR_SEQUENCE,
+            template=TEMPLATE
         )
         
         wicket_fig.update_layout(
             xaxis=dict(tickmode='linear', tick0=1, dtick=1),
-            margin=dict(l=10, r=10, t=40, b=10)
+            margin=dict(l=10, r=10, t=40, b=10),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)"
         )
         
         responsive_plotly_chart(wicket_fig)
@@ -663,11 +689,15 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 barmode='group',
                 title=f"Runs per Over by Phase at {selected_venue}",
                 labels={'phase': 'Phase', 'runs_per_over': 'Runs per Over', 'inning': 'Inning'},
-                category_orders={"phase": ["Powerplay", "Middle", "Death"]}
+                category_orders={"phase": ["Powerplay", "Middle", "Death"]},
+                color_discrete_sequence=COLOR_SEQUENCE,
+                template=TEMPLATE
             )
             
             phase_fig.update_layout(
-                margin=dict(l=10, r=10, t=40, b=10)
+                margin=dict(l=10, r=10, t=40, b=10),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             st.plotly_chart(phase_fig, use_container_width=True)
@@ -682,11 +712,15 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 barmode='group',
                 title=f"Wickets per Match by Phase at {selected_venue}",
                 labels={'phase': 'Phase', 'wickets_per_match': 'Wickets per Match', 'inning': 'Inning'},
-                category_orders={"phase": ["Powerplay", "Middle", "Death"]}
+                category_orders={"phase": ["Powerplay", "Middle", "Death"]},
+                color_discrete_sequence=COLOR_SEQUENCE,
+                template=TEMPLATE
             )
             
             wicket_phase_fig.update_layout(
-                margin=dict(l=10, r=10, t=40, b=10)
+                margin=dict(l=10, r=10, t=40, b=10),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
             )
             
             st.plotly_chart(wicket_phase_fig, use_container_width=True)
@@ -701,7 +735,7 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
 
 def display_toss_analysis(matches_df: pd.DataFrame) -> None:
     """Display toss impact analysis for venues."""
-    st.markdown("### Toss Impact Analysis")
+    st.subheader("Toss Impact Analysis")
     st.write("Analyze how winning the toss affects match outcomes at different venues.")
     
     # Get list of venues
@@ -712,7 +746,7 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
     toss_data = generate_toss_impact(matches_df, selected_venue)
     
     if not toss_data:
-        st.warning(f"No toss data available for {selected_venue}.")
+        st.info(f"No toss data available for {selected_venue}.")
         return
     
     # Create layout
@@ -739,12 +773,14 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
             labels=decision_labels,
             values=decision_values,
             hole=.4,
-            marker_colors=['#1f77b4', '#ff7f0e']
+            marker_colors=['#00AC69', '#4361EE'] # Using consistent app colors
         )])
         
         decision_fig.update_layout(
             title_text="Toss Decisions",
-            margin=dict(l=10, r=10, t=40, b=10)
+            margin=dict(l=10, r=10, t=40, b=10),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)"
         )
         
         st.plotly_chart(decision_fig, use_container_width=True)
@@ -768,14 +804,18 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
             color='Decision',
             title="Success Rate by Toss Decision",
             labels={'Success Rate': 'Win Percentage (%)'},
-            text_auto='.1f'
+            text_auto='.1f',
+            color_discrete_sequence=['#00AC69', '#4361EE'], # Using consistent app colors
+            template=TEMPLATE
         )
         
         success_fig.update_traces(texttemplate='%{text}%', textposition='outside')
         success_fig.update_layout(
             margin=dict(l=10, r=10, t=40, b=10),
             showlegend=False,
-            yaxis=dict(range=[0, 100])
+            yaxis=dict(range=[0, 100]),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)"
         )
         
         st.plotly_chart(success_fig, use_container_width=True)
@@ -801,7 +841,8 @@ def display_toss_analysis(matches_df: pd.DataFrame) -> None:
 
 def display_venue_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
     """Display comprehensive venue analysis with all enhanced features."""
-    st.title("Enhanced Venue Analysis")
+    st.title("📍 Venue Analysis")
+    st.write("Explore in-depth statistics and patterns across different venues in the IPL.")
     
     # Create tabs for different analyses
     tabs = st.tabs([
