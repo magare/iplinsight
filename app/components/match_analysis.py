@@ -401,6 +401,8 @@ def display_toss_analysis(matches_df):
         toss_by_venue_pct = toss_stats[3]
         df_venue = toss_by_venue_pct.reset_index()
         df_melt = df_venue.melt(id_vars='venue', var_name='Toss Decision', value_name='Percentage')
+        # Compute unique venues for the x-axis ticks
+        unique_venues = df_melt['venue'].unique().tolist()
         fig = px.bar(
             df_melt,
             x='venue',
@@ -409,33 +411,33 @@ def display_toss_analysis(matches_df):
             title='Toss Decision by Venue (%)',
             barmode='stack',
             template='plotly_dark',
-            color_discrete_sequence=['#00ff88', '#ff0088']
+            color_discrete_sequence=['#00ff88', '#ff0088'],
+            height=600  # Added height parameter to set chart height
         )
         fig.update_layout(
             xaxis_title='Venue',
             yaxis_title='Percentage',
             xaxis_tickangle=-45,
-            margin=dict(t=60, b=100),  # Increased bottom margin for labels
+            margin=dict(t=60, b=100),
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             yaxis=dict(
                 gridcolor='rgba(128,128,128,0.1)',
-                tickmode='linear',   # Show all ticks with consistent spacing
-                dtick=10,            # Tick every 10 percentage points
-                range=[0, 100],      # Ensure consistent y-axis range
-                automargin=True      # Ensure labels don't get cut off
+                tickmode='linear',
+                dtick=10,
+                range=[0, 100],
+                automargin=True
             ),
             xaxis=dict(
                 gridcolor='rgba(128,128,128,0.1)',
-                automargin=True,     # Ensure labels don't get cut off
-                tickfont=dict(size=10),  # Slightly smaller font for better fit
-                tickmode='auto',
-                nticks=20            # Show more ticks on the x-axis
+                automargin=True,
+                tickfont=dict(size=10),
+                tickmode='array',
+                tickvals=unique_venues,
+                ticktext=unique_venues
             )
         )
-        # Ensure all venues are displayed on the x-axis by setting visible=True
-        fig.update_xaxes(showticklabels=True, automargin=True)
-        responsive_plotly_chart(fig, use_container_width=True)
+        responsive_plotly_chart(fig, use_container_width=False)
 
 
 # ---------------------------
