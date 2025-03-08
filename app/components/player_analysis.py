@@ -258,7 +258,15 @@ def display_batting_analysis(deliveries_df=None):
                 title='Top 10 Run Scorers',
                 hover_data=['batting_average', 'batting_strike_rate', 'matches_batting']
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',  # Use array tick mode to show all players
+                    tickvals=list(range(len(filtered_stats.nlargest(10, 'runs')))),  # Ensure a tick for each player
+                    ticktext=filtered_stats.nlargest(10, 'runs')['batter'],
+                    automargin=True  # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
             
             # Strike Rate vs Average scatter plot
@@ -525,7 +533,13 @@ def display_batting_analysis(deliveries_df=None):
             milestone_fig.update_layout(
                 barmode='group',
                 title='Batting Milestones (Top 10 Run Scorers)',
-                xaxis_tickangle=-45
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',  # Use array tick mode to show all players
+                    tickvals=list(range(len(filtered_stats.nlargest(10, 'runs')))),  # Ensure a tick for each player
+                    ticktext=filtered_stats.nlargest(10, 'runs')['batter'],
+                    automargin=True  # Ensure labels don't get cut off
+                )
             )
             responsive_plotly_chart(milestone_fig, use_container_width=True)
     

@@ -92,7 +92,13 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
                 dtick=0.25,         # Set tick interval to 0.25
                 automargin=True     # Ensure labels don't get cut off
             ),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',   # Use array tick mode to show all team names
+                tickvals=list(range(len(team_stats))),  # Ensure a tick for each team 
+                ticktext=team_stats.sort_values('Win_Loss_Ratio', ascending=False)['Team'],
+                automargin=True     # Ensure labels don't get cut off
+            )
         )
         responsive_plotly_chart(fig, use_container_width=True)
         
@@ -146,7 +152,13 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
                 range=[0, 100],     # Ensure consistent y-axis range
                 automargin=True     # Ensure labels don't get cut off
             ),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',   # Use array tick mode to show all team names
+                tickvals=list(range(len(batting_first_melted['Team'].unique()))),  # Ensure a tick for each team
+                ticktext=batting_first_melted['Team'].unique(),
+                automargin=True     # Ensure labels don't get cut off
+            )
         )
         responsive_plotly_chart(fig, use_container_width=True)
 
@@ -254,33 +266,31 @@ def plot_nrr_analysis(matches_df=None, deliveries_df=None):
     
     fig.update_layout(
         title={
-            'text': 'Team Performance by Net Run Rate Across Seasons',
+            'text': 'Team Net Run Rate (NRR) Across Seasons',
             'x': 0.5,
             'xanchor': 'center',
             'font': {'size': 18}
         },
         height=500,
-        xaxis_title="IPL Season",
-        yaxis_title="Net Run Rate",
-        xaxis_tickangle=-45,
+        xaxis_title="Season",
+        yaxis_title="Net Run Rate (NRR)",
+        template='plotly_dark',
+        yaxis=dict(
+            gridcolor='rgba(128,128,128,0.1)'
+        ),
+        xaxis=dict(
+            tickmode='array',  # Use array tick mode to show all seasons
+            tickvals=filtered_avg_nrr['season'].unique(),  # Ensure a tick for each season
+            ticktext=filtered_avg_nrr['season'].unique(),
+            tickangle=-45,
+            gridcolor='rgba(128,128,128,0.1)',
+            automargin=True  # Ensure labels don't get cut off
+        ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         margin=dict(t=60, b=80, l=80, r=40),
-        barmode='group',  # Group bars by team for each season
-        yaxis=dict(
-            gridcolor='rgba(128,128,128,0.1)',
-            zeroline=True,
-            zerolinecolor='rgba(255,255,255,0.5)'
-        ),
-        xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-        hovermode="closest",
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="center",
-            x=0.5
-        )
+        barmode='relative',
+        hovermode='closest'
     )
     
     responsive_plotly_chart(fig, use_container_width=True)
@@ -464,7 +474,13 @@ def plot_playoff_analysis(matches_df=None):
         yaxis_title="Number of Appearances/Wins",
         xaxis_tickangle=-45,
         yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-        xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+        xaxis=dict(
+            gridcolor='rgba(128,128,128,0.1)',
+            tickmode='array',  # Use array tick mode to show all team names
+            tickvals=list(range(len(playoff_df['Team'].unique()))),  # Ensure a tick for each team
+            ticktext=playoff_df['Team'].unique(),
+            automargin=True  # Ensure labels don't get cut off
+        ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         margin=dict(t=60, b=80)
@@ -625,7 +641,13 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                     gridcolor='rgba(128,128,128,0.1)',
                     range=[0, 100]
                 ),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                xaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='array',  # Use array tick mode to show all teams
+                    tickvals=list(range(len(venue_team_data))),  # Ensure a tick for each team
+                    ticktext=venue_team_data.sort_values('Win Rate (%)', ascending=False)['Team'],
+                    automargin=True  # Ensure labels don't get cut off
+                ),
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )
