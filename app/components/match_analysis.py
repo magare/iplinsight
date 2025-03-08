@@ -800,66 +800,47 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
     with tabs[3]:
         col1, col2 = st.columns(2)
         with col1:
-            fig = go.Figure(data=[
-                go.Bar(name='High Scoring', x=scoring_stats[7].index, 
-                       y=scoring_stats[7].values),
-                go.Bar(name='Low Scoring', x=scoring_stats[8].index, 
-                       y=scoring_stats[8].values)
-            ])
-            fig.update_layout(
-                title='Toss Decisions in High/Low Scoring Matches',
-                barmode='group',
-                xaxis=dict(
-                    tickmode='array',    # Use array tick mode to show all decisions
-                    tickvals=list(range(len(scoring_stats[7].index))),  # Ensure a tick for each decision
-                    ticktext=scoring_stats[7].index,
-                    automargin=True      # Ensure labels don't get cut off
-                )
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
-        with col2:
-            # Fix the DataFrame creation by checking structure and providing an index if needed
+            # Fix the toss decisions chart
             try:
-                # Check if the data has indexes
-                if hasattr(scoring_stats[9], 'index') and hasattr(scoring_stats[10], 'index'):
-                    # If both have matching indexes, use them
-                    phase_comparison = pd.DataFrame({
-                        'High Scoring': scoring_stats[9],
-                        'Low Scoring': scoring_stats[10]
-                    })
-                else:
-                    # If they're scalar values or don't have indexes, create an index
-                    # First check if they are dictionaries
-                    if isinstance(scoring_stats[9], dict) and isinstance(scoring_stats[10], dict):
-                        # Use the dictionary keys as index
-                        phase_comparison = pd.DataFrame({
-                            'High Scoring': list(scoring_stats[9].values()),
-                            'Low Scoring': list(scoring_stats[10].values())
-                        }, index=list(scoring_stats[9].keys()))
-                    else:
-                        # Try to convert to series if they're not already
-                        high_scoring = pd.Series(scoring_stats[9]) if not isinstance(scoring_stats[9], pd.Series) else scoring_stats[9]
-                        low_scoring = pd.Series(scoring_stats[10]) if not isinstance(scoring_stats[10], pd.Series) else scoring_stats[10]
-                        
-                        # Create a DataFrame with an explicit index
-                        if len(high_scoring) == 3 and len(low_scoring) == 3:
-                            # Assume it's powerplay, middle, death overs
-                            phase_comparison = pd.DataFrame({
-                                'High Scoring': high_scoring.values,
-                                'Low Scoring': low_scoring.values
-                            }, index=['Powerplay', 'Middle Overs', 'Death Overs'])
-                        else:
-                            # Use numeric indices
-                            phase_comparison = pd.DataFrame({
-                                'High Scoring': high_scoring.values,
-                                'Low Scoring': low_scoring.values
-                            }, index=[f"Phase {i+1}" for i in range(len(high_scoring))])
+                # The data is a DataFrame with a 'count' column and 'toss_decision' as index
+                high_toss = scoring_stats[7]
+                low_toss = scoring_stats[8]
+                
+                # Create a properly formatted DataFrame for plotting
+                toss_data = pd.DataFrame({
+                    'High Scoring': high_toss['count'],
+                    'Low Scoring': low_toss['count']
+                }, index=high_toss.index)
                 
                 fig = px.bar(
-                    phase_comparison,
+                    toss_data, 
+                    barmode='group',
+                    title='Toss Decisions in High/Low Scoring Matches',
+                    labels={'value': 'Number of Matches', 'variable': 'Match Type', 'index': 'Toss Decision'}
+                )
+                responsive_plotly_chart(fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error displaying toss decisions: {e}")
+                st.info("The toss decisions data could not be displayed due to a formatting issue.")
+        
+        with col2:
+            # Fix the phase comparison chart
+            try:
+                # The data is a DataFrame with a 'score' column and 'phase' as index
+                high_phases = scoring_stats[9]
+                low_phases = scoring_stats[10]
+                
+                # Create a properly formatted DataFrame for plotting
+                phase_data = pd.DataFrame({
+                    'High Scoring': high_phases['score'],
+                    'Low Scoring': low_phases['score']
+                }, index=high_phases.index)
+                
+                fig = px.bar(
+                    phase_data,
                     barmode='group',
                     title='Run Rates by Phase',
-                    labels={'value': 'Average Runs', 'variable': 'Match Type'}
+                    labels={'value': 'Average Run Rate', 'variable': 'Match Type', 'index': 'Phase'}
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
             except Exception as e:
