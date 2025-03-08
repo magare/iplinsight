@@ -70,7 +70,7 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
                 title_text="Number of Matches",
                 gridcolor='rgba(128,128,128,0.1)',
                 tickmode='linear',
-                dtick=5,  # Tick every 5 matches
+                dtick=10,  # Increase tick spacing from 5 to 10 matches
                 automargin=True
             ),
             xaxis=dict(
@@ -109,7 +109,7 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
                 title_text="Average Runs",
                 gridcolor='rgba(128,128,128,0.1)',
                 tickmode='linear',
-                dtick=5,  # Tick every 5 runs
+                dtick=20,  # Increase tick spacing from 5 to 20 runs
                 automargin=True
             ),
             xaxis=dict(
@@ -148,7 +148,7 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
                 title_text="Average Wickets",
                 gridcolor='rgba(128,128,128,0.1)',
                 tickmode='linear',
-                dtick=0.5,  # Tick every 0.5 wickets
+                dtick=1,  # Increase tick spacing from 0.5 to 1 wicket
                 automargin=True
             ),
             xaxis=dict(

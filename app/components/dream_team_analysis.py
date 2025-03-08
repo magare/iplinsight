@@ -1080,7 +1080,6 @@ max_year = load_dream_team_data()[0]['season'].max()
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"""
 <div style="opacity: 0.7; font-size: 0.8rem; text-align: center;">
-    <p>Made with ❤️ for cricket analytics</p>
     <p>Data from {min_year}-{max_year} IPL seasons</p>
 </div>
 """, unsafe_allow_html=True)

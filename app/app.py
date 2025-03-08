@@ -83,15 +83,6 @@ except Exception as e:
 # Initialize device detection
 device_type = init_device_detection()
 
-# Add a note about mobile optimization
-if device_type == 'mobile':
-    st.sidebar.markdown("""
-    <div style="background-color: rgba(30, 30, 60, 0.7); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.8rem;">
-        <p style="margin: 0;">📱 <b>Mobile-optimized view enabled</b></p>
-        <p style="margin: 0; opacity: 0.8;">Charts and layouts are adjusted for better mobile experience.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
 # Cache data loading to improve performance and wrap it with a spinner for user feedback
 @st.cache_data(show_spinner=False)
 def cached_load_data():
