@@ -175,6 +175,14 @@ def display_season_standings(matches_df, deliveries_df, season):
         )
         points_melt.rename(columns={'index': 'Match Number'}, inplace=True)
         
+        # Get unique match numbers
+        match_numbers = sorted(points_melt['Match Number'].unique())
+        
+        # Check if we have any match numbers before proceeding
+        if len(match_numbers) == 0:
+            st.warning("No match data available for this season")
+            return
+        
         # Create a new line chart with markers instead of area chart
         fig = px.line(
             points_melt,
@@ -191,7 +199,6 @@ def display_season_standings(matches_df, deliveries_df, season):
         
         # Add ranking annotations at selected intervals
         # Calculate rankings at each match number
-        match_numbers = sorted(points_melt['Match Number'].unique())
         selected_matches = [match_numbers[0]] + match_numbers[::max(1, len(match_numbers)//5)][-5:]  # Start, then ~5 evenly spaced points
         
         annotations = []
@@ -262,98 +269,130 @@ def display_season_standings(matches_df, deliveries_df, season):
             # This creates static frames that give the impression of a race
             st.subheader("Points Race Throughout the Season")
             
+            # Check if we have enough match data to create a meaningful visualization
+            if len(match_numbers) < 2:
+                st.warning("Not enough match data to create a bar chart race visualization")
+                return
+            
             # Allow user to select specific matches to view
             step = max(1, len(match_numbers) // 10)  # Divide season into ~10 steps
-            selected_match = st.select_slider(
-                "Select match number to view standings:",
-                options=match_numbers[::step],
-                value=match_numbers[-1]  # Default to final match
-            )
+            slider_options = match_numbers[::step]
             
-            # Get data for selected match
-            match_data = points_melt[points_melt['Match Number'] == selected_match]
-            # Sort by points descending
-            match_data = match_data.sort_values('Points', ascending=False)
+            # Ensure the last match is always included in options
+            if match_numbers[-1] not in slider_options:
+                slider_options = list(slider_options) + [match_numbers[-1]]
+                slider_options.sort()
             
-            # Create horizontal bar chart
-            bar_fig = px.bar(
-                match_data,
-                y='Team',
-                x='Points',
-                orientation='h',
-                color='Team',
-                title=f'Team Standings After Match {selected_match}',
-                color_discrete_sequence=['#00ff88', '#ff0088', '#00ffff', '#ff00ff', '#ffff00', '#ff8800', '#88ff00', '#0088ff']
-            )
+            # Default to final match, but ensure it's in the options
+            default_value = match_numbers[-1]
             
-            # Add rank numbers
-            for i, (_, row) in enumerate(match_data.iterrows(), 1):
-                bar_fig.add_annotation(
-                    x=0,
-                    y=row['Team'],
-                    text=f"#{i}",
-                    showarrow=False,
-                    font=dict(color="white", size=12),
-                    xanchor='right',
-                    yanchor='middle',
-                    xshift=-10
+            try:
+                selected_match = st.select_slider(
+                    "Select match number to view standings:",
+                    options=slider_options,
+                    value=default_value
                 )
-            
-            bar_fig.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(
-                    gridcolor='rgba(128,128,128,0.1)',
-                    tickmode='linear',
-                    dtick=1,  # Show every category
-                    automargin=True
-                ),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                height=400
-            )
-            
-            responsive_plotly_chart(bar_fig, use_container_width=True)
+                
+                # Get data for selected match
+                match_data = points_melt[points_melt['Match Number'] == selected_match]
+                
+                # Check if we have data for the selected match
+                if match_data.empty:
+                    st.warning(f"No data available for match number {selected_match}")
+                    return
+                
+                # Sort by points descending
+                match_data = match_data.sort_values('Points', ascending=False)
+                
+                # Create horizontal bar chart
+                bar_fig = px.bar(
+                    match_data,
+                    y='Team',
+                    x='Points',
+                    orientation='h',
+                    color='Team',
+                    title=f'Team Standings After Match {selected_match}',
+                    color_discrete_sequence=['#00ff88', '#ff0088', '#00ffff', '#ff00ff', '#ffff00', '#ff8800', '#88ff00', '#0088ff']
+                )
+                
+                # Add rank numbers
+                for i, (_, row) in enumerate(match_data.iterrows(), 1):
+                    bar_fig.add_annotation(
+                        x=0,
+                        y=row['Team'],
+                        text=f"#{i}",
+                        showarrow=False,
+                        font=dict(color="white", size=12),
+                        xanchor='right',
+                        yanchor='middle',
+                        xshift=-10
+                    )
+                
+                bar_fig.update_layout(
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=1,  # Show every category
+                        automargin=True
+                    ),
+                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    height=400
+                )
+                
+                responsive_plotly_chart(bar_fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error creating bar chart race: {e}")
             
         elif viz_option == "Heatmap View":
             # Create a heatmap showing team positions throughout the season
             st.subheader("Team Positions Throughout the Season")
             
-            # Create a DataFrame to store team rankings at each match
-            rankings = []
-            for match_num in match_numbers:
-                # Get points for this match
-                match_data = points_melt[points_melt['Match Number'] == match_num]
-                # Sort by points descending and get team rankings
-                match_data = match_data.sort_values('Points', ascending=False)
-                match_data['Rank'] = range(1, len(match_data) + 1)
+            try:
+                # Create a DataFrame to store team rankings at each match
+                rankings = []
+                for match_num in match_numbers:
+                    # Get points for this match
+                    match_data = points_melt[points_melt['Match Number'] == match_num]
+                    # Sort by points descending and get team rankings
+                    match_data = match_data.sort_values('Points', ascending=False)
+                    match_data['Rank'] = range(1, len(match_data) + 1)
+                    
+                    # Store ranking data
+                    for _, row in match_data.iterrows():
+                        rankings.append({
+                            'Match Number': match_num,
+                            'Team': row['Team'],
+                            'Rank': row['Rank']
+                        })
                 
-                # Store ranking data
-                for _, row in match_data.iterrows():
-                    rankings.append({
-                        'Match Number': match_num,
-                        'Team': row['Team'],
-                        'Rank': row['Rank']
-                    })
-            
-            rankings_df = pd.DataFrame(rankings)
-            
-            # Create heatmap
-            heat_fig = px.imshow(
-                rankings_df.pivot(index='Team', columns='Match Number', values='Rank'),
-                labels=dict(x="Match Number", y="Team", color="Rank"),
-                x=match_numbers,
-                color_continuous_scale=px.colors.sequential.Plasma_r,  # Reversed so 1st is bright
-                title="Team Rankings Heatmap (Brighter = Higher Rank)",
-                template='plotly_dark'
-            )
-            
-            heat_fig.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                height=400
-            )
-            
-            responsive_plotly_chart(heat_fig, use_container_width=True)
+                # Check if we have ranking data
+                if not rankings:
+                    st.warning("No ranking data available to create heatmap")
+                    return
+                
+                rankings_df = pd.DataFrame(rankings)
+                
+                # Create heatmap
+                heat_fig = px.imshow(
+                    rankings_df.pivot(index='Team', columns='Match Number', values='Rank'),
+                    labels=dict(x="Match Number", y="Team", color="Rank"),
+                    x=match_numbers,
+                    color_continuous_scale=px.colors.sequential.Plasma_r,  # Reversed so 1st is bright
+                    title="Team Rankings Heatmap (Brighter = Higher Rank)",
+                    template='plotly_dark'
+                )
+                
+                heat_fig.update_layout(
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    height=400
+                )
+                
+                responsive_plotly_chart(heat_fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error creating heatmap: {e}")
     else:
         st.warning("Points progression data not available")
     
