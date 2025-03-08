@@ -672,12 +672,12 @@ class DreamTeamAnalysis:
                 st.dataframe(dream_team_df[[
                     'player', 'role', 'captain_role', 'total_points',
                     'batting_points', 'bowling_points', 'fielding_points'
-                ]].style.format({
+                ]].reset_index(drop=True).style.format({
                     'total_points': '{:.2f}',
                     'batting_points': '{:.2f}',
                     'bowling_points': '{:.2f}',
                     'fielding_points': '{:.2f}'
-                }).reset_index(drop=True))
+                }))
                 fig = px.bar(
                     dream_team_df,
                     x='player',

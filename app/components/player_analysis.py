@@ -291,75 +291,52 @@ def display_batting_analysis(deliveries_df=None):
                 axis=1
             )
             
-            # Add size based on runs scored for additional context
-            qualified_players['marker_size'] = qualified_players['runs'].apply(lambda x: max(10, min(x/50, 30)))
+            # Create a size variable for the scatter points based on runs scored
+            qualified_players['marker_size'] = qualified_players['runs'].apply(lambda x: max(10, min(50, x/100)))
             
-            # Color based on boundary percentage for additional insight
-            qualified_players['color_value'] = qualified_players['boundary_percentage'] 
-            
-            # Create the improved scatter plot
+            # Create the scatter plot
             fig = px.scatter(
                 qualified_players,
                 x='batting_average',
                 y='batting_strike_rate',
-                color='color_value',
                 size='marker_size',
-                color_continuous_scale='Viridis',
+                color='boundary_percentage',
+                color_continuous_scale='RdYlGn',
                 hover_name='batter',
                 hover_data={
                     'batting_average': ':.2f', 
                     'batting_strike_rate': ':.2f',
                     'runs': True,
                     'matches_batting': True,
-                    'boundary_percentage': ':.1f%',
-                    'performance_quadrant': True,
                     'marker_size': False,
-                    'color_value': False
+                    'boundary_percentage': ':.1f%'
                 },
                 labels={
                     'batting_average': 'Batting Average',
                     'batting_strike_rate': 'Strike Rate',
-                    'color_value': 'Boundary %'
-                }
+                    'boundary_percentage': 'Boundary %'
+                },
+                title="Batting Strike Rate vs Average"
             )
             
             # Add quadrant lines
             fig.add_shape(type="line", x0=avg_median, y0=0, x1=avg_median, y1=200,
-                          line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
+                        line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
             fig.add_shape(type="line", x0=0, y0=sr_median, x1=100, y1=sr_median,
-                          line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
-            
-            # Add quadrant labels
-            fig.add_annotation(x=avg_median + (100-avg_median)/2, y=sr_median + (200-sr_median)/2, 
-                              text="Match Winners<br>High SR, High Avg", showarrow=False, 
-                              font=dict(size=10, color="white"), align="center",
-                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
-            fig.add_annotation(x=avg_median/2, y=sr_median + (200-sr_median)/2, 
-                              text="Aggressive<br>High SR, Low Avg", showarrow=False, 
-                              font=dict(size=10, color="white"), align="center",
-                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
-            fig.add_annotation(x=avg_median + (100-avg_median)/2, y=sr_median/2, 
-                              text="Anchors<br>Low SR, High Avg", showarrow=False, 
-                              font=dict(size=10, color="white"), align="center",
-                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
-            fig.add_annotation(x=avg_median/2, y=sr_median/2, 
-                              text="Struggling<br>Low SR, Low Avg", showarrow=False, 
-                              font=dict(size=10, color="white"), align="center",
-                              bgcolor="rgba(0,0,0,0.5)", borderpad=4)
+                        line=dict(color="rgba(255,255,255,0.5)", width=1, dash="dash"))
             
             # Update layout for better readability
             fig.update_layout(
                 coloraxis_colorbar=dict(title="Boundary %"),
-                title=None,
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                margin=dict(l=50, r=50, t=30, b=50),
+                margin=dict(l=50, r=50, t=50, b=50),
                 height=450,
                 xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
                 yaxis=dict(
                     gridcolor='rgba(255,255,255,0.1)',
                     tickmode='linear',
-                    dtick=100,  # Set appropriate interval for runs
+                    dtick=100,
                     automargin=True
                 )
             )
@@ -424,7 +401,8 @@ def display_batting_analysis(deliveries_df=None):
                     'dot_ball_percentage': 'Dot Ball %',
                     'boundary_percentage': 'Boundary %',
                     'scoring_efficiency': 'Scoring Efficiency'
-                }
+                },
+                title="Boundary Percentage vs Dot Ball Percentage"
             )
             
             # Calculate median values for quadrant lines
@@ -470,16 +448,15 @@ def display_batting_analysis(deliveries_df=None):
             # Update layout for better readability
             fig.update_layout(
                 coloraxis_colorbar=dict(title="Scoring<br>Efficiency"),
-                title=None,
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                margin=dict(l=50, r=50, t=30, b=50),
+                margin=dict(l=50, r=50, t=50, b=50),
                 height=450,
                 xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
                 yaxis=dict(
                     gridcolor='rgba(255,255,255,0.1)',
                     tickmode='linear',
-                    dtick=5,  # Set appropriate interval for wickets
+                    dtick=5,
                     automargin=True
                 )
             )
