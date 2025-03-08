@@ -591,7 +591,13 @@ def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
                 margin=dict(l=10, r=10, t=40, b=10),
                 height=400,
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                yaxis=dict(
+                    tickmode='array',  # Use array tick mode to show all teams
+                    tickvals=list(range(len(opposition_df))),  # Ensure a tick for each team
+                    ticktext=opposition_df['team'],
+                    automargin=True  # Ensure labels don't get cut off
+                )
             )
             
             responsive_plotly_chart(fig)
@@ -639,7 +645,12 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         )
         
         fig.update_layout(
-            xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+            xaxis=dict(
+                tickmode='linear', 
+                tick0=1, 
+                dtick=1,
+                automargin=True  # Ensure labels don't get cut off
+            ),
             margin=dict(l=10, r=10, t=40, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"
@@ -661,7 +672,12 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
         )
         
         wicket_fig.update_layout(
-            xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+            xaxis=dict(
+                tickmode='linear', 
+                tick0=1, 
+                dtick=1,
+                automargin=True  # Ensure labels don't get cut off
+            ),
             margin=dict(l=10, r=10, t=40, b=10),
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)"
@@ -697,7 +713,13 @@ def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFra
             phase_fig.update_layout(
                 margin=dict(l=10, r=10, t=40, b=10),
                 paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)"
+                plot_bgcolor="rgba(0,0,0,0)",
+                xaxis=dict(
+                    tickmode='array',  # Use array tick mode to show all phases
+                    tickvals=list(range(len(phase_df['phase'].unique()))),  # Ensure a tick for each phase
+                    ticktext=phase_df['phase'].unique(),
+                    automargin=True  # Ensure labels don't get cut off
+                )
             )
             
             st.plotly_chart(phase_fig, use_container_width=True)

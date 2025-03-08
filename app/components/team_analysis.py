@@ -815,7 +815,13 @@ def plot_venue_performance(matches_df=None, deliveries_df=None):
                 height=400,
                 xaxis_tickangle=-45,
                 yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                xaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='array',    # Use array tick mode to show all seasons
+                    tickvals=avg_scores['season'].unique(),  # Ensure a tick for each season
+                    ticktext=avg_scores['season'].unique(),
+                    automargin=True      # Ensure labels don't get cut off
+                ),
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)'
             )

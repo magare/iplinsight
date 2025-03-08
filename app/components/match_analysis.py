@@ -155,7 +155,14 @@ def display_match_result_analysis(matches_df):
                 range=[0, 100],      # Ensure consistent y-axis range
                 automargin=True      # Ensure labels don't get cut off
             ),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',    # Use array tick mode to show all seasons
+                tickvals=list(range(len(result_stats[2].index.unique()))),  # Ensure a tick for each season
+                ticktext=result_stats[2].index.unique(),
+                tickangle=-45,
+                automargin=True      # Ensure labels don't get cut off
+            )
         )
         responsive_plotly_chart(fig, use_container_width=True)
     
@@ -465,7 +472,14 @@ def display_scoring_analysis(matches_df, deliveries_df):
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',    # Use array tick mode to show all seasons
+                tickvals=season_scores_df['season'].unique(),  # Ensure a tick for each season
+                ticktext=season_scores_df['season'].unique(),
+                tickangle=-45,
+                automargin=True      # Ensure labels don't get cut off
+            )
         )
         responsive_plotly_chart(fig, use_container_width=True)
     
@@ -597,7 +611,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Teams in High Scoring Matches',
                 labels={'value': 'Number of Matches', 'index': 'Team'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all teams
+                    tickvals=list(range(len(scoring_stats[3].head(10)))),  # Ensure a tick for each team
+                    ticktext=scoring_stats[3].head(10).index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
@@ -605,7 +627,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Teams in Low Scoring Matches',
                 labels={'value': 'Number of Matches', 'index': 'Team'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all teams
+                    tickvals=list(range(len(scoring_stats[4].head(10)))),  # Ensure a tick for each team
+                    ticktext=scoring_stats[4].head(10).index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Season Analysis Tab
@@ -617,7 +647,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='High Scoring Matches by Season',
                 labels={'value': 'Number of Matches', 'index': 'Season'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all seasons
+                    tickvals=list(range(len(scoring_stats[5]))),  # Ensure a tick for each season
+                    ticktext=scoring_stats[5].index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
         with col2:
             fig = px.bar(
@@ -625,7 +663,15 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
                 title='Low Scoring Matches by Season',
                 labels={'value': 'Number of Matches', 'index': 'Season'}
             )
-            fig.update_layout(xaxis_tickangle=-45)
+            fig.update_layout(
+                xaxis_tickangle=-45,
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all seasons
+                    tickvals=list(range(len(scoring_stats[6]))),  # Ensure a tick for each season
+                    ticktext=scoring_stats[6].index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
+            )
             responsive_plotly_chart(fig, use_container_width=True)
     
     # Match Characteristics Tab
@@ -640,7 +686,13 @@ def display_high_low_scoring_analysis(matches_df, deliveries_df):
             ])
             fig.update_layout(
                 title='Toss Decisions in High/Low Scoring Matches',
-                barmode='group'
+                barmode='group',
+                xaxis=dict(
+                    tickmode='array',    # Use array tick mode to show all decisions
+                    tickvals=list(range(len(scoring_stats[7].index))),  # Ensure a tick for each decision
+                    ticktext=scoring_stats[7].index,
+                    automargin=True      # Ensure labels don't get cut off
+                )
             )
             responsive_plotly_chart(fig, use_container_width=True)
         with col2:

@@ -229,7 +229,12 @@ def display_season_standings(matches_df, deliveries_df, season):
                 dtick=2,  # Set tick interval to 2 points
                 automargin=True
             ),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='array',  # Use array tick mode to show all match numbers
+                tickvals=match_numbers,  # Ensure a tick for each match
+                automargin=True  # Ensure labels don't get cut off
+            ),
             annotations=annotations,
             height=500  # Make chart taller for better readability
         )
@@ -404,7 +409,13 @@ def display_top_performers(matches_df, deliveries_df, season):
                         dtick=100,  # Set appropriate tick interval for runs
                         automargin=True
                     ),
-                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                    xaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='array',  # Use array tick mode to show all batters
+                        tickvals=list(range(len(top_batters))),  # Ensure a tick for each batter
+                        ticktext=top_batters.index if top_batters.index.name is not None else top_batters.reset_index()['index'],
+                        automargin=True  # Ensure labels don't get cut off
+                    )
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
             else:
@@ -435,7 +446,13 @@ def display_top_performers(matches_df, deliveries_df, season):
                         dtick=5,  # Set appropriate tick interval for batting average
                         automargin=True
                     ),
-                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                    xaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='array',  # Use array tick mode to show all batters
+                        tickvals=list(range(len(top_sr))),  # Ensure a tick for each batter
+                        ticktext=top_sr.index if top_sr.index.name is not None else top_sr.reset_index()['index'],
+                        automargin=True  # Ensure labels don't get cut off
+                    )
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
             else:
@@ -469,7 +486,13 @@ def display_top_performers(matches_df, deliveries_df, season):
                         dtick=5,  # Set appropriate tick interval for wickets
                         automargin=True
                     ),
-                    xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                    xaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='array',  # Use array tick mode to show all bowlers
+                        tickvals=list(range(len(top_bowlers))),  # Ensure a tick for each bowler
+                        ticktext=top_bowlers.index if top_bowlers.index.name is not None else top_bowlers.reset_index()['index'],
+                        automargin=True  # Ensure labels don't get cut off
+                    )
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
             else:
