@@ -219,16 +219,23 @@ def display_toss_analysis(matches_df):
             toss_win_percentage = toss_stats[5]
             # Check if it's a DataFrame and extract the value if needed
             if hasattr(toss_win_percentage, 'iloc'):
-                toss_win_percentage = float(toss_win_percentage.iloc[0])
+                # Use .iloc[0] instead of casting directly to float to avoid FutureWarning
+                toss_win_percentage = toss_win_percentage.iloc[0]
             # Ensure we have a float to format
             toss_win_percentage = float(toss_win_percentage)
             st.metric("Match Win % When Winning Toss", f"{toss_win_percentage:.1f}%")
+            
+            # Fix: properly handle the dataframe for the bar chart
+            toss_decision_df = toss_stats[6].reset_index()
+            # Rename 'index' column to avoid confusion
+            toss_decision_df = toss_decision_df.rename(columns={'index': 'toss_decision'})
+            
             fig = px.bar(
-                toss_stats[6].reset_index(),
-                x='index',
+                toss_decision_df,
+                x='toss_decision',
                 y='win_percentage',
                 title='Win % by Toss Decision',
-                labels={'win_percentage': 'Win Percentage', 'index': 'Toss Decision'},
+                labels={'win_percentage': 'Win Percentage', 'toss_decision': 'Toss Decision'},
                 template='plotly_dark',
                 color_discrete_sequence=['#00ff88']
             )
@@ -248,14 +255,67 @@ def display_toss_analysis(matches_df):
         with col2:
             # Since we can't compute correlation from precomputed data, we'll show a different metric
             try:
-                # Get the win percentage difference between batting and fielding first
-                win_pct_diff = abs(toss_stats[6]['win_percentage'].diff().iloc[-1])
-                # Ensure it's a float for formatting
-                win_pct_diff = float(win_pct_diff)
-                st.metric("Toss Decision Impact", f"{win_pct_diff:.1f}%")
-            except (TypeError, IndexError, AttributeError):
+                # Get the toss decision outcomes dataframe
+                toss_decision_outcomes = toss_stats[6]
+                
+                # Make sure we have valid data to work with
+                if isinstance(toss_decision_outcomes, pd.DataFrame) and 'win_percentage' in toss_decision_outcomes.columns:
+                    # Calculate the win percentage difference 
+                    if len(toss_decision_outcomes) >= 2:
+                        batting_pct = None
+                        fielding_pct = None
+                        
+                        # Find batting and fielding percentages
+                        for idx, row in toss_decision_outcomes.iterrows():
+                            if isinstance(idx, str):
+                                if 'bat' in idx.lower():
+                                    batting_pct = row['win_percentage']
+                                elif 'field' in idx.lower():
+                                    fielding_pct = row['win_percentage']
+                        
+                        # If we found both values, calculate the difference
+                        if batting_pct is not None and fielding_pct is not None:
+                            win_pct_diff = abs(batting_pct - fielding_pct)
+                            st.metric("Toss Decision Impact", f"{win_pct_diff:.1f}%")
+                            
+                            # Add a bar chart to visualize the difference
+                            impact_data = pd.DataFrame({
+                                'Decision': ['Batting First', 'Fielding First'],
+                                'Win Percentage': [batting_pct, fielding_pct]
+                            })
+                            
+                            fig = px.bar(
+                                impact_data,
+                                x='Decision',
+                                y='Win Percentage',
+                                title='Win % by Toss Decision',
+                                template='plotly_dark',
+                                color_discrete_sequence=['#ff0088', '#00ff88']
+                            )
+                            fig.update_layout(
+                                plot_bgcolor='rgba(0,0,0,0)',
+                                paper_bgcolor='rgba(0,0,0,0)',
+                                yaxis=dict(
+                                    gridcolor='rgba(128,128,128,0.1)',
+                                    tickmode='linear',
+                                    dtick=5,
+                                    range=[0, max(batting_pct, fielding_pct) * 1.1],  # Dynamic range
+                                    automargin=True
+                                ),
+                                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+                            )
+                            responsive_plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.metric("Toss Decision Impact", "N/A")
+                    else:
+                        st.metric("Toss Decision Impact", "N/A")
+                else:
+                    st.metric("Toss Decision Impact", "N/A")
+            except (TypeError, IndexError, AttributeError) as e:
                 # Fallback in case of any error
                 st.metric("Toss Decision Impact", "N/A")
+                st.error(f"Error calculating toss impact: {str(e)}")
+            
             st.caption("Difference in win % between batting and fielding first")
     
     # Toss Decisions Tab
@@ -264,10 +324,40 @@ def display_toss_analysis(matches_df):
         
         with col1:
             # Create a DataFrame for the pie chart
-            toss_pie_data = pd.DataFrame({
-                'decision': toss_stats[0].index,
-                'percentage': toss_stats[0].values
-            })
+            # Ensure toss_stats[0] is properly structured for the pie chart
+            toss_decisions_df = toss_stats[0]
+            
+            # Check if it's a Series (which would have .index and .values) or a DataFrame
+            if isinstance(toss_decisions_df, pd.Series):
+                toss_pie_data = pd.DataFrame({
+                    'decision': toss_decisions_df.index.tolist(),
+                    'percentage': toss_decisions_df.values.tolist()
+                })
+            else:
+                # If it's a DataFrame, handle it accordingly
+                # Assuming it has 'toss_decision' and 'count' columns
+                if 'toss_decision' in toss_decisions_df.columns and 'count' in toss_decisions_df.columns:
+                    # Calculate percentages
+                    total = toss_decisions_df['count'].sum()
+                    toss_decisions_df['percentage'] = (toss_decisions_df['count'] / total) * 100
+                    toss_pie_data = pd.DataFrame({
+                        'decision': toss_decisions_df['toss_decision'].tolist(),
+                        'percentage': toss_decisions_df['percentage'].tolist()
+                    })
+                else:
+                    # Fallback - use the first two columns
+                    cols = toss_decisions_df.columns.tolist()
+                    if len(cols) >= 2:
+                        toss_pie_data = pd.DataFrame({
+                            'decision': toss_decisions_df[cols[0]].tolist(),
+                            'percentage': toss_decisions_df[cols[1]].tolist()
+                        })
+                    else:
+                        # Last resort - just create a dummy DataFrame to avoid crashing
+                        toss_pie_data = pd.DataFrame({
+                            'decision': ['Field', 'Bat'],
+                            'percentage': [50, 50]
+                        })
             
             fig = px.pie(
                 toss_pie_data,
@@ -325,7 +415,7 @@ def display_toss_analysis(matches_df):
             xaxis_title='Venue',
             yaxis_title='Percentage',
             xaxis_tickangle=-45,
-            margin=dict(t=60, b=80),
+            margin=dict(t=60, b=100),  # Increased bottom margin for labels
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             yaxis=dict(
@@ -335,8 +425,16 @@ def display_toss_analysis(matches_df):
                 range=[0, 100],      # Ensure consistent y-axis range
                 automargin=True      # Ensure labels don't get cut off
             ),
-            xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
+            xaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                automargin=True,     # Ensure labels don't get cut off
+                tickfont=dict(size=10),  # Slightly smaller font for better fit
+                tickmode='auto',
+                nticks=20            # Show more ticks on the x-axis
+            )
         )
+        # Ensure all venues are displayed on the x-axis by setting visible=True
+        fig.update_xaxes(showticklabels=True, automargin=True)
         responsive_plotly_chart(fig, use_container_width=True)
 
 
