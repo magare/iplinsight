@@ -626,7 +626,11 @@ class DreamTeamAnalysis:
                 st.subheader(f"Season {selected_season} Best XI")
                 best_xi = season_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
-                                      'total_runs', 'total_wickets', 'total_catches']].reset_index(drop=True))
+                                      'total_runs', 'total_wickets', 'total_catches']]
+                             .reset_index(drop=True)
+                             .assign(index=lambda x: x.index + 1)
+                             .set_index('index'), 
+                             use_container_width=True)
                 st.subheader("Season Performance Analysis")
                 col1, col2, col3 = st.columns(3)
                 with col1:
@@ -672,12 +676,12 @@ class DreamTeamAnalysis:
                 st.dataframe(dream_team_df[[
                     'player', 'role', 'captain_role', 'total_points',
                     'batting_points', 'bowling_points', 'fielding_points'
-                ]].reset_index(drop=True).style.format({
+                ]].reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index').style.format({
                     'total_points': '{:.2f}',
                     'batting_points': '{:.2f}',
                     'bowling_points': '{:.2f}',
                     'fielding_points': '{:.2f}'
-                }))
+                }), use_container_width=True)
                 fig = px.bar(
                     dream_team_df,
                     x='player',
@@ -687,15 +691,18 @@ class DreamTeamAnalysis:
                     barmode='stack'
                 )
                 responsive_plotly_chart(fig)
+                
+                # Create side-by-side tables for batting and bowling performances
                 col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("Batting Performances")
                     batting_stats = dream_team_df[['player', 'runs', 'boundaries', 'sixes', 'strike_rate']].sort_values('runs', ascending=False)
-                    st.dataframe(batting_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
+                    st.dataframe(batting_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'), use_container_width=True)
+                
                 with col2:
                     st.subheader("Bowling Performances")
                     bowling_stats = dream_team_df[['player', 'wickets', 'maidens', 'economy_rate']].sort_values('wickets', ascending=False)
-                    st.dataframe(bowling_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'))
+                    st.dataframe(bowling_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index'), use_container_width=True)
         
         # --- Venue Analysis ---
         with tabs[3]:
@@ -723,7 +730,11 @@ class DreamTeamAnalysis:
                 st.subheader("Venue Best XI")
                 best_xi = venue_stats.nlargest(11, 'appearances')
                 st.dataframe(best_xi[['player', 'primary_role', 'appearances', 'avg_points',
-                                      'total_runs', 'total_wickets', 'total_catches']].reset_index(drop=True))
+                                      'total_runs', 'total_wickets', 'total_catches']]
+                             .reset_index(drop=True)
+                             .assign(index=lambda x: x.index + 1)
+                             .set_index('index'), 
+                             use_container_width=True)
                 st.subheader("Venue Statistics")
                 total_matches = self.matches_df[self.matches_df['venue'] == selected_venue].shape[0]
                 col1, col2, col3 = st.columns(3)
