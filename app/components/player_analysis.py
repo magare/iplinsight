@@ -786,10 +786,13 @@ def display_bowling_analysis(deliveries_df=None):
                     title="Bowler",
                     tickfont=dict(size=10),
                     showticklabels=True,
-                    tickmode="auto"
+                    tickmode='array',  # Use array tick mode to show all bowlers
+                    tickvals=list(range(len(filtered_stats.nlargest(10, 'is_wicket')))),  # Ensure a tick for each bowler
+                    ticktext=filtered_stats.nlargest(10, 'is_wicket')['bowler'],
+                    automargin=True  # Ensure labels don't get cut off
                 ),
                 yaxis=dict(title="No. Wicket"),
-                margin=dict(l=20, r=20, t=50, b=100)
+                margin=dict(l=20, r=20, t=50, b=120)  # Increased bottom margin to accommodate labels
             )
             responsive_plotly_chart(fig, use_container_width=True)
             
@@ -892,10 +895,13 @@ def display_bowling_analysis(deliveries_df=None):
                     title="Bowler",
                     tickfont=dict(size=10),
                     showticklabels=True,
-                    tickmode="auto"
+                    tickmode='array',  # Use array tick mode to show all bowlers
+                    tickvals=list(range(len(filtered_stats.nlargest(10, 'dot_ball_percentage')))),  # Ensure a tick for each bowler
+                    ticktext=filtered_stats.nlargest(10, 'dot_ball_percentage')['bowler'],
+                    automargin=True  # Ensure labels don't get cut off
                 ),
                 yaxis=dict(title="Dot Ball Percentage"),
-                margin=dict(l=20, r=20, t=50, b=100)
+                margin=dict(l=20, r=20, t=50, b=120)  # Increased bottom margin to accommodate labels
             )
             responsive_plotly_chart(fig, use_container_width=True)
             
@@ -913,10 +919,13 @@ def display_bowling_analysis(deliveries_df=None):
                     title="Bowler",
                     tickfont=dict(size=10),
                     showticklabels=True,
-                    tickmode="auto"
+                    tickmode='array',  # Use array tick mode to show all bowlers
+                    tickvals=list(range(len(filtered_stats.nlargest(10, 'wickets_per_match')))),  # Ensure a tick for each bowler
+                    ticktext=filtered_stats.nlargest(10, 'wickets_per_match')['bowler'],
+                    automargin=True  # Ensure labels don't get cut off
                 ),
                 yaxis=dict(title="Wickets per Match"),
-                margin=dict(l=20, r=20, t=50, b=100)
+                margin=dict(l=20, r=20, t=50, b=120)  # Increased bottom margin to accommodate labels
             )
             responsive_plotly_chart(fig, use_container_width=True)
     
@@ -972,10 +981,12 @@ def display_bowling_analysis(deliveries_df=None):
                 xaxis=dict(
                     title="Match Phase",
                     tickfont=dict(size=12),
-                    showticklabels=True
+                    showticklabels=True,
+                    automargin=True,  # Ensure labels don't get cut off
+                    tickangle=-15  # Slight angle to prevent overlap
                 ),
                 yaxis=dict(title="Economy Rate"),
-                margin=dict(l=20, r=20, t=50, b=50)
+                margin=dict(l=20, r=20, t=50, b=70)  # Increased bottom margin
             )
             responsive_plotly_chart(fig, use_container_width=True)
         
@@ -992,10 +1003,12 @@ def display_bowling_analysis(deliveries_df=None):
                 xaxis=dict(
                     title="Match Phase",
                     tickfont=dict(size=12),
-                    showticklabels=True
+                    showticklabels=True,
+                    automargin=True,  # Ensure labels don't get cut off
+                    tickangle=-15  # Slight angle to prevent overlap
                 ),
                 yaxis=dict(title="Number of Wickets"),
-                margin=dict(l=20, r=20, t=50, b=50)
+                margin=dict(l=20, r=20, t=50, b=70)  # Increased bottom margin
             )
             responsive_plotly_chart(fig, use_container_width=True)
         
