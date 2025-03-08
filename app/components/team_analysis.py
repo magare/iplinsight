@@ -86,7 +86,12 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             margin=dict(t=60, b=80),
-            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            yaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',  # Use linear tick mode to show all ticks
+                dtick=0.25,         # Set tick interval to 0.25
+                automargin=True     # Ensure labels don't get cut off
+            ),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
         responsive_plotly_chart(fig, use_container_width=True)
@@ -134,7 +139,13 @@ def plot_overall_performance(matches_df=None, deliveries_df=None):
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
             margin=dict(t=60, b=80),
-            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            yaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',  # Use linear tick mode to show all ticks
+                dtick=10,           # Set tick interval to 10%
+                range=[0, 100],     # Ensure consistent y-axis range
+                automargin=True     # Ensure labels don't get cut off
+            ),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
         responsive_plotly_chart(fig, use_container_width=True)

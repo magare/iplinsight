@@ -223,7 +223,12 @@ def display_season_standings(matches_df, deliveries_df, season):
             hovermode='x unified',
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
-            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            yaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',
+                dtick=2,  # Set tick interval to 2 points
+                automargin=True
+            ),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
             annotations=annotations,
             height=500  # Make chart taller for better readability
@@ -292,7 +297,12 @@ def display_season_standings(matches_df, deliveries_df, season):
             bar_fig.update_layout(
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)', categoryorder='total ascending'),
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='linear',
+                    dtick=1,  # Show every category
+                    automargin=True
+                ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
                 height=400
             )
@@ -388,7 +398,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=100,  # Set appropriate tick interval for runs
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
@@ -414,7 +429,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=5,  # Set appropriate tick interval for batting average
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
@@ -443,7 +463,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=5,  # Set appropriate tick interval for wickets
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
@@ -469,7 +494,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=1,  # Set appropriate tick interval for economy rate
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
@@ -497,7 +527,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=5,  # Set appropriate tick interval for catches/stumpings
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)
@@ -518,7 +553,12 @@ def display_top_performers(matches_df, deliveries_df, season):
                     xaxis_tickangle=-45,
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                    yaxis=dict(
+                        gridcolor='rgba(128,128,128,0.1)',
+                        tickmode='linear',
+                        dtick=5,  # Set appropriate tick interval for catches/stumpings
+                        automargin=True
+                    ),
                     xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
                 )
                 responsive_plotly_chart(fig, use_container_width=True)

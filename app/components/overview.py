@@ -66,9 +66,12 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
         fig.update_layout(
             height=400,
             xaxis_title="Season",
-            yaxis_title="Number of Matches",
             yaxis=dict(
-                range=[0, max(matches_per_season['matches']) * 1.15]
+                title_text="Number of Matches",
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',
+                dtick=5,  # Tick every 5 matches
+                automargin=True
             ),
             xaxis=dict(
                 ticktext=matches_per_season['season'],
@@ -102,9 +105,12 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
         fig.update_layout(
             height=400,
             xaxis_title="Season",
-            yaxis_title="Average Runs",
             yaxis=dict(
-                range=[0, max(avg_runs_by_season['total_runs']) * 1.15]
+                title_text="Average Runs",
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',
+                dtick=5,  # Tick every 5 runs
+                automargin=True
             ),
             xaxis=dict(
                 ticktext=avg_runs_by_season['season'],
@@ -138,9 +144,12 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None):
         fig.update_layout(
             height=400,
             xaxis_title="Season",
-            yaxis_title="Average Wickets",
             yaxis=dict(
-                range=[0, max(avg_wickets_by_season['wickets']) * 1.15]
+                title_text="Average Wickets",
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',
+                dtick=0.5,  # Tick every 0.5 wickets
+                automargin=True
             ),
             xaxis=dict(
                 ticktext=avg_wickets_by_season['season'],

@@ -15,6 +15,27 @@ def get_device_type() -> str:
     # Default to desktop if not set
     return st.session_state.get('device_type', 'desktop')
 
+def ensure_all_ticks_shown(fig: Any) -> Any:
+    """
+    Updates a figure to ensure that all y-axis ticks are shown when possible.
+    This improves readability of charts by displaying more detailed y-axis labels.
+    
+    Args:
+        fig: Plotly figure object
+        
+    Returns:
+        The updated Plotly figure object
+    """
+    # Configure y-axis to show all ticks using 'linear' tick mode
+    # This ensures all values are shown rather than a subset
+    fig.update_yaxes(
+        tickmode='auto',
+        nticks=20,  # Increased number of ticks
+        automargin=True  # Ensure there's enough margin for labels
+    )
+    
+    return fig
+
 def update_chart_for_responsive_layout(fig: Any, device_type: Optional[str] = None) -> Any:
     """
     Update chart layout to be responsive to device type.
@@ -86,6 +107,9 @@ def update_chart_for_responsive_layout(fig: Any, device_type: Optional[str] = No
             ),
             margin=dict(t=60, l=50, r=50, b=50)  # Standard margins for desktop
         )
+        
+        # Ensure all y-axis ticks are shown when possible on desktop
+        fig = ensure_all_ticks_shown(fig)
     
     # Apply neon styling to the chart
     fig = apply_neon_style(fig)

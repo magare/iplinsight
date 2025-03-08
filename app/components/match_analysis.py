@@ -101,7 +101,12 @@ def display_match_result_analysis(matches_df):
             fig.update_layout(
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='linear',  # Show all ticks with consistent spacing
+                    dtick=5,            # Tick every 5 units
+                    automargin=True     # Ensure labels don't get cut off
+                ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
             responsive_plotly_chart(fig, use_container_width=True)
@@ -120,7 +125,12 @@ def display_match_result_analysis(matches_df):
             fig.update_layout(
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='linear',  # Show all ticks with consistent spacing
+                    dtick=5,            # Tick every 5 units
+                    automargin=True     # Ensure labels don't get cut off
+                ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
             responsive_plotly_chart(fig, use_container_width=True)
@@ -138,7 +148,13 @@ def display_match_result_analysis(matches_df):
             yaxis_title='Percentage',
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
-            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            yaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',   # Show all ticks with consistent spacing
+                dtick=10,            # Tick every 10 percentage points
+                range=[0, 100],      # Ensure consistent y-axis range
+                automargin=True      # Ensure labels don't get cut off
+            ),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
         responsive_plotly_chart(fig, use_container_width=True)
@@ -212,7 +228,12 @@ def display_toss_analysis(matches_df):
             fig.update_layout(
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='linear',  # Show all ticks with consistent spacing
+                    dtick=5,            # Tick every 5 units
+                    automargin=True     # Ensure labels don't get cut off
+                ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
             responsive_plotly_chart(fig, use_container_width=True)
@@ -266,7 +287,13 @@ def display_toss_analysis(matches_df):
             fig.update_layout(
                 plot_bgcolor='rgba(0,0,0,0)',
                 paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+                yaxis=dict(
+                    gridcolor='rgba(128,128,128,0.1)',
+                    tickmode='linear',   # Show all ticks with consistent spacing
+                    dtick=10,            # Tick every 10 percentage points
+                    range=[0, 100],      # Ensure consistent y-axis range
+                    automargin=True      # Ensure labels don't get cut off
+                ),
                 xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
             )
             responsive_plotly_chart(fig, use_container_width=True)
@@ -294,7 +321,13 @@ def display_toss_analysis(matches_df):
             margin=dict(t=60, b=80),
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
-            yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
+            yaxis=dict(
+                gridcolor='rgba(128,128,128,0.1)',
+                tickmode='linear',   # Show all ticks with consistent spacing
+                dtick=10,            # Tick every 10 percentage points
+                range=[0, 100],      # Ensure consistent y-axis range
+                automargin=True      # Ensure labels don't get cut off
+            ),
             xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
         )
         responsive_plotly_chart(fig, use_container_width=True)

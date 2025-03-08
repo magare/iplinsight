@@ -348,7 +348,12 @@ def display_batting_analysis(deliveries_df=None):
                 margin=dict(l=50, r=50, t=30, b=50),
                 height=450,
                 xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
-                yaxis=dict(gridcolor='rgba(255,255,255,0.1)')
+                yaxis=dict(
+                    gridcolor='rgba(255,255,255,0.1)',
+                    tickmode='linear',
+                    dtick=100,  # Set appropriate interval for runs
+                    automargin=True
+                )
             )
             
             # Show player names for top performers only
@@ -463,7 +468,12 @@ def display_batting_analysis(deliveries_df=None):
                 margin=dict(l=50, r=50, t=30, b=50),
                 height=450,
                 xaxis=dict(gridcolor='rgba(255,255,255,0.1)'),
-                yaxis=dict(gridcolor='rgba(255,255,255,0.1)')
+                yaxis=dict(
+                    gridcolor='rgba(255,255,255,0.1)',
+                    tickmode='linear',
+                    dtick=5,  # Set appropriate interval for wickets
+                    automargin=True
+                )
             )
             
             # Show player names for top performers only
