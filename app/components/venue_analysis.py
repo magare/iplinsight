@@ -51,37 +51,20 @@ def load_precomputed_parquet(filename):
         filename (str): Name of the Parquet file to load.
         
     Returns:
-        dict: Dictionary containing the loaded data.
+        dict or DataFrame: Data from the parquet file.
     """
     data_dir = Path(__file__).resolve().parent.parent / "data"
-    
-    # Convert filename from .json to .parquet if needed
-    if filename.endswith('.json'):
-        parquet_filename = filename.replace('.json', '.parquet')
-    else:
-        parquet_filename = filename
-        
-    file_path = data_dir / parquet_filename
+    file_path = data_dir / filename
     
     if not os.path.exists(file_path):
-        # Try to fall back to JSON if Parquet doesn't exist
-        json_path = data_dir / filename.replace('.parquet', '.json')
-        if os.path.exists(json_path):
-            return load_precomputed_json(filename.replace('.parquet', '.json'))
-        st.error(f"Precomputed data file not found: {parquet_filename}")
+        st.warning(f"Precomputed data file not found: {filename}")
         return {}
     
     try:
         df = pd.read_parquet(file_path)
-        # Convert DataFrame to dict
-        if len(df) == 1:
-            # If it's a single row DataFrame (converted from a dict)
-            return df.iloc[0].to_dict()
-        else:
-            # If it's a multi-row DataFrame (converted from a list)
-            return df.to_dict(orient='records')
+        return df
     except Exception as e:
-        st.error(f"Error loading {parquet_filename}: {str(e)}")
+        st.error(f"Error loading {filename}: {str(e)}")
         return {}
 
 def load_venue_metadata():
@@ -104,11 +87,15 @@ def load_venue_weather_impact():
     """Load precomputed venue weather impact data."""
     return load_precomputed_parquet('venue_weather_impact.json')
 
+def load_venue_team_stats():
+    """Load precomputed venue team stats data."""
+    return load_precomputed_parquet('venue_team_stats.parquet')
+
 # ---------------------------
-# Legacy Calculation Functions (Kept for reference)
+# Data Generation Functions
 # ---------------------------
 
-def calculate_venue_metadata(matches_df: pd.DataFrame) -> Dict:
+def generate_venue_metadata(matches_df: pd.DataFrame) -> Dict:
     """Calculate comprehensive venue metadata including location, characteristics, and historical data."""
     venues = matches_df['venue'].unique()
     venue_metadata = {}
@@ -129,12 +116,20 @@ def calculate_venue_metadata(matches_df: pd.DataFrame) -> Dict:
         # Calculate venue characteristics
         total_matches = len(venue_matches)
         avg_first_innings = venue_matches[venue_matches['win_by_runs'] > 0]['win_by_runs'].mean()
+        # Handle NaN values
+        if pd.isna(avg_first_innings):
+            avg_first_innings = 0
+            
         avg_second_innings = venue_matches[venue_matches['win_by_wickets'] > 0]['win_by_wickets'].mean()
+        # Handle NaN values
+        if pd.isna(avg_second_innings):
+            avg_second_innings = 0
+            
         batting_first_wins = len(venue_matches[venue_matches['win_by_runs'] > 0])
         chasing_wins = len(venue_matches[venue_matches['win_by_wickets'] > 0])
         
         # Calculate pitch characteristics
-        is_high_scoring = avg_first_innings > matches_df['win_by_runs'].mean()
+        is_high_scoring = avg_first_innings > matches_df['win_by_runs'].replace(0, np.nan).mean()
         favors_chasing = chasing_wins > batting_first_wins
         
         # Generate venue description
@@ -151,17 +146,18 @@ def calculate_venue_metadata(matches_df: pd.DataFrame) -> Dict:
             description += "Teams batting first have had good success here, indicating the pitch might slow down as the match progresses."
         
         # Store metadata
+        city = venue_matches['city'].iloc[0] if 'city' in venue_matches.columns else 'Unknown'
+        
         venue_metadata[venue] = {
             'total_matches': total_matches,
             'home_teams': home_teams,
             'description': description,
-            'city': venue_matches['city'].iloc[0] if 'city' in venue_matches.columns else 'Unknown',
-            'state': venue_matches['state'].iloc[0] if 'state' in venue_matches.columns else 'Unknown',
+            'city': city,
             'first_match': venue_matches['date'].min(),
             'last_match': venue_matches['date'].max(),
             'characteristics': {
-                'is_high_scoring': is_high_scoring,
-                'favors_chasing': favors_chasing,
+                'is_high_scoring': bool(is_high_scoring),
+                'favors_chasing': bool(favors_chasing),
                 'avg_first_innings_score': avg_first_innings,
                 'avg_second_innings_wickets': avg_second_innings,
                 'batting_first_wins': batting_first_wins,
@@ -171,75 +167,15 @@ def calculate_venue_metadata(matches_df: pd.DataFrame) -> Dict:
     
     return venue_metadata
 
-def calculate_team_venue_stats(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> Dict:
-    """Calculate comprehensive team performance statistics at each venue."""
-    venues = matches_df['venue'].unique()
-    teams = pd.concat([matches_df['team1'], matches_df['team2']]).unique()
-    venue_stats = {}
+def generate_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame, venue: str) -> Dict:
+    """Calculate scoring patterns for a specific venue."""
     
-    for venue in venues:
-        venue_matches = matches_df[matches_df['venue'] == venue]
-        venue_stats[venue] = {}
-        
-        for team in teams:
-            # Get matches where team played at this venue
-            team_matches = venue_matches[
-                (venue_matches['team1'] == team) |
-                (venue_matches['team2'] == team)
-            ]
-            
-            if len(team_matches) == 0:
-                continue
-            
-            # Calculate W/L/T record
-            wins = len(team_matches[team_matches['winner'] == team])
-            total = len(team_matches)
-            losses = total - wins
-            
-            # Calculate batting stats by innings
-            team_deliveries = deliveries_df[
-                deliveries_df['match_id'].isin(team_matches['match_id'])
-            ]
-            
-            batting_stats = team_deliveries[
-                team_deliveries['batting_team'] == team
-            ].groupby('inning').agg({
-                'total_runs': ['mean', 'std', 'sum'],
-                'is_wicket': 'sum',
-                'match_id': 'nunique'
-            })
-            
-            bowling_stats = team_deliveries[
-                team_deliveries['bowling_team'] == team
-            ].groupby('inning').agg({
-                'total_runs': ['mean', 'std', 'sum'],
-                'is_wicket': 'sum',
-                'match_id': 'nunique'
-            })
-            
-            # Calculate home advantage
-            is_home_team = team in venue_stats[venue].get('home_teams', [])
-            home_matches = team_matches[
-                (team_matches['team1'] == team) & (venue_matches['venue'] == venue)
-            ]
-            home_wins = len(home_matches[home_matches['winner'] == team])
-            home_win_pct = (home_wins / len(home_matches)) * 100 if len(home_matches) > 0 else 0
-            
-            venue_stats[venue][team] = {
-                'matches': total,
-                'wins': wins,
-                'losses': losses,
-                'win_percentage': (wins / total) * 100,
-                'batting_stats': batting_stats.to_dict(),
-                'bowling_stats': bowling_stats.to_dict(),
-                'is_home_team': is_home_team,
-                'home_win_percentage': home_win_pct
-            }
+    # Get matches at this venue
+    venue_matches = matches_df[matches_df['venue'] == venue]
+    venue_deliveries = deliveries_df[deliveries_df['match_id'].isin(venue_matches['match_id'])]
     
-    return venue_stats
-
-def calculate_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> Dict:
-    """Calculate scoring patterns for a venue."""
+    if len(venue_deliveries) == 0:
+        return {}
     
     # Calculate phase-wise statistics
     def get_phase(over):
@@ -250,775 +186,618 @@ def calculate_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataF
         else:
             return 'Death'
     
-    # Add phase and innings information
-    deliveries_df['phase'] = deliveries_df['over'].apply(get_phase)
+    # Add over and phase columns
+    venue_deliveries['over'] = (venue_deliveries['ball'].astype(int) - 1) // 6 + 1
+    venue_deliveries['phase'] = venue_deliveries['over'].apply(get_phase)
     
-    # Calculate phase-wise statistics
-    phase_stats = deliveries_df.groupby(['inning', 'phase']).agg({
-        'total_runs': ['mean', 'std', 'sum', 'count']
+    # Calculate phase-wise metrics
+    phase_metrics = venue_deliveries.groupby(['phase', 'inning']).agg({
+        'total_runs': ['sum', 'mean'],
+        'is_wicket': 'sum',
+        'match_id': 'nunique'
     })
     
-    # Calculate innings-wise statistics
-    innings_stats = deliveries_df.groupby('inning').agg({
-        'total_runs': ['mean', 'std', 'sum', 'count']
+    # Calculate over-by-over metrics
+    over_metrics = venue_deliveries.groupby(['over', 'inning']).agg({
+        'total_runs': ['sum', 'mean'],
+        'is_wicket': 'sum',
     })
+    
+    # Format the data for visualization
+    over_data = []
+    for idx, data in over_metrics.reset_index().iterrows():
+        over_data.append({
+            'over': data[('over', '')],
+            'inning': f"Inning {data[('inning', '')]}",
+            'runs': data[('total_runs', 'mean')],
+            'wickets': data[('is_wicket', 'sum')] / data[('total_runs', 'sum')] * 100 if data[('total_runs', 'sum')] > 0 else 0
+        })
+    
+    phase_data = []
+    for idx, data in phase_metrics.reset_index().iterrows():
+        phase_data.append({
+            'phase': data[('phase', '')],
+            'inning': f"Inning {data[('inning', '')]}",
+            'runs_per_over': data[('total_runs', 'sum')] / (data[('match_id', 'nunique')] * (6 if data[('phase', '')] == 'Powerplay' else 9 if data[('phase', '')] == 'Middle' else 5)),
+            'wickets_per_match': data[('is_wicket', 'sum')] / data[('match_id', 'nunique')]
+        })
     
     return {
-        'phase_stats': phase_stats,
-        'innings_stats': innings_stats
+        'over_data': over_data,
+        'phase_data': phase_data
     }
 
-def calculate_toss_impact(matches_df: pd.DataFrame) -> Dict:
-    """Calculate comprehensive toss impact statistics for each venue."""
-    venues = matches_df['venue'].unique()
-    toss_stats = {}
+def generate_toss_impact(matches_df: pd.DataFrame, venue: str) -> Dict:
+    """Calculate toss impact data for a specific venue."""
+    venue_matches = matches_df[matches_df['venue'] == venue]
     
-    for venue in venues:
-        venue_matches = matches_df[matches_df['venue'] == venue]
-        
-        # Basic toss decisions
-        toss_decisions = venue_matches['toss_decision'].value_counts()
-        toss_decisions_pct = (toss_decisions / len(venue_matches)) * 100
-        
-        # Toss win impact
-        toss_wins = venue_matches['toss_winner'] == venue_matches['winner']
-        toss_win_pct = (toss_wins.sum() / len(venue_matches)) * 100
-        
-        # Team-wise toss preferences and success
-        team_toss_stats = {}
-        for team in pd.concat([venue_matches['team1'], venue_matches['team2']]).unique():
-            team_tosses = venue_matches[venue_matches['toss_winner'] == team]
-            if not team_tosses.empty:
-                team_toss_stats[team] = {
-                    'decisions': team_tosses['toss_decision'].value_counts().to_dict(),
-                    'success_rate': (
-                        len(team_tosses[team_tosses['winner'] == team]) / 
-                        len(team_tosses)
-                    ) * 100
-                }
-        
-        # Toss decision success by innings
-        bat_first_success = len(
-            venue_matches[
-                (venue_matches['toss_decision'] == 'bat') & 
-                (venue_matches['toss_winner'] == venue_matches['winner'])
-            ]
-        )
-        field_first_success = len(
-            venue_matches[
-                (venue_matches['toss_decision'] == 'field') & 
-                (venue_matches['toss_winner'] == venue_matches['winner'])
-            ]
-        )
-        
-        toss_stats[venue] = {
-            'toss_decisions': toss_decisions.to_dict(),
-            'toss_decisions_pct': toss_decisions_pct.to_dict(),
-            'toss_win_pct': toss_win_pct,
-            'team_stats': team_toss_stats,
-            'decision_success': {
-                'bat_first': bat_first_success,
-                'field_first': field_first_success,
-                'bat_first_pct': (bat_first_success / len(venue_matches)) * 100,
-                'field_first_pct': (field_first_success / len(venue_matches)) * 100
-            }
-        }
+    if len(venue_matches) == 0:
+        return {}
     
-    return toss_stats
-
-def calculate_weather_impact(matches_df: pd.DataFrame) -> Dict:
-    """Calculate weather impact statistics for venues."""
-    venues = matches_df['venue'].unique()
-    weather_stats = {}
+    # Calculate toss decision counts
+    toss_decisions = venue_matches['toss_decision'].value_counts().to_dict()
     
-    for venue in venues:
-        venue_matches = matches_df[matches_df['venue'] == venue]
-        total_matches = len(venue_matches)
-        
-        # Calculate rain-affected matches (if result column exists)
-        if 'result' in venue_matches.columns:
-            rain_affected = len(venue_matches[venue_matches['result'].str.contains('rain', case=False, na=False)])
-        else:
-            rain_affected = 0
-        
-        # Calculate match timing distribution (if start_time column exists)
-        if 'start_time' in venue_matches.columns:
-            evening_matches = len(venue_matches[venue_matches['start_time'].str.contains('19:30|20:00', na=False)])
-            day_matches = total_matches - evening_matches
-        else:
-            # If no timing data available, assume equal distribution
-            evening_matches = total_matches // 2
-            day_matches = total_matches - evening_matches
-        
-        weather_stats[venue] = {
-            'total_matches': total_matches,
-            'rain_affected_matches': rain_affected,
-            'rain_percentage': (rain_affected / total_matches * 100) if total_matches > 0 else 0,
-            'evening_matches': evening_matches,
-            'day_matches': day_matches,
-            'evening_percentage': (evening_matches / total_matches * 100) if total_matches > 0 else 0
-        }
+    # Calculate win % after winning toss
+    toss_winners = venue_matches[venue_matches['toss_winner'] == venue_matches['winner']]
+    toss_win_percentage = (len(toss_winners) / len(venue_matches)) * 100
     
-    return weather_stats
-
-def calculate_batting_stats(venue_matches: pd.DataFrame, deliveries_df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate batting statistics for teams at a venue."""
-    # Get deliveries for the venue matches
-    venue_deliveries = deliveries_df[
-        deliveries_df['match_id'].isin(venue_matches['match_id'])
-    ]
+    # Calculate bat first vs field first success rates
+    bat_first_decisions = venue_matches[venue_matches['toss_decision'] == 'bat']
+    field_first_decisions = venue_matches[venue_matches['toss_decision'] == 'field']
     
-    # Calculate team batting stats
-    batting_stats = venue_deliveries.groupby('batting_team').agg({
-        'total_runs': ['sum', 'mean', 'max'],
-        'match_id': 'nunique',
-        'ball': lambda x: len(x) / 6.0  # Convert balls to overs
-    }).round(2)
+    bat_first_success = len(bat_first_decisions[bat_first_decisions['toss_winner'] == bat_first_decisions['winner']])
+    bat_first_success_rate = (bat_first_success / len(bat_first_decisions)) * 100 if len(bat_first_decisions) > 0 else 0
     
-    # Flatten column names
-    batting_stats.columns = ['total_runs', 'average_score', 'highest_score', 'innings', 'overs']
+    field_first_success = len(field_first_decisions[field_first_decisions['toss_winner'] == field_first_decisions['winner']])
+    field_first_success_rate = (field_first_success / len(field_first_decisions)) * 100 if len(field_first_decisions) > 0 else 0
     
-    # Calculate strike rate
-    batting_stats['strike_rate'] = (batting_stats['total_runs'] / batting_stats['overs']).round(2)
-    
-    return batting_stats
-
-def calculate_bowling_stats(venue_matches: pd.DataFrame, deliveries_df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate bowling statistics for teams at a venue."""
-    # Get deliveries for the venue matches
-    venue_deliveries = deliveries_df[
-        deliveries_df['match_id'].isin(venue_matches['match_id'])
-    ]
-    
-    # Calculate team bowling stats
-    bowling_stats = venue_deliveries.groupby('bowling_team').agg({
-        'is_wicket': ['sum', 'mean'],
-        'match_id': 'nunique',
-        'ball': lambda x: len(x) / 6.0,  # Convert balls to overs
-        'total_runs': 'sum'
-    }).round(2)
-    
-    # Flatten column names
-    bowling_stats.columns = ['wickets', 'wickets_per_over', 'innings', 'overs', 'runs_conceded']
-    
-    # Calculate economy rate
-    bowling_stats['economy'] = (bowling_stats['runs_conceded'] / bowling_stats['overs']).round(2)
-    
-    # Calculate average wickets per match
-    bowling_stats['average_wickets'] = (bowling_stats['wickets'] / bowling_stats['innings']).round(2)
-    
-    # Find best bowling performances
-    best_bowling = venue_deliveries[venue_deliveries['is_wicket'] == 1].groupby(
-        ['match_id', 'bowling_team']
-    ).agg({
-        'is_wicket': 'sum',
-        'total_runs': 'sum'
-    })
-    
-    best_bowling = best_bowling.reset_index().groupby('bowling_team').apply(
-        lambda x: f"{int(x['is_wicket'].max())}/{int(x['total_runs'].min())}"
-    ).to_dict()
-    
-    bowling_stats['best_bowling'] = bowling_stats.index.map(best_bowling)
-    
-    return bowling_stats
+    return {
+        'toss_decisions': toss_decisions,
+        'toss_win_percentage': toss_win_percentage,
+        'bat_first_success_rate': bat_first_success_rate,
+        'field_first_success_rate': field_first_success_rate
+    }
 
 # ---------------------------
 # Display Functions
 # ---------------------------
 
 def display_venue_overview(matches_df: pd.DataFrame) -> None:
-    """Display comprehensive venue overview with metadata and characteristics."""
-    st.header("Venue Overview")
+    """Display overview of all venues with key stats."""
+    st.markdown("### Venue Overview")
+    st.write("Explore the statistics and characteristics of IPL venues across seasons.")
     
-    # Load precomputed venue metadata
-    venue_metadata = load_venue_metadata()
+    venue_data = generate_venue_metadata(matches_df)
     
-    if not venue_metadata:
-        st.error("Venue metadata not available. Please run the data preprocessing script.")
-        return
+    # Create venue selector
+    venues = matches_df['venue'].unique()
+    selected_venue = st.selectbox("Select a venue", venues)
     
-    # Create venue selector with unique key
-    selected_venue = st.selectbox(
-        "Select Venue",
-        options=sorted(venue_metadata.keys()),
-        key="venue_overview_selector"
-    )
-    
-    metadata = venue_metadata[selected_venue]
-    
-    # Display basic information
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("Venue Information")
-        st.metric("Total Matches", metadata['total_matches'])
-        st.metric("City", metadata['city'])
-        st.metric("State", metadata['state'])
-        st.metric("First IPL Match", str(metadata['first_match'])[:10])
-        st.metric("Latest IPL Match", str(metadata['last_match'])[:10])
+    if selected_venue and selected_venue in venue_data:
+        venue_info = venue_data[selected_venue]
         
-        st.subheader("Home Teams")
-        for team in metadata['home_teams']:
-            st.write(f"• {team}")
-    
-    with col2:
-        st.subheader("Venue Characteristics")
-        st.write(metadata['description'])
+        # Layout the venue information in columns
+        col1, col2 = st.columns([1, 1])
         
-        # Display pitch characteristics
-        chars = metadata['characteristics']
-        try:
-            avg_score = float(chars['avg_first_innings_score'])
-            st.metric("Average First Innings Score", f"{avg_score:.1f}")
-        except (TypeError, ValueError, KeyError):
-            st.metric("Average First Innings Score", "N/A")
+        with col1:
+            st.subheader(selected_venue)
+            st.markdown(f"**City:** {venue_info['city']}")
+            st.markdown(f"**Total Matches:** {venue_info['total_matches']}")
+            st.markdown(f"**First Match:** {venue_info['first_match']}")
+            st.markdown(f"**Latest Match:** {venue_info['last_match']}")
             
-        try:
-            bat_first_wins = float(chars['batting_first_wins'])
-            total_matches = float(metadata['total_matches'])
-            win_pct = (bat_first_wins / total_matches) * 100 if total_matches > 0 else 0
-            st.metric("Batting First Win %", f"{win_pct:.1f}%")
-        except (TypeError, ValueError, KeyError, ZeroDivisionError):
-            st.metric("Batting First Win %", "N/A")
+            # Display home teams
+            if venue_info['home_teams']:
+                st.markdown(f"**Home Teams:** {', '.join(venue_info['home_teams'])}")
+            
+        with col2:
+            # Create a radar chart for venue characteristics
+            characteristics = venue_info['characteristics']
+            
+            # Calculate normalized values between 0 and 1 for the radar chart
+            total_matches = matches_df['venue'].value_counts().max()
+            batting_wins_ratio = characteristics['batting_first_wins'] / (characteristics['batting_first_wins'] + characteristics['chasing_wins']) if (characteristics['batting_first_wins'] + characteristics['chasing_wins']) > 0 else 0.5
+            
+            categories = ['Matches Hosted', 'Bat 1st Win %', 'Chase Win %', 'Avg Score', 'High Scoring']
+            values = [
+                venue_info['total_matches'] / total_matches,
+                batting_wins_ratio,
+                1 - batting_wins_ratio,
+                characteristics['avg_first_innings_score'] / 200,  # Normalize by 200 (high score)
+                1 if characteristics['is_high_scoring'] else 0.3
+            ]
+            
+            fig = go.Figure()
+            fig.add_trace(go.Scatterpolar(
+                r=values,
+                theta=categories,
+                fill='toself',
+                name=selected_venue
+            ))
+            
+            fig.update_layout(
+                polar=dict(
+                    radialaxis=dict(
+                        visible=True,
+                        range=[0, 1]
+                    )
+                ),
+                showlegend=False,
+                margin=dict(l=10, r=10, t=30, b=10),
+                height=300
+            )
+            
+            st.plotly_chart(fig, use_container_width=True)
         
-        # Pitch type indicator
-        if chars['is_high_scoring']:
-            st.success("🏏 Batting-friendly pitch")
-        else:
-            st.warning("🎯 Bowling-friendly pitch")
+        # Display venue description
+        st.markdown("#### Venue Characteristics")
+        st.write(venue_info['description'])
         
-        if chars['favors_chasing']:
-            st.info("🎯 Favors chasing teams")
+        # Display match history
+        st.markdown("#### Recent Matches")
+        venue_matches = matches_df[matches_df['venue'] == selected_venue].sort_values('date', ascending=False).head(5)
+        
+        if not venue_matches.empty:
+            for i, match in venue_matches.iterrows():
+                winner = match['winner']
+                result = f"{match['win_by_runs']} runs" if match['win_by_runs'] > 0 else f"{match['win_by_wickets']} wickets"
+                
+                st.markdown(f"**{match['date']}**: {match['team1']} vs {match['team2']} - **{winner}** won by {result}")
         else:
-            st.info("🏏 Favors batting first")
+            st.write("No matches found for this venue.")
+    else:
+        st.warning("Please select a venue from the dropdown.")
 
 def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
-    """Display team performance analysis for each venue."""
-    st.header("Team Performance Analysis")
+    """Display team performance analysis at venues."""
+    st.markdown("### Team Performance at Venues")
+    st.write("Analyze how different teams have performed at various venues over IPL history.")
     
-    # Load precomputed team performance at venues
-    venue_team_performance = load_venue_team_performance()
+    # Get venue team stats if available
+    venue_team_stats_df = load_venue_team_stats()
     
-    if not venue_team_performance:
-        st.error("Team performance data not available. Please run the data preprocessing script.")
+    # Get list of venues and teams
+    venues = matches_df['venue'].unique()
+    all_teams = pd.concat([matches_df['team1'], matches_df['team2']]).unique()
+    
+    # Create selectors
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_venue = st.selectbox("Select Venue", venues, key="team_perf_venue")
+    with col2:
+        selected_team = st.selectbox("Select Team", sorted(all_teams), key="team_perf_team")
+    
+    # Filter venue matches
+    venue_matches = matches_df[matches_df['venue'] == selected_venue]
+    
+    # Get team's matches at this venue
+    team_venue_matches = venue_matches[
+        (venue_matches['team1'] == selected_team) | 
+        (venue_matches['team2'] == selected_team)
+    ]
+    
+    if len(team_venue_matches) == 0:
+        st.warning(f"{selected_team} has not played any matches at {selected_venue}.")
         return
     
-    # Get selected venue with unique key
-    venue = st.selectbox(
-        "Select Venue", 
-        sorted(venue_team_performance.keys()),
-        key="team_performance_venue_selector"
-    )
+    # Calculate basic stats
+    total_matches = len(team_venue_matches)
+    wins = len(team_venue_matches[team_venue_matches['winner'] == selected_team])
+    losses = total_matches - wins
+    win_percentage = (wins / total_matches) * 100 if total_matches > 0 else 0
     
-    if venue not in venue_team_performance:
-        st.warning(f"No team performance data available for {venue}")
-        return
+    # Create win-loss display
+    col1, col2, col3 = st.columns(3)
     
-    # Extract team performance data for the selected venue
-    team_data = venue_team_performance[venue]
+    with col1:
+        st.metric("Matches", total_matches)
+    with col2:
+        st.metric("Wins", wins)
+    with col3:
+        st.metric("Win Rate", f"{win_percentage:.1f}%")
     
-    # Create DataFrames for batting and bowling stats
-    batting_stats = []
-    bowling_stats = []
-    
-    for team, stats in team_data.items():
-        # Check if stats is None
-        if stats is None:
-            # Add default values if stats is None
-            batting_stats.append({
-                'batting_team': team,
-                'total_runs': 0,
-                'average_score': 0,
-                'highest_score': 0,
-                'innings': 0,
-                'overs': 0,
-                'strike_rate': 0
-            })
-            
-            bowling_stats.append({
-                'bowling_team': team,
-                'wickets': 0,
-                'average_wickets': 0,
-                'innings': 0,
-                'overs': 0,
-                'runs_conceded': 0,
-                'economy': 0,
-                'best_bowling': '0/0'
-            })
-            continue
-            
-        # Check if batting_stats exists and is not None
-        if 'batting_stats' in stats and stats['batting_stats'] is not None:
-            batting_stats.append({
-                'batting_team': team,
-                'total_runs': stats['batting_stats'].get('total_runs', 0),
-                'average_score': stats['batting_stats'].get('total_runs', 0) / stats.get('matches', 1) if stats.get('matches', 0) > 0 else 0,
-                'highest_score': stats['batting_stats'].get('highest_score', 0),
-                'innings': stats.get('matches', 0),
-                'overs': stats['batting_stats'].get('overs', 0),
-                'strike_rate': stats['batting_stats'].get('batting_sr', 0)
-            })
-        else:
-            # Add default values if batting_stats is missing
-            batting_stats.append({
-                'batting_team': team,
-                'total_runs': 0,
-                'average_score': 0,
-                'highest_score': 0,
-                'innings': stats.get('matches', 0),
-                'overs': 0,
-                'strike_rate': 0
-            })
-        
-        # Check if bowling_stats exists and is not None
-        if 'bowling_stats' in stats and stats['bowling_stats'] is not None:
-            bowling_stats.append({
-                'bowling_team': team,
-                'wickets': stats['bowling_stats'].get('wickets', 0),
-                'average_wickets': stats['bowling_stats'].get('wickets', 0) / stats.get('matches', 1) if stats.get('matches', 0) > 0 else 0,
-                'innings': stats.get('matches', 0),
-                'overs': stats['bowling_stats'].get('overs', 0),
-                'runs_conceded': stats['bowling_stats'].get('runs_conceded', 0),
-                'economy': stats['bowling_stats'].get('economy', 0),
-                'best_bowling': stats['bowling_stats'].get('best_bowling', '0/0')
-            })
-        else:
-            # Add default values if bowling_stats is missing
-            bowling_stats.append({
-                'bowling_team': team,
-                'wickets': 0,
-                'average_wickets': 0,
-                'innings': stats.get('matches', 0),
-                'overs': 0,
-                'runs_conceded': 0,
-                'economy': 0,
-                'best_bowling': '0/0'
-            })
-    
-    # Convert to DataFrames
-    batting_df = pd.DataFrame(batting_stats)
-    bowling_df = pd.DataFrame(bowling_stats)
-    
-    # Display team win/loss record
-    st.subheader(f"Team Records at {venue}")
-    
-    # Create a DataFrame for team records
-    team_records = []
-    for team, stats in team_data.items():
-        if stats is None:
-            team_records.append({
-                'Team': team,
-                'Matches': 0,
-                'Wins': 0,
-                'Losses': 0,
-                'Win %': 0
-            })
-        else:
-            team_records.append({
-                'Team': team,
-                'Matches': stats.get('matches', 0),
-                'Wins': stats.get('wins', 0),
-                'Losses': stats.get('losses', 0),
-                'Win %': (stats.get('wins', 0) / stats.get('matches', 1) * 100) if stats.get('matches', 0) > 0 else 0
-            })
-    
-    team_records_df = pd.DataFrame(team_records)
-    team_records_df = team_records_df.sort_values('Matches', ascending=False)
-    
-    # Display team records
-    st.dataframe(
-        team_records_df.style.format({
-            'Win %': '{:.1f}%'
-        }),
-        use_container_width=True
-    )
-    
-    # Create tabs for batting and bowling analysis
-    tabs = st.tabs(["Batting Analysis", "Bowling Analysis"])
-    
-    # Batting Analysis Tab
-    with tabs[0]:
-        if not batting_df.empty:
-            # Sort by total runs
-            batting_df = batting_df.sort_values('total_runs', ascending=False)
-            
-            # Display batting stats
-            st.subheader("Batting Performance")
-            st.dataframe(
-                batting_df.style.format({
-                    'total_runs': '{:.0f}',
-                    'average_score': '{:.1f}',
-                    'highest_score': '{:.0f}',
-                    'overs': '{:.1f}',
-                    'strike_rate': '{:.2f}'
-                }),
-                use_container_width=True
-            )
-            
-            # Create bar chart for total runs
-            fig = px.bar(
-                batting_df,
-                x='batting_team',
-                y='total_runs',
-                title='Total Runs by Team',
-                color='batting_team',
-                template='plotly_dark'
-            )
-            fig.update_layout(
-                xaxis_title='Team',
-                yaxis_title='Total Runs',
-                showlegend=False,
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
-            
-            # Create bar chart for average score
-            fig = px.bar(
-                batting_df,
-                x='batting_team',
-                y='average_score',
-                title='Average Score by Team',
-                color='batting_team',
-                template='plotly_dark'
-            )
-            fig.update_layout(
-                xaxis_title='Team',
-                yaxis_title='Average Score',
-                showlegend=False,
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("No batting data available for this venue")
-    
-    # Bowling Analysis Tab
-    with tabs[1]:
-        if not bowling_df.empty:
-            # Sort by wickets
-            bowling_df = bowling_df.sort_values('wickets', ascending=False)
-            
-            # Display bowling stats
-            st.subheader("Bowling Performance")
-            st.dataframe(
-                bowling_df.style.format({
-                    'wickets': '{:.0f}',
-                    'average_wickets': '{:.1f}',
-                    'overs': '{:.1f}',
-                    'runs_conceded': '{:.0f}',
-                    'economy': '{:.2f}'
-                }),
-                use_container_width=True
-            )
-            
-            # Create bar chart for wickets
-            fig = px.bar(
-                bowling_df,
-                x='bowling_team',
-                y='wickets',
-                title='Total Wickets by Team',
-                color='bowling_team',
-                template='plotly_dark'
-            )
-            fig.update_layout(
-                xaxis_title='Team',
-                yaxis_title='Wickets',
-                showlegend=False,
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
-            
-            # Create bar chart for economy
-            fig = px.bar(
-                bowling_df,
-                x='bowling_team',
-                y='economy',
-                title='Economy Rate by Team',
-                color='bowling_team',
-                template='plotly_dark'
-            )
-            fig.update_layout(
-                xaxis_title='Team',
-                yaxis_title='Economy Rate',
-                showlegend=False,
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                yaxis=dict(gridcolor='rgba(128,128,128,0.1)'),
-                xaxis=dict(gridcolor='rgba(128,128,128,0.1)')
-            )
-            responsive_plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("No bowling data available for this venue")
-
-def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame):
-    st.header("Scoring Patterns")
-    
-    # Load precomputed scoring patterns
-    venue_scoring_patterns = load_venue_scoring_patterns()
-    
-    if not venue_scoring_patterns:
-        st.error("Scoring patterns data not available. Please run the data preprocessing script.")
-        return
-    
-    # Get unique venues for selection
-    venues = sorted(venue_scoring_patterns.keys())
-    selected_venue = st.selectbox("Select Venue", venues, key="scoring_patterns_venue_selector")
-    
-    if selected_venue not in venue_scoring_patterns:
-        st.warning(f"No scoring pattern data available for {selected_venue}")
-        return
-    
-    # Extract scoring patterns for the selected venue
-    venue_patterns = venue_scoring_patterns[selected_venue]
-    
-    # Display phase-wise scoring
-    st.subheader("Scoring by Match Phase")
-    
-    # Convert phase stats to DataFrame
-    phase_df = pd.DataFrame(venue_patterns['phase_stats'])
-    
-    if not phase_df.empty:
-        # Create phase-wise bar chart
-        fig = px.bar(phase_df, 
-                    x='phase', 
-                    y='mean',
-                    color='inning',
-                    barmode='group',
-                    title=f"Average Runs by Phase at {selected_venue}",
-                    labels={
-                        'phase': "Phase",
-                        'mean': "Average Runs",
-                        'inning': "Innings"
-                    })
-        responsive_plotly_chart(fig)
-    else:
-        st.info("No phase-wise scoring data available for this venue")
-    
-    # Display innings comparison
-    st.subheader("Innings Comparison")
-    
-    # Convert innings stats to DataFrame
-    innings_df = pd.DataFrame(venue_patterns['innings_stats'])
-    
-    if not innings_df.empty:
-        # Create box plot for innings comparison
-        fig = px.box(innings_df,
-                    x='inning',
-                    y='sum',
-                    title=f"Run Distribution by Innings at {selected_venue}",
-                    labels={
-                        'inning': "Innings",
-                        'sum': "Total Runs"
-                    })
-        responsive_plotly_chart(fig)
-    else:
-        st.info("No innings comparison data available for this venue")
-    
-    # Display score distribution
-    st.subheader("Score Distribution")
-    
-    # Extract match totals
-    match_totals = venue_patterns['match_totals']
-    
-    if match_totals['values']:
-        # Create histogram
-        fig = px.histogram(x=match_totals['values'],
-                        nbins=20,
-                        title=f"Match Score Distribution at {selected_venue}",
-                        labels={'x': 'Total Match Score', 'y': 'Frequency'})
-        responsive_plotly_chart(fig)
-        
-        # Display summary statistics
-        st.write("Summary Statistics:")
-        stats = {
-            "Mean Score": f"{match_totals['mean']:.2f}",
-            "Median Score": f"{match_totals['median']:.2f}",
-            "Std Dev": f"{match_totals['std']:.2f}",
-            "Minimum": f"{match_totals['min']:.2f}",
-            "Maximum": f"{match_totals['max']:.2f}"
-        }
-        st.json(stats)
-    else:
-        st.info("No match score distribution data available for this venue")
-
-def display_toss_analysis(matches_df: pd.DataFrame) -> None:
-    """Display comprehensive toss impact analysis for venues."""
-    st.header("Toss Impact Analysis")
-    
-    # Load precomputed toss impact
-    venue_toss_impact = load_venue_toss_impact()
-    
-    if not venue_toss_impact:
-        st.error("Toss impact data not available. Please run the data preprocessing script.")
-        return
-    
-    # Create venue selector with unique key
-    selected_venue = st.selectbox(
-        "Select Venue",
-        options=sorted(venue_toss_impact.keys()),
-        key="toss_analysis_venue_selector"
-    )
-    
-    if selected_venue not in venue_toss_impact:
-        st.warning(f"No toss impact data available for {selected_venue}")
-        return
-    
-    stats = venue_toss_impact[selected_venue]
+    # Get team deliveries for this venue
+    team_venue_deliveries = deliveries_df[
+        deliveries_df['match_id'].isin(team_venue_matches['match_id'])
+    ]
     
     # Create tabs for different analyses
-    tabs = st.tabs([
-        "Toss Decisions",
-        "Team Preferences",
-        "Success Analysis"
-    ])
+    batting_tab, bowling_tab, opposition_tab = st.tabs(["Batting", "Bowling", "Opposition Performance"])
     
-    # Toss Decisions Tab
-    with tabs[0]:
+    # Batting Analysis
+    with batting_tab:
+        st.markdown(f"#### {selected_team}'s Batting at {selected_venue}")
+        
+        # Get team's batting deliveries
+        batting_deliveries = team_venue_deliveries[
+            team_venue_deliveries['batting_team'] == selected_team
+        ]
+        
+        if len(batting_deliveries) > 0:
+            # Calculate batting stats
+            total_runs = batting_deliveries['total_runs'].sum()
+            matches_batted = batting_deliveries['match_id'].nunique()
+            avg_runs_per_match = total_runs / matches_batted if matches_batted > 0 else 0
+            
+            boundaries = len(batting_deliveries[batting_deliveries['batsman_runs'] >= 4])
+            sixes = len(batting_deliveries[batting_deliveries['batsman_runs'] == 6])
+            
+            # Display metrics
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Avg. Score", f"{avg_runs_per_match:.1f}")
+            with col2:
+                st.metric("Boundaries", boundaries)
+            with col3:
+                st.metric("Sixes", sixes)
+            
+            # Create innings progression chart
+            st.markdown("##### Batting Progression")
+            
+            # Calculate over-by-over stats
+            batting_deliveries['over'] = (batting_deliveries['ball'].astype(int) - 1) // 6 + 1
+            over_stats = batting_deliveries.groupby('over').agg({
+                'total_runs': 'sum',
+                'is_wicket': 'sum',
+                'match_id': 'nunique'
+            }).reset_index()
+            
+            over_stats['runs_per_match'] = over_stats['total_runs'] / over_stats['match_id']
+            
+            fig = px.line(
+                over_stats, 
+                x='over', 
+                y='runs_per_match',
+                title=f"Average Runs per Over at {selected_venue}",
+                labels={'over': 'Over', 'runs_per_match': 'Avg. Runs'},
+                markers=True
+            )
+            fig.update_layout(
+                xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+                margin=dict(l=10, r=10, t=40, b=10)
+            )
+            
+            responsive_plotly_chart(fig)
+        else:
+            st.warning(f"No batting data available for {selected_team} at {selected_venue}.")
+    
+    # Bowling Analysis
+    with bowling_tab:
+        st.markdown(f"#### {selected_team}'s Bowling at {selected_venue}")
+        
+        # Get team's bowling deliveries
+        bowling_deliveries = team_venue_deliveries[
+            team_venue_deliveries['bowling_team'] == selected_team
+        ]
+        
+        if len(bowling_deliveries) > 0:
+            # Calculate bowling stats
+            total_wickets = bowling_deliveries['is_wicket'].sum()
+            matches_bowled = bowling_deliveries['match_id'].nunique()
+            runs_conceded = bowling_deliveries['total_runs'].sum()
+            
+            avg_wickets_per_match = total_wickets / matches_bowled if matches_bowled > 0 else 0
+            economy_rate = (runs_conceded / (len(bowling_deliveries) / 6)) if len(bowling_deliveries) > 0 else 0
+            
+            # Display metrics
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Avg. Wickets", f"{avg_wickets_per_match:.1f}")
+            with col2:
+                st.metric("Economy Rate", f"{economy_rate:.2f}")
+            with col3:
+                st.metric("Total Wickets", total_wickets)
+            
+            # Create wickets by over chart
+            st.markdown("##### Bowling Performance")
+            
+            # Calculate over-by-over stats
+            bowling_deliveries['over'] = (bowling_deliveries['ball'].astype(int) - 1) // 6 + 1
+            over_stats = bowling_deliveries.groupby('over').agg({
+                'total_runs': 'sum',
+                'is_wicket': 'sum',
+                'match_id': 'nunique'
+            }).reset_index()
+            
+            over_stats['wickets_per_match'] = over_stats['is_wicket'] / over_stats['match_id']
+            over_stats['runs_per_match'] = over_stats['total_runs'] / over_stats['match_id']
+            
+            fig = px.bar(
+                over_stats, 
+                x='over', 
+                y='wickets_per_match',
+                title=f"Average Wickets per Over at {selected_venue}",
+                labels={'over': 'Over', 'wickets_per_match': 'Avg. Wickets'},
+                color='runs_per_match',
+                color_continuous_scale='Viridis'
+            )
+            fig.update_layout(
+                xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+                margin=dict(l=10, r=10, t=40, b=10),
+                coloraxis_colorbar=dict(title="Avg. Runs")
+            )
+            
+            responsive_plotly_chart(fig)
+        else:
+            st.warning(f"No bowling data available for {selected_team} at {selected_venue}.")
+    
+    # Opposition Analysis
+    with opposition_tab:
+        st.markdown(f"#### {selected_team}'s Performance vs. Opposition at {selected_venue}")
+        
+        # Get list of opposition teams
+        opposition_teams = []
+        for _, match in team_venue_matches.iterrows():
+            if match['team1'] == selected_team:
+                opposition_teams.append(match['team2'])
+            else:
+                opposition_teams.append(match['team1'])
+        
+        # Count matches and wins against each opposition
+        opposition_stats = []
+        for team in set(opposition_teams):
+            matches_vs_team = team_venue_matches[
+                ((team_venue_matches['team1'] == selected_team) & (team_venue_matches['team2'] == team)) |
+                ((team_venue_matches['team1'] == team) & (team_venue_matches['team2'] == selected_team))
+            ]
+            total = len(matches_vs_team)
+            wins = len(matches_vs_team[matches_vs_team['winner'] == selected_team])
+            
+            opposition_stats.append({
+                'team': team,
+                'matches': total,
+                'wins': wins,
+                'losses': total - wins,
+                'win_rate': (wins / total) * 100 if total > 0 else 0
+            })
+        
+        if opposition_stats:
+            # Convert to DataFrame and sort
+            opposition_df = pd.DataFrame(opposition_stats)
+            opposition_df = opposition_df.sort_values('matches', ascending=False)
+            
+            # Create horizontal bar chart
+            fig = px.bar(
+                opposition_df,
+                y='team',
+                x='matches',
+                color='win_rate',
+                labels={'team': 'Opposition', 'matches': 'Matches Played', 'win_rate': 'Win Rate (%)'},
+                color_continuous_scale='RdYlGn',
+                range_color=[0, 100],
+                text='wins',
+                orientation='h'
+            )
+            
+            fig.update_traces(texttemplate='%{text} wins', textposition='inside')
+            fig.update_layout(
+                title=f"{selected_team}'s Record vs. Opposition at {selected_venue}",
+                margin=dict(l=10, r=10, t=40, b=10),
+                height=400
+            )
+            
+            responsive_plotly_chart(fig)
+        else:
+            st.warning(f"No opposition data available for {selected_team} at {selected_venue}.")
+
+def display_scoring_patterns(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
+    """Display scoring patterns at venues."""
+    st.markdown("### Venue Scoring Patterns")
+    st.write("Analyze how runs are scored and wickets fall across different phases of the game at each venue.")
+    
+    # Get list of venues
+    venues = matches_df['venue'].unique()
+    selected_venue = st.selectbox("Select Venue", venues, key="scoring_patterns_venue")
+    
+    # Generate scoring patterns for selected venue
+    scoring_patterns = generate_scoring_patterns(matches_df, deliveries_df, selected_venue)
+    
+    if not scoring_patterns:
+        st.warning(f"No detailed scoring data available for {selected_venue}.")
+        return
+    
+    # Create tabs for different analyses
+    over_tab, phase_tab = st.tabs(["Over-by-Over Analysis", "Phase Analysis"])
+    
+    # Over-by-Over Analysis
+    with over_tab:
+        st.markdown(f"#### Over-by-Over Scoring at {selected_venue}")
+        
+        # Convert data to DataFrame
+        over_df = pd.DataFrame(scoring_patterns['over_data'])
+        
+        # Create line chart for runs by over
+        fig = px.line(
+            over_df, 
+            x='over', 
+            y='runs', 
+            color='inning',
+            title=f"Average Runs per Over at {selected_venue}",
+            labels={'over': 'Over', 'runs': 'Avg. Runs', 'inning': 'Inning'},
+            markers=True,
+            line_shape='spline'
+        )
+        
+        fig.update_layout(
+            xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        
+        responsive_plotly_chart(fig)
+        
+        # Create bar chart for wickets by over
+        wicket_fig = px.bar(
+            over_df, 
+            x='over', 
+            y='wickets', 
+            color='inning',
+            barmode='group',
+            title=f"Wicket Likelihood by Over at {selected_venue} (%)",
+            labels={'over': 'Over', 'wickets': 'Wicket Probability (%)', 'inning': 'Inning'}
+        )
+        
+        wicket_fig.update_layout(
+            xaxis=dict(tickmode='linear', tick0=1, dtick=1),
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        
+        responsive_plotly_chart(wicket_fig)
+    
+    # Phase Analysis
+    with phase_tab:
+        st.markdown(f"#### Phase-wise Analysis at {selected_venue}")
+        
+        # Convert data to DataFrame
+        phase_df = pd.DataFrame(scoring_patterns['phase_data'])
+        
+        # Create column layout
         col1, col2 = st.columns(2)
         
         with col1:
-            # Toss decisions pie chart
-            if stats['toss_decisions']:
-                fig = px.pie(
-                    values=list(stats['toss_decisions'].values()),
-                    names=list(stats['toss_decisions'].keys()),
-                    title="Toss Decisions Distribution"
-                )
-                responsive_plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("No toss decision data available")
+            # Create bar chart for runs by phase
+            phase_fig = px.bar(
+                phase_df, 
+                x='phase', 
+                y='runs_per_over', 
+                color='inning',
+                barmode='group',
+                title=f"Runs per Over by Phase at {selected_venue}",
+                labels={'phase': 'Phase', 'runs_per_over': 'Runs per Over', 'inning': 'Inning'},
+                category_orders={"phase": ["Powerplay", "Middle", "Death"]}
+            )
+            
+            phase_fig.update_layout(
+                margin=dict(l=10, r=10, t=40, b=10)
+            )
+            
+            st.plotly_chart(phase_fig, use_container_width=True)
         
         with col2:
-            try:
-                toss_win_pct = float(stats['toss_win_pct'])
-                st.metric("Toss Win Impact", f"{toss_win_pct:.1f}%")
-            except (TypeError, ValueError, KeyError):
-                st.metric("Toss Win Impact", "N/A")
-                
-            try:
-                bat_first_pct = float(stats['decision_success']['bat_first_pct'])
-                st.metric("Bat First Success", f"{bat_first_pct:.1f}%")
-            except (TypeError, ValueError, KeyError):
-                st.metric("Bat First Success", "N/A")
-    
-    # Team Preferences Tab
-    with tabs[1]:
-        st.subheader("Team-wise Toss Preferences")
+            # Create bar chart for wickets by phase
+            wicket_phase_fig = px.bar(
+                phase_df, 
+                x='phase', 
+                y='wickets_per_match', 
+                color='inning',
+                barmode='group',
+                title=f"Wickets per Match by Phase at {selected_venue}",
+                labels={'phase': 'Phase', 'wickets_per_match': 'Wickets per Match', 'inning': 'Inning'},
+                category_orders={"phase": ["Powerplay", "Middle", "Death"]}
+            )
+            
+            wicket_phase_fig.update_layout(
+                margin=dict(l=10, r=10, t=40, b=10)
+            )
+            
+            st.plotly_chart(wicket_phase_fig, use_container_width=True)
         
-        if stats['team_stats']:
-            for team, team_stats in stats['team_stats'].items():
-                st.write(f"**{team}**")
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    # Team's toss decisions
-                    if team_stats['decisions']:
-                        fig = px.pie(
-                            values=list(team_stats['decisions'].values()),
-                            names=list(team_stats['decisions'].keys()),
-                            title=f"Toss Decisions - {team}"
-                        )
-                        responsive_plotly_chart(fig, use_container_width=True)
-                    else:
-                        st.info(f"No toss decision data available for {team}")
-                
-                with col2:
-                    try:
-                        success_rate = float(team_stats['success_rate'])
-                        st.metric("Success Rate", f"{success_rate:.1f}%")
-                    except (TypeError, ValueError, KeyError):
-                        st.metric("Success Rate", "N/A")
-        else:
-            st.info("No team-wise toss preference data available")
-    
-    # Success Analysis Tab
-    with tabs[2]:
-        st.subheader("Toss Decision Success Analysis")
-        
-        # Create success rate comparison
-        success_data = pd.DataFrame({
-            'Decision': ['Bat First', 'Field First'],
-            'Success Rate': [
-                stats['decision_success']['bat_first_pct'],
-                stats['decision_success']['field_first_pct']
-            ]
-        })
-        
-        fig = px.bar(
-            success_data,
-            x='Decision',
-            y='Success Rate',
-            title="Success Rate by Toss Decision",
-            labels={'Success Rate': 'Win Percentage'}
-        )
-        responsive_plotly_chart(fig, use_container_width=True)
+        # Add phase description
+        st.markdown("""
+        **Phase Definitions:**
+        - **Powerplay**: Overs 1-6
+        - **Middle**: Overs 7-15
+        - **Death**: Overs 16-20
+        """)
 
-def display_weather_analysis(matches_df: pd.DataFrame) -> None:
-    """Display weather impact analysis for venues."""
-    st.header("Weather Analysis")
+def display_toss_analysis(matches_df: pd.DataFrame) -> None:
+    """Display toss impact analysis for venues."""
+    st.markdown("### Toss Impact Analysis")
+    st.write("Analyze how winning the toss affects match outcomes at different venues.")
     
-    # Load precomputed weather impact
-    venue_weather_impact = load_venue_weather_impact()
+    # Get list of venues
+    venues = matches_df['venue'].unique()
+    selected_venue = st.selectbox("Select Venue", venues, key="toss_analysis_venue")
     
-    if not venue_weather_impact:
-        st.error("Weather impact data not available. Please run the data preprocessing script.")
+    # Generate toss impact data for selected venue
+    toss_data = generate_toss_impact(matches_df, selected_venue)
+    
+    if not toss_data:
+        st.warning(f"No toss data available for {selected_venue}.")
         return
     
-    # Get unique venues for selection
-    venues = sorted(venue_weather_impact.keys())
-    selected_venue = st.selectbox("Select Venue", venues, key="weather_analysis_venue_selector")
-    
-    if selected_venue not in venue_weather_impact:
-        st.warning(f"No weather impact data available for {selected_venue}")
-        return
-    
-    venue_stats = venue_weather_impact[selected_venue]
-    
-    # Display statistics
+    # Create layout
     col1, col2 = st.columns(2)
     
     with col1:
-        st.metric("Total Matches", venue_stats['total_matches'])
-        st.metric("Rain-Affected Matches", venue_stats['rain_affected_matches'])
-        try:
-            rain_pct = float(venue_stats['rain_percentage'])
-            st.metric("Rain Impact", f"{rain_pct:.1f}%")
-        except (TypeError, ValueError, KeyError):
-            st.metric("Rain Impact", "N/A")
+        # Display toss win percentage
+        st.metric(
+            "Matches Won After Winning Toss",
+            f"{toss_data['toss_win_percentage']:.1f}%"
+        )
+        
+        # Create pie chart for toss decisions
+        decisions = toss_data['toss_decisions']
+        
+        decision_labels = []
+        decision_values = []
+        
+        for decision, count in decisions.items():
+            decision_labels.append(decision.capitalize())
+            decision_values.append(count)
+        
+        decision_fig = go.Figure(data=[go.Pie(
+            labels=decision_labels,
+            values=decision_values,
+            hole=.4,
+            marker_colors=['#1f77b4', '#ff7f0e']
+        )])
+        
+        decision_fig.update_layout(
+            title_text="Toss Decisions",
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        
+        st.plotly_chart(decision_fig, use_container_width=True)
     
     with col2:
-        st.metric("Day Matches", venue_stats['day_matches'])
-        st.metric("Evening Matches", venue_stats['evening_matches'])
-        try:
-            evening_pct = float(venue_stats['evening_percentage'])
-            st.metric("Evening Match %", f"{evening_pct:.1f}%")
-        except (TypeError, ValueError, KeyError):
-            st.metric("Evening Match %", "N/A")
+        # Create success rate comparison
+        success_data = {
+            'Decision': ['Bat First', 'Field First'],
+            'Success Rate': [
+                toss_data['bat_first_success_rate'],
+                toss_data['field_first_success_rate']
+            ]
+        }
+        
+        success_df = pd.DataFrame(success_data)
+        
+        success_fig = px.bar(
+            success_df,
+            x='Decision',
+            y='Success Rate',
+            color='Decision',
+            title="Success Rate by Toss Decision",
+            labels={'Success Rate': 'Win Percentage (%)'},
+            text_auto='.1f'
+        )
+        
+        success_fig.update_traces(texttemplate='%{text}%', textposition='outside')
+        success_fig.update_layout(
+            margin=dict(l=10, r=10, t=40, b=10),
+            showlegend=False,
+            yaxis=dict(range=[0, 100])
+        )
+        
+        st.plotly_chart(success_fig, use_container_width=True)
     
-    # Create pie chart for match timing distribution
-    timing_data = pd.DataFrame({
-        'Time': ['Day', 'Evening'],
-        'Matches': [venue_stats['day_matches'], venue_stats['evening_matches']]
-    })
+    # Display insights
+    st.markdown("#### Toss Impact Insights")
     
-    fig = px.pie(timing_data,
-                 values='Matches',
-                 names='Time',
-                 title=f"Match Timing Distribution at {selected_venue}")
-    responsive_plotly_chart(fig)
+    # Generate insights based on the data
+    if toss_data['toss_win_percentage'] > 60:
+        st.markdown(f"💡 **Winning the toss is highly advantageous at {selected_venue}**, with teams winning {toss_data['toss_win_percentage']:.1f}% of matches after winning the toss.")
+    elif toss_data['toss_win_percentage'] < 40:
+        st.markdown(f"💡 **Interestingly, winning the toss seems to be a disadvantage at {selected_venue}**, with teams losing {100-toss_data['toss_win_percentage']:.1f}% of matches after winning the toss.")
+    else:
+        st.markdown(f"💡 **The toss has a moderate impact at {selected_venue}**, with toss winners winning {toss_data['toss_win_percentage']:.1f}% of matches.")
     
-    # Add a note about data availability
-    if venue_stats['day_matches'] == venue_stats['total_matches'] // 2 and venue_stats['evening_matches'] == venue_stats['total_matches'] // 2:
-        st.info("Note: Match timing data is not available. Showing estimated distribution.")
+    # Decision insights
+    bat_field_diff = abs(toss_data['bat_first_success_rate'] - toss_data['field_first_success_rate'])
+    if bat_field_diff > 20:
+        better_choice = "batting first" if toss_data['bat_first_success_rate'] > toss_data['field_first_success_rate'] else "fielding first"
+        st.markdown(f"💡 **The data strongly suggests that {better_choice} is the better choice after winning the toss** at {selected_venue}.")
+    else:
+        st.markdown(f"💡 **There is no clear advantage to either batting or fielding first** at {selected_venue} based on historical data.")
 
 def display_venue_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
     """Display comprehensive venue analysis with all enhanced features."""
@@ -1029,8 +808,7 @@ def display_venue_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame
         "Venue Overview",
         "Team Performance",
         "Scoring Patterns",
-        "Toss Impact",
-        "Weather Analysis"
+        "Toss Impact"
     ])
     
     # Venue Overview Tab
@@ -1047,8 +825,4 @@ def display_venue_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame
     
     # Toss Impact Tab
     with tabs[3]:
-        display_toss_analysis(matches_df)
-    
-    # Weather Analysis Tab
-    with tabs[4]:
-        display_weather_analysis(matches_df) 
+        display_toss_analysis(matches_df) 

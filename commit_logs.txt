@@ -1,0 +1,71 @@
+commit ef906a163dbc5f86af879cd368d39d1846f91a44
+Author: magare <vilaslmagare@gmail.com>
+Date:   Fri Mar 7 19:53:26 2025 +0530
+
+    season file changes
+
+commit 11e2baa99392f485226fece22cfd70de9a9ec8bc
+Author: magare <vilaslmagare@gmail.com>
+Date:   Thu Mar 6 23:09:25 2025 +0530
+
+    season analysis points table fix
+
+commit d167b6d8d51d4cbf6c82e4cc202b57f1c42a7f77
+Author: magare <vilaslmagare@gmail.com>
+Date:   Thu Mar 6 23:03:18 2025 +0530
+
+    fixed errors
+
+commit 462ee07ba00d6418437bfb6569dcb8ec0fc96590
+Author: magare <vilaslmagare@gmail.com>
+Date:   Thu Mar 6 22:38:55 2025 +0530
+
+    new data added
+
+commit 5f747dc2015176b8c94a1f106a7223880f69e29c
+Author: magare <vilaslmagare@gmail.com>
+Date:   Thu Mar 6 22:32:32 2025 +0530
+
+    fixed timestamp issue in the match details page
+
+commit e44bd30590d8b41f68cb2acee43df46a39596dac
+Author: magare <vilaslmagare@gmail.com>
+Date:   Thu Mar 6 22:25:33 2025 +0530
+
+    team analysis - head to head comparision
+
+commit 2caa6f8dd3275edea9767f7983e8a059eff165b5
+Author: magare <vilaslmagare@gmail.com>
+Date:   Wed Mar 5 06:29:54 2025 +0530
+
+    taken care of tab buttons - red line and hover issue
+
+commit dd6e976e241954f242092a3601563a151c4b8ae1
+Author: magare <vilaslmagare@gmail.com>
+Date:   Tue Mar 4 23:14:32 2025 +0530
+
+    adjusted chart legands
+
+commit 1e8d7184db731a37cbe9661a8723c5c27044e8b2
+Author: magare <vilaslmagare@gmail.com>
+Date:   Tue Mar 4 21:34:54 2025 +0530
+
+    added new changes
+
+commit e14143ec128138444cb09dafee831c61b4aedd8d
+Author: magare <vilaslmagare@gmail.com>
+Date:   Tue Mar 4 19:29:00 2025 +0530
+
+    removed data files
+
+commit d679dbff93f2197e6d83626d9c4432896675e5b9
+Author: magare <vilaslmagare@gmail.com>
+Date:   Tue Mar 4 19:03:12 2025 +0530
+
+    new files added
+
+commit c6c46171c03dc36bba212a7d86a53233b58b44fc
+Author: magare <vilaslmagare@gmail.com>
+Date:   Tue Mar 4 17:14:09 2025 +0530
+
+    initial commit for the standalone streamlit app
