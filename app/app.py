@@ -4,40 +4,54 @@ This is the main entry point for the Streamlit application.
 """
 
 import streamlit as st
+
+# Set page configuration - MUST BE FIRST STREAMLIT COMMAND
+st.set_page_config(
+    page_title="IPL Data Explorer 🏏",
+    page_icon="🏏",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import logging
 from pathlib import Path
 import sys
 from typing import Tuple, Dict, Any, Optional
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+import time
 
 # Import configuration
-from config import APP_TITLE, APP_ICON, APP_LAYOUT, INITIAL_SIDEBAR_STATE, NAVIGATION_SECTIONS
+from config import (
+    APP_TITLE, 
+    APP_ICON, 
+    APP_LAYOUT, 
+    INITIAL_SIDEBAR_STATE, 
+    NAVIGATION_SECTIONS,
+    LOG_LEVEL
+)
 
 # Import utilities
-from utils.data_loader import load_data, calculate_basic_stats, format_large_number
+from utils.logger import configure_app_logging, get_module_logger
+from utils.state_manager import initialize_session_state, get_state, set_state
+from utils.error_handler import ErrorBoundary, display_error
+from utils.data_loader import (
+    load_data, 
+    calculate_basic_stats, 
+    format_large_number,
+    data_loader_with_retry,
+    DataLoadingError
+)
 from utils.chart_utils import init_device_detection
 from utils.ui_components import (
     load_css, 
-    display_app_header, 
-    display_sidebar_header, 
-    display_sidebar_footer,
-    display_error_message
+    HeaderComponent,
+    SidebarComponent,
+    MessageComponent,
+    DataDisplayComponent,
+    LayoutComponent
 )
 
 # Import components
-from components.overview import (
-    plot_tournament_growth,
-    display_team_participation,
-    display_dataset_info,
-    display_key_questions,
-    display_data_limitations
-)
+from components.overview import render_overview_section
 from components.team_analysis import display_team_analysis
 from components.player_analysis import (
     display_batting_analysis,
@@ -56,51 +70,28 @@ from components.season_analysis import display_season_analysis
 from components.venue_analysis import display_venue_analysis
 from components.dream_team_analysis import DreamTeamAnalysis
 
-# Set page configuration
-st.set_page_config(
-    page_title=APP_TITLE,
-    page_icon=APP_ICON,
-    layout=APP_LAYOUT,
-    initial_sidebar_state=INITIAL_SIDEBAR_STATE
-)
+# Configure logging
+configure_app_logging(LOG_LEVEL)
+logger = get_module_logger(__name__)
 
-def main():
-    """
-    Main application function.
-    """
-    try:
-        # Load CSS
-        load_css()
-        
-        # Initialize device detection
-        device_type = init_device_detection()
-        
-        # Load data with error handling
-        try:
-            with st.spinner("Loading data..."):
-                matches, deliveries = load_cached_data()
-        except Exception as e:
-            display_error_message("Failed to load data. Please try refreshing the page.", e)
-            st.stop()
-        
-        # Set up sidebar navigation
-        display_sidebar_header()
-        selected_tab = st.sidebar.radio("", NAVIGATION_SECTIONS)
-        
-        # Add information at the bottom of the sidebar
-        try:
-            min_season = int(matches['season'].min())
-            max_season = int(matches['season'].max())
-            display_sidebar_footer(min_season, max_season)
-        except Exception as e:
-            logger.error(f"Error displaying sidebar footer: {e}")
-        
-        # Render the selected section
-        render_section(selected_tab, matches, deliveries)
-        
-    except Exception as e:
-        logger.error(f"Unhandled application error: {e}", exc_info=True)
-        display_error_message("An unexpected error occurred. Please try refreshing the page.")
+# Initialize application state
+def initialize_app():
+    """Initialize application state and detect device."""
+    # Initialize session state with default values
+    initialize_session_state({
+        'device_type': 'desktop',
+        'data_loaded': False,
+        'selected_tab': NAVIGATION_SECTIONS[0],
+        'loading_error': None
+    })
+    
+    # Initialize device detection
+    device_type = init_device_detection()
+    
+    # Load CSS
+    load_css()
+    
+    logger.info("Application initialized")
 
 @st.cache_data(show_spinner=False)
 def load_cached_data():
@@ -110,130 +101,57 @@ def load_cached_data():
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: Matches and deliveries dataframes
     """
-    logger.info("Loading cached data")
-    return load_data()
-
-def render_section(section: str, matches, deliveries):
-    """
-    Render the selected section.
-    
-    Args:
-        section: The section to render
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    if section == "Overview":
-        render_overview(matches, deliveries)
-    elif section == "Team Analysis":
-        render_team_analysis(matches, deliveries)
-    elif section == "Player Analysis":
-        render_player_analysis(matches, deliveries)
-    elif section == "Match Analysis":
-        render_match_analysis(matches, deliveries)
-    elif section == "Season Analysis":
-        render_season_analysis(matches, deliveries)
-    elif section == "Venue Analysis":
-        render_venue_analysis(matches, deliveries)
-    elif section == "Dream Team Analysis":
-        render_dream_team_analysis()
-
-def render_overview(matches, deliveries):
-    """
-    Render the overview section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
     try:
-        # Display app header
-        display_app_header()
+        start_time = time.time()
+        logger.info("Loading cached data")
         
-        st.header("IPL Data Analysis Overview")
-        st.markdown("""
-        The Indian Premier League (IPL) has captivated cricket fans worldwide since its inception in 2008. 
-        This analysis dives deep into the rich history of IPL, uncovering patterns and insights from over a decade of matches.
-        """)
+        # Use retry mechanism for more reliable data loading
+        matches, deliveries = data_loader_with_retry(load_data)
         
-        # Calculate basic stats
-        stats = calculate_basic_stats(matches, deliveries)
+        set_state('data_loaded', True)
+        set_state('loading_error', None)
         
-        # Display metrics in three columns
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.subheader("Tournament Scale")
-            st.metric("Total Matches", format_large_number(stats['total_matches']))
-            st.metric("Unique Teams", format_large_number(stats['total_teams']))
-            st.metric("Seasons", format_large_number(stats['total_seasons']))
-            st.metric("Venues", format_large_number(stats['total_venues']))
-            st.metric("Cities", format_large_number(stats['total_cities']))
-        with col2:
-            st.subheader("Batting Insights")
-            st.metric("Total Runs", format_large_number(stats['total_runs']))
-            st.metric("Total Boundaries", format_large_number(stats['total_boundaries']))
-            st.metric("Total Sixes", format_large_number(stats['total_sixes']))
-            try:
-                avg_runs = float(stats['avg_runs_per_match'])
-                st.metric("Avg. Runs/Match", f"{avg_runs:.1f}")
-            except (TypeError, ValueError):
-                st.metric("Avg. Runs/Match", "N/A")
-        with col3:
-            st.subheader("Bowling Insights")
-            st.metric("Total Wickets", format_large_number(stats['total_wickets']))
-            try:
-                total_overs = int(stats['total_overs'])
-                st.metric("Total Overs", format_large_number(total_overs))
-            except (TypeError, ValueError):
-                st.metric("Total Overs", "N/A")
-            try:
-                avg_wickets = float(stats['avg_wickets_per_match'])
-                st.metric("Avg. Wickets/Match", f"{avg_wickets:.1f}")
-            except (TypeError, ValueError):
-                st.metric("Avg. Wickets/Match", "N/A")
+        elapsed_time = time.time() - start_time
+        logger.info(f"Data loading completed in {elapsed_time:.2f}s")
         
-        st.subheader("Tournament Growth Over Years")
-        plot_tournament_growth(matches, deliveries)
+        return matches, deliveries
         
-        # Team Participation Table
-        display_team_participation(matches)
-        
-        # Key questions and data limitations
-        display_key_questions()
-        display_data_limitations()
-        
-        # Dataset structure information (moved to the bottom)
-        display_dataset_info()
     except Exception as e:
-        logger.error(f"Error rendering overview: {e}")
-        display_error_message("Error rendering overview section. Please try refreshing the page.")
+        set_state('loading_error', str(e))
+        logger.error(f"Error loading cached data: {e}")
+        raise
 
-def render_team_analysis(matches, deliveries):
-    """
-    Render the team analysis section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    try:
+def render_navigation():
+    """Render the navigation sidebar."""
+    with ErrorBoundary("Navigation Sidebar"):
+        SidebarComponent.sidebar_header()
+        
+        # Render navigation options
+        selected_tab = st.sidebar.radio("", NAVIGATION_SECTIONS)
+        set_state('selected_tab', selected_tab)
+        
+        # Add information at the bottom of the sidebar
+        try:
+            matches, _ = load_cached_data()
+            min_season = int(matches['season'].min())
+            max_season = int(matches['season'].max())
+            SidebarComponent.sidebar_footer(min_season, max_season)
+        except Exception as e:
+            logger.error(f"Error displaying sidebar footer: {e}")
+
+# Define component rendering functions to match our new refactored structure
+def render_team_analysis_section(matches, deliveries):
+    """Render team analysis section using the existing component."""
+    with ErrorBoundary("Team Analysis Section"):
         display_team_analysis(matches, deliveries)
-    except Exception as e:
-        logger.error(f"Error rendering team analysis: {e}")
-        display_error_message("Error rendering team analysis section. Please try refreshing the page.")
 
-def render_player_analysis(matches, deliveries):
-    """
-    Render the player analysis section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    try:
+def render_player_analysis_section(matches, deliveries):
+    """Render player analysis section using the existing components."""
+    with ErrorBoundary("Player Analysis Section"):
         st.header("Player Analysis")
         
         # Get device type to determine layout
-        device_type = st.session_state.get('device_type', 'mobile')
+        device_type = get_state('device_type', 'mobile')
         
         # Define analysis options
         analysis_options = ["Batting Analysis", "Bowling Analysis", "All-Rounder Analysis", "Head-to-Head Analysis"]
@@ -262,27 +180,15 @@ def render_player_analysis(matches, deliveries):
                 display_allrounder_analysis(deliveries)
             with tabs[3]:
                 display_head_to_head_analysis(deliveries)
-    except Exception as e:
-        logger.error(f"Error rendering player analysis: {e}")
-        display_error_message("Error rendering player analysis section. Please try refreshing the page.")
 
-def render_match_analysis(matches, deliveries):
-    """
-    Render the match analysis section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    try:
+def render_match_analysis_section(matches, deliveries):
+    """Render match analysis section using the existing components."""
+    with ErrorBoundary("Match Analysis Section"):
         st.header("Match Analysis")
         st.markdown("""
         This section provides a detailed analysis of match outcomes, toss decisions, and their impact on the game.
         We explore various aspects like victory margins, toss advantage, and scoring patterns.
         """)
-        
-        # Get device type to determine layout
-        device_type = st.session_state.get('device_type', 'mobile')
         
         # Define analysis options
         match_options = ["Match Details", "Match Results", "Toss Analysis", "Scoring Patterns", "High/Low Scoring Matches"]
@@ -300,48 +206,96 @@ def render_match_analysis(matches, deliveries):
             display_high_low_scoring_analysis(matches, deliveries)
         elif match_tab == "Match Details":
             display_match_details(matches)
-    except Exception as e:
-        logger.error(f"Error rendering match analysis: {e}")
-        display_error_message("Error rendering match analysis section. Please try refreshing the page.")
 
-def render_season_analysis(matches, deliveries):
-    """
-    Render the season analysis section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    try:
+def render_season_analysis_section(matches, deliveries):
+    """Render season analysis section using the existing component."""
+    with ErrorBoundary("Season Analysis Section"):
         display_season_analysis(matches, deliveries)
-    except Exception as e:
-        logger.error(f"Error rendering season analysis: {e}")
-        display_error_message("Error rendering season analysis section. Please try refreshing the page.")
 
-def render_venue_analysis(matches, deliveries):
-    """
-    Render the venue analysis section.
-    
-    Args:
-        matches: Matches dataframe
-        deliveries: Deliveries dataframe
-    """
-    try:
+def render_venue_analysis_section(matches, deliveries):
+    """Render venue analysis section using the existing component."""
+    with ErrorBoundary("Venue Analysis Section"):
         display_venue_analysis(matches, deliveries)
-    except Exception as e:
-        logger.error(f"Error rendering venue analysis: {e}")
-        display_error_message("Error rendering venue analysis section. Please try refreshing the page.")
 
-def render_dream_team_analysis():
-    """
-    Render the dream team analysis section.
-    """
-    try:
+def render_dream_team_section(matches, deliveries):
+    """Render dream team section using the existing component."""
+    with ErrorBoundary("Dream Team Analysis Section"):
         dt_instance = DreamTeamAnalysis()
         dt_instance.create_layout()
+
+def render_section(section: str, matches, deliveries):
+    """
+    Render the selected section.
+    
+    Args:
+        section: The section to render
+        matches: Matches dataframe
+        deliveries: Deliveries dataframe
+    """
+    section_mapping = {
+        "Overview": render_overview_section,
+        "Team Analysis": render_team_analysis_section,
+        "Player Analysis": render_player_analysis_section,
+        "Match Analysis": render_match_analysis_section,
+        "Season Analysis": render_season_analysis_section,
+        "Venue Analysis": render_venue_analysis_section,
+        "Dream Team Analysis": render_dream_team_section
+    }
+    
+    if section in section_mapping:
+        with ErrorBoundary(f"{section} Section"):
+            section_mapping[section](matches, deliveries)
+    else:
+        logger.error(f"Unknown section: {section}")
+        MessageComponent.error(f"Unknown section: {section}")
+
+def main():
+    """
+    Main application function.
+    """
+    try:
+        # Initialize application
+        initialize_app()
+        
+        # Render navigation
+        render_navigation()
+        
+        # Check if there was a loading error from a previous attempt
+        loading_error = get_state('loading_error')
+        if loading_error:
+            MessageComponent.error(f"Failed to load data: {loading_error}")
+            
+            # Add retry button
+            if st.button("Retry Loading Data"):
+                st.experimental_rerun()
+            
+            st.stop()
+        
+        # Load data with error handling
+        try:
+            with st.spinner("Loading data..."):
+                matches, deliveries = load_cached_data()
+        except Exception as e:
+            logger.error(f"Failed to load data: {e}")
+            MessageComponent.error("Failed to load data. Please try refreshing the page.")
+            
+            # Add technical details in an expander
+            with st.expander("Technical Details", expanded=False):
+                st.code(str(e))
+            
+            st.stop()
+        
+        # Render the selected section
+        selected_tab = get_state('selected_tab')
+        render_section(selected_tab, matches, deliveries)
+        
     except Exception as e:
-        logger.error(f"Error rendering dream team analysis: {e}")
-        display_error_message("Error rendering dream team analysis section. Please try refreshing the page.")
+        logger.error(f"Unhandled application error: {e}", exc_info=True)
+        MessageComponent.error("An unexpected error occurred. Please try refreshing the page.")
+        
+        # Add technical details in an expander for debugging
+        with st.expander("Technical Details", expanded=False):
+            st.code(str(e))
 
 if __name__ == "__main__":
     main()
