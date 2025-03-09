@@ -337,11 +337,22 @@ def display_team_participation(matches_df=None) -> None:
         if 'Win Rate (%)' in df.columns:
             df['Win Rate (%)'] = df['Win Rate (%)'].apply(lambda x: f"{x:.1f}%")
         
-        # Display the dataframe
-        DataDisplayComponent.table_with_download(
-            df, 
-            download_label="Download Team Data", 
-            filename="team_participation.csv"
+        # Reset index, assign new index starting from 1, and set it as the display index
+        df = df.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index')
+        
+        # Display the dataframe with full width
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
+        
+        # Add download button
+        csv = df.to_csv()
+        st.download_button(
+            label="Download Team Data",
+            data=csv,
+            file_name="team_participation.csv",
+            mime="text/csv"
         )
     else:
         # Compute on the fly if precomputed data is not available
@@ -386,11 +397,22 @@ def display_team_participation(matches_df=None) -> None:
                 # Select and order columns
                 team_stats = team_stats[['Team', 'Seasons Played', 'Total Matches', 'Wins', 'Win Rate (%)']]
                 
-                # Display the dataframe
-                DataDisplayComponent.table_with_download(
-                    team_stats, 
-                    download_label="Download Team Data", 
-                    filename="team_participation.csv"
+                # Reset index, assign new index starting from 1, and set it as the display index
+                team_stats = team_stats.reset_index(drop=True).assign(index=lambda x: x.index + 1).set_index('index')
+                
+                # Display the dataframe with full width
+                st.dataframe(
+                    team_stats,
+                    use_container_width=True
+                )
+                
+                # Add download button
+                csv = team_stats.to_csv()
+                st.download_button(
+                    label="Download Team Data",
+                    data=csv,
+                    file_name="team_participation.csv",
+                    mime="text/csv"
                 )
             except Exception as e:
                 logger.error(f"Error generating team participation table: {e}")
