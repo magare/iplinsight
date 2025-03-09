@@ -287,8 +287,11 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
             st.markdown(f"#### {selected_venue}")
             st.markdown(f"**City:** {venue_info['city']}")
             st.markdown(f"**Total Matches:** {venue_info['total_matches']}")
-            st.markdown(f"**First Match:** {venue_info['first_match']}")
-            st.markdown(f"**Latest Match:** {venue_info['last_match']}")
+            # Format dates to show only the date part
+            first_match = pd.to_datetime(venue_info['first_match']).strftime('%Y-%m-%d')
+            last_match = pd.to_datetime(venue_info['last_match']).strftime('%Y-%m-%d')
+            st.markdown(f"**First Match:** {first_match}")
+            st.markdown(f"**Latest Match:** {last_match}")
             
             # Display home teams
             if venue_info['home_teams']:
@@ -350,12 +353,11 @@ def display_venue_overview(matches_df: pd.DataFrame) -> None:
             for i, match in venue_matches.iterrows():
                 winner = match['winner']
                 result = f"{match['win_by_runs']} runs" if match['win_by_runs'] > 0 else f"{match['win_by_wickets']} wickets"
-                
-                st.markdown(f"**{match['date']}**: {match['team1']} vs {match['team2']} - **{winner}** won by {result}")
+                # Format match date to show only the date part
+                match_date = pd.to_datetime(match['date']).strftime('%Y-%m-%d')
+                st.markdown(f"**{match_date}**: {match['team1']} vs {match['team2']} - **{winner}** won by {result}")
         else:
             st.info("No matches found for this venue.")
-    else:
-        st.warning("Please select a venue from the dropdown.")
 
 def display_team_performance(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame) -> None:
     """Display team performance analysis at venues."""
@@ -939,4 +941,4 @@ def display_venue_analysis(matches_df: pd.DataFrame, deliveries_df: pd.DataFrame
     
     # Toss Impact Tab
     with tabs[3]:
-        display_toss_analysis(matches_df) 
+        display_toss_analysis(matches_df)

@@ -199,7 +199,15 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None) -> None:
                         labels={'season': 'Season', 'matches': 'Number of Matches'},
                         color_discrete_sequence=[matches_color]
                     )
-                    fig.update_layout(**CHART_STYLING)
+                    fig.update_layout(
+                        **CHART_STYLING,
+                        xaxis=dict(
+                            tickmode='array',
+                            ticktext=matches_per_season['season'].astype(str),
+                            tickvals=matches_per_season['season'],
+                            tickangle=45
+                        )
+                    )
                     responsive_plotly_chart(fig)
                 except Exception as e:
                     logger.error(f"Error generating matches per season chart: {e}")
@@ -244,7 +252,15 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None) -> None:
                         markers=True,
                         color_discrete_sequence=[runs_color]
                     )
-                    fig.update_layout(**CHART_STYLING)
+                    fig.update_layout(
+                        **CHART_STYLING,
+                        xaxis=dict(
+                            tickmode='array',
+                            ticktext=avg_runs_by_season['season'].astype(str),
+                            tickvals=avg_runs_by_season['season'],
+                            tickangle=45
+                        )
+                    )
                     responsive_plotly_chart(fig)
                 except Exception as e:
                     logger.error(f"Error generating average runs chart: {str(e)}")
@@ -285,7 +301,15 @@ def plot_tournament_growth(matches_df=None, deliveries_df=None) -> None:
                         markers=True,
                         color_discrete_sequence=[wickets_color]
                     )
-                    fig.update_layout(**CHART_STYLING)
+                    fig.update_layout(
+                        **CHART_STYLING,
+                        xaxis=dict(
+                            tickmode='array',
+                            ticktext=avg_wickets_by_season['season'].astype(str),
+                            tickvals=avg_wickets_by_season['season'],
+                            tickangle=45
+                        )
+                    )
                     responsive_plotly_chart(fig)
                 except Exception as e:
                     logger.error(f"Error generating average wickets chart: {str(e)}")
