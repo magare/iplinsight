@@ -32,24 +32,35 @@ def normalize_and_abbreviate_teams(file_path):
     # Manual Mapping (with Normalization and Abbreviation)
     manual_mapping = {
         'Chennai Super Kings': 'CSK',
-        'Deccan Chargers': 'SRH',  # Renamed Deccan Chargers to Sunrisers Hyderabad
+    
+        'Deccan Chargers': 'DCH',  # Renamed Deccan Chargers to Sunrisers Hyderabad
+        'Sunrisers Hyderabad': 'SRH',
+    
         'Delhi Capitals': 'DC',
-        'Delhi Daredevils': 'DD',
-        'Gujarat Lions': 'GL',
+        'Delhi Daredevils': 'DC',
+
+        'Gujarat Lions': 'GT',
         'Gujarat Titans': 'GT',
-        'Kings XI Punjab': 'KXIP',
-        'Kochi Tuskers Kerala': 'KTK',
-        'Kolkata Knight Riders': 'KKR',
-        'Lucknow Super Giants': 'LSG',
-        'Mumbai Indians': 'MI',
-        'Pune Warriors': 'PW',
+    
         'Punjab Kings': 'PBKS',  # Different from KXIP
+        'Kings XI Punjab': 'PBKS',
+    
+        'Kochi Tuskers Kerala': 'KTK',
+        
+        'Kolkata Knight Riders': 'KKR',
+        
+        'Lucknow Super Giants': 'LSG',
+        
+        'Mumbai Indians': 'MI',
+        
         'Rajasthan Royals': 'RR',
+        
+        'Pune Warriors': 'PW',
         'Rising Pune Supergiant': 'RPS',
         'Rising Pune Supergiants': 'RPS',
+        
         'Royal Challengers Bangalore': 'RCB',
         'Royal Challengers Bengaluru': 'RCB',
-        'Sunrisers Hyderabad': 'SRH'
     }
 
     # Create a mapping from original names to normalized/abbreviated names

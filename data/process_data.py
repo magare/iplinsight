@@ -224,6 +224,13 @@ all_match_df.to_parquet(app_data_dir / 'matches.parquet', compression='snappy', 
 all_delivery_df.to_parquet(app_data_dir / 'deliveries.parquet', compression='snappy', index=False)
 print(f"Main dataframes saved to {app_data_dir}")
 
+# --- New Block: Save CSV copies of matches and deliveries in data/processed folder ---
+processed_dir = current_dir / 'processed'
+os.makedirs(processed_dir, exist_ok=True)
+all_match_df.to_csv(processed_dir / 'matches.csv', index=False)
+all_delivery_df.to_csv(processed_dir / 'deliveries.csv', index=False)
+print(f"CSV files saved to {processed_dir}")
+
 # --- New Block: Add batter_position functionality ---
 # For each group of match_id, inning, and batting_team, assign a batting order
 
@@ -239,8 +246,14 @@ def assign_batter_positions(group):
 
 all_delivery_df['batter_position'] = all_delivery_df.groupby(['match_id', 'inning', 'batting_team']).apply(assign_batter_positions).reset_index(level=[0,1,2], drop=True)
 
-# Sort deliveries by match_id, inning, over, and ball
-all_delivery_df = all_delivery_df.sort_values(by=['match_id', 'inning', 'over', 'ball'])
+# Create a match order mapping from the sorted matches dataframe
+# This ensures deliveries follow the same sequence as matches
+match_order_mapping = {match_id: idx for idx, match_id in enumerate(all_match_df['match_id'])}
+all_delivery_df['match_order'] = all_delivery_df['match_id'].map(match_order_mapping)
+
+# Sort deliveries using the match order, then inning, over, and ball
+all_delivery_df = all_delivery_df.sort_values(by=['match_order', 'inning', 'over', 'ball'])
+all_delivery_df = all_delivery_df.drop(columns=['match_order'])
 all_delivery_df.reset_index(drop=True, inplace=True)
 
 # --- New Block: Pre-compute data for overview section ---
