@@ -1,0 +1,19 @@
+# Core dependencies
+streamlit>=1.22.0
+pandas>=1.5.0
+numpy>=1.22.0
+
+# Data visualization
+matplotlib>=3.5.0
+seaborn>=0.12.0
+plotly>=5.10.0
+
+# Data processing and analysis
+scikit-learn>=1.0.0
+
+# File handling
+pyarrow>=10.0.0  # For parquet file support
+
+# Utilities
+typing-extensions>=4.0.0
+pathlib>=1.0.1
