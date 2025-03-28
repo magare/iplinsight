@@ -1096,3 +1096,6 @@ match_id,season,date,team1,team2,venue,city,toss_winner,toss_decision,winner,win
 2024_71,2024,2024-05-26,SRH,KKR,MA Chidambaram Stadium,Chennai,SRH,bat,KKR,0,8,MA Starc,71
 2025_01,2025,2025-03-22,KKR,RCB,Eden Gardens,Kolkata,RCB,field,RCB,0,7,KH Pandya,1
 2025_02,2025,2025-03-23,MI,CSK,MA Chidambaram Stadium,Chennai,CSK,field,CSK,0,4,Noor Ahmad,2
+2025_03,2025,2025-03-23,SRH,RR,"Rajiv Gandhi International Stadium, Uppal, Hyderabad",Hyderabad,RR,field,SRH,44,0,Ishan Kishan,3
+2025_04,2025,2025-03-24,LSG,DC,ACA-VDCA Stadium,Visakhapatnam,DC,field,DC,0,1,Ashutosh Sharma,4
+2025_05,2025,2025-03-25,PBKS,GT,Narendra Modi Stadium,Ahmedabad,GT,field,PBKS,11,0,SS Iyer,5
