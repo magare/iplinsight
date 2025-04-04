@@ -1099,3 +1099,13 @@ match_id,season,date,team1,team2,venue,city,toss_winner,toss_decision,winner,win
 2025_03,2025,2025-03-23,SRH,RR,"Rajiv Gandhi International Stadium, Uppal, Hyderabad",Hyderabad,RR,field,SRH,44,0,Ishan Kishan,3
 2025_04,2025,2025-03-24,LSG,DC,ACA-VDCA Stadium,Visakhapatnam,DC,field,DC,0,1,Ashutosh Sharma,4
 2025_05,2025,2025-03-25,PBKS,GT,Narendra Modi Stadium,Ahmedabad,GT,field,PBKS,11,0,SS Iyer,5
+2025_06,2025,2025-03-26,RR,KKR,"Barsapara Cricket Stadium, Guwahati",Guwahati,KKR,field,KKR,0,8,Q de Kock,6
+2025_07,2025,2025-03-27,SRH,LSG,"Rajiv Gandhi International Stadium, Uppal, Hyderabad",Hyderabad,LSG,field,LSG,0,5,SN Thakur,7
+2025_08,2025,2025-03-28,RCB,CSK,MA Chidambaram Stadium,Chennai,CSK,field,RCB,50,0,RM Patidar,8
+2025_09,2025,2025-03-29,GT,MI,Narendra Modi Stadium,Ahmedabad,MI,field,GT,36,0,M Prasidh Krishna,9
+2025_10,2025,2025-03-30,SRH,DC,ACA-VDCA Stadium,Visakhapatnam,SRH,bat,DC,0,7,MA Starc,10
+2025_11,2025,2025-03-30,RR,CSK,"Barsapara Cricket Stadium, Guwahati",Guwahati,CSK,field,RR,6,0,N Rana,11
+2025_12,2025,2025-03-31,KKR,MI,Wankhede Stadium,Mumbai,MI,field,MI,0,8,Ashwani Kumar,12
+2025_13,2025,2025-04-01,LSG,PBKS,"Bharat Ratna Shri Atal Bihari Vajpayee Ekana Cricket Stadium, Lucknow",Lucknow,PBKS,field,PBKS,0,8,P Simran Singh,13
+2025_14,2025,2025-04-02,RCB,GT,M. Chinnaswamy Stadium,Bengaluru,GT,field,GT,0,8,Mohammed Siraj,14
+2025_15,2025,2025-04-03,KKR,SRH,Eden Gardens,Kolkata,SRH,field,KKR,80,0,VG Arora,15
